@@ -1,0 +1,14 @@
+Module: Labour Economics (Year 2)
+Assessment: Short answer exam. Maximum mark: 20.
+
+Marking rubric:
+- 18–20: Excellent understanding, clear structure, correct use of theory and diagrams, relevant empirical examples.
+- 14–17: Good understanding, mostly correct, some gaps or minor errors, reasonable structure.
+- 10–13: Partial understanding, missing depth, some misinterpretation of theory, limited examples.
+- 6–9: Weak understanding, major gaps, unclear structure, little or no relevant application.
+- 0–5: Very little relevant material, serious misunderstandings, off-topic or missing answer.
+
+The AI must assign:
+1) a single overall mark out of 20,
+2) a brief explanation of the mark,
+3) feedback for improvement.
