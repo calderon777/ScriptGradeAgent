@@ -55,6 +55,16 @@ def read_uploaded_files_text(uploaded_files):
             texts.append(extract_text_from_docx(f))
     return "\n\n".join(texts).strip()
 
+MARK_DESCRIPTOR_SUMMARY = """
+Use the following generic undergraduate mark descriptors as guidance (ignore the university name):
+
+- 70–85 (First): responds fully to the task; shows excellent to outstanding knowledge, strong critical analysis, originality and insight; very well structured and well written.
+- 60–69 (Upper Second / 2:1): responds to most criteria; thorough grasp of theory and concepts; good structure and clear argument; some critical analysis and synthesis.
+- 50–59 (Lower Second / 2:2): generally effective response; clear grasp of main material; some organisation and analysis but limited depth or originality.
+- 40–49 (Third): basic but acceptable response; covers core points with limited analysis; derivative and descriptive; weak conceptual grasp.
+- 30–39: overall insufficient; significant gaps or inaccuracies; weakly developed understanding.
+- 0–29: poor or very poor; little relevant knowledge or serious misunderstanding of the task.
+"""
 
 def call_ollama(
     text: str,
@@ -67,15 +77,30 @@ def call_ollama(
     model_name: str,
 ) -> dict:
     """
-    Send rubric + student answer (plus optional contextual info) to local LLM via Ollama.
-    Expect JSON with: total_mark, max_mark, feedback.
+    Use local LLM via Ollama to mark a script.
+    The model should infer question structure and weights from the documents when possible.
+    JSON schema:
+
+    {
+      "scale": "qualitative_0_85" or "quantitative_0_100",
+      "total_mark": number,
+      "max_mark": number,
+      "questions": [
+        {"id": "Q1", "mark": number, "max_mark": number, "feedback": "string"},
+        ...
+      ],
+      "overall_feedback": "string"
+    }
     """
     system = (
-        "You are a fair and consistent university examiner. "
-        "You strictly follow the rubric, assignment brief, marking scheme and example grading style when provided."
+    "You are a fair and consistent university examiner. "
+    "You strictly follow the rubric, assignment brief, marking scheme and example grading style when provided. "
+    "Do NOT invent irrelevant content. "
+    "Stay focused on the student's answer and the marking documents."
     )
 
-    context_parts = []
+
+    context_parts = [MARK_DESCRIPTOR_SUMMARY]
 
     if rubric_text:
         context_parts.append(f"RUBRIC:\n{rubric_text}")
@@ -105,8 +130,9 @@ def call_ollama(
         )
 
     user = f"""
-You are marking a student's script.
+You are marking a student's exam script in economics.
 
+CONTEXT DOCUMENTS (to infer questions, criteria and weights):
 {context}
 
 STUDENT FILE NAME: {filename}
@@ -114,19 +140,56 @@ STUDENT FILE NAME: {filename}
 STUDENT ANSWER:
 \"\"\"{text}\"\"\"
 
-TASK:
-1. Assign a single overall mark in the field "total_mark".
-   The maximum mark is 20. You MUST choose a number between 0 and 20 inclusive.
-2. Set "max_mark" to 20.
-3. Give concise, constructive feedback in the field "feedback" in no more than 200 words.
-   Focus on strengths, weaknesses, and how to improve.
+INSTRUCTIONS:
 
-Return ONLY valid JSON in this exact format (no extra text, no explanation):
+1. From the context documents, identify:
+   - how many questions the exam has (e.g. two questions),
+   - the mark allocation / weights for each question (e.g. Q1 40 marks, Q2 45 marks, total 85),
+   - any explicit criteria for each question.
+
+2. If the documents clearly specify a total mark and per-question marks, you MUST use those.
+   For example, if the brief or marking scheme says "Q1 (40 marks), Q2 (45 marks), total 85",
+   then Q1.max_mark = 40, Q2.max_mark = 45, total max_mark = 85.
+
+3. If the documents do NOT clearly specify a total mark:
+   - Decide whether the exam is QUALITATIVE (essay-style, discursive, open answers)
+     or QUANTITATIVE (mathematical, clearly right/wrong).
+   - If it is QUALITATIVE, use the DMU-style QUALITATIVE scale 0–85:
+       scale = "qualitative_0_85"
+       max_mark = 85
+   - If it is clearly QUANTITATIVE, use scale 0–100:
+       scale = "quantitative_0_100"
+       max_mark = 100
+
+4. Always:
+   - Assign a mark for EACH QUESTION (field questions[i].mark) and a max_mark for that question.
+   - Provide brief, focused feedback per question.
+   - Provide a short overall feedback summary at the end (overall_feedback).
+
+5. The overall total_mark must be the sum of the question marks
+   and must not exceed max_mark.
+
+Return ONLY valid JSON in this exact structure (no commentary, no markdown):
 
 {{
-  "total_mark": 15,
-  "max_mark": 20,
-  "feedback": "Your answer shows good understanding of..."
+  "scale": "qualitative_0_85",
+  "total_mark": 68,
+  "max_mark": 85,
+  "questions": [
+    {{
+      "id": "Q1",
+      "mark": 32,
+      "max_mark": 40,
+      "feedback": "Short feedback specific to question 1."
+    }},
+    {{
+      "id": "Q2",
+      "mark": 36,
+      "max_mark": 45,
+      "feedback": "Short feedback specific to question 2."
+    }}
+  ],
+  "overall_feedback": "Short overall feedback for the whole script."
 }}
 """
 
@@ -148,13 +211,22 @@ Return ONLY valid JSON in this exact format (no extra text, no explanation):
         raise ValueError(f"No JSON object found in model response:\n{content}")
     data = json.loads(match.group(0))
 
-    # Safety: if model ignores the 0–20 instruction and returns > 20, rescale as percentage
-    if isinstance(data.get("total_mark"), (int, float)) and data.get("total_mark", 0) > 20:
-        original = float(data["total_mark"])
-        data["total_mark"] = round(original * 20.0 / 100.0, 1)
+    # Safety: if model ignores the scale and returns a total_mark > max_mark but ≤ 100,
+    # treat total_mark as a percentage and rescale to max_mark.
+    if isinstance(data.get("total_mark"), (int, float)) and isinstance(data.get("max_mark"), (int, float)):
+        if data["total_mark"] > data["max_mark"] and data["total_mark"] <= 100:
+            original = float(data["total_mark"])
+            max_mark = float(data["max_mark"])
+            data["total_mark"] = round(original * max_mark / 100.0, 1)
 
-    # Ensure max_mark is 20
-    data["max_mark"] = 20
+    # If the model forgot max_mark, set it from the scale
+    scale = data.get("scale")
+    if "max_mark" not in data or data["max_mark"] in (None, 0):
+        if scale == "qualitative_0_85":
+            data["max_mark"] = 85
+        elif scale == "quantitative_0_100":
+            data["max_mark"] = 100
+
 
     return data
 
@@ -291,7 +363,7 @@ def main():
                         model_name,
                     )
                     row[f"{label}_mark"] = result.get("total_mark")
-                    row[f"{label}_feedback"] = result.get("feedback")
+                    row[f"{label}_feedback"] = result.get("overall_feedback") or result.get("feedback")
                 except Exception as e:
                     row[f"{label}_mark"] = None
                     row[f"{label}_feedback"] = f"ERROR: {e}"
