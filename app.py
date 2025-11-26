@@ -438,11 +438,8 @@ def main():
                     val = row_data.get(col, "")
                     if isinstance(val, float) and pd.isna(val):
                         continue
-                    parts.append(f"{col}:
-{val}")
-                script_text = "
-
-".join(parts).strip()
+                    parts.append(f"{col}:\n{val}")
+                script_text = "\n\n".join(parts).strip()
 
                 row = {"filename": filename}
 
@@ -550,6 +547,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
-
     main()
