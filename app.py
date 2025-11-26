@@ -1,4 +1,3 @@
-import os
 import io
 import re
 import json
@@ -15,11 +14,14 @@ import streamlit as st
 
 OLLAMA_URL = "http://localhost:11434/api/chat"
 
-# (ollama_model_name, label_used_in_columns)
-MODELS = [
-    ("gemma3:4b", "Gemma3_4B"),
-    ("llama3.1:8b", "Llama3.1_8B"),
-]
+# Available models: key is what the user sees, value is (ollama_model_name, label_used_in_columns)
+AVAILABLE_MODELS = {
+    "Llama 3.1 8B (recommended – more rigorous)": ("llama3.1:8b", "Llama3.1_8B"),
+    "Mistral 7B (strong reasoning)": ("mistral:7b", "Mistral_7B"),
+    "Qwen2 7B (good JSON + structure)": ("qwen2:7b", "Qwen2_7B"),
+    "Gemma 3 4B (faster, softer feedback)": ("gemma3:4b", "Gemma3_4B"),
+}
+
 
 
 # ==== HELPERS ====
@@ -79,26 +81,22 @@ def call_ollama(
     """
     Use local LLM via Ollama to mark a script.
     The model should infer question structure and weights from the documents when possible.
-    JSON schema:
+
+    Expected JSON schema (overall only, no per-question marks required):
 
     {
       "scale": "qualitative_0_85" or "quantitative_0_100",
       "total_mark": number,
       "max_mark": number,
-      "questions": [
-        {"id": "Q1", "mark": number, "max_mark": number, "feedback": "string"},
-        ...
-      ],
-      "overall_feedback": "string"
+      "overall_feedback": "string (≥150 words, referring to each question)"
     }
     """
     system = (
-    "You are a fair and consistent university examiner. "
-    "You strictly follow the rubric, assignment brief, marking scheme and example grading style when provided. "
-    "Do NOT invent irrelevant content. "
-    "Stay focused on the student's answer and the marking documents."
+        "You are a fair and consistent university examiner. "
+        "You strictly follow the rubric, assignment brief, marking scheme and example grading style when provided. "
+        "Do NOT invent irrelevant content. "
+        "Stay focused on the student's answer and the marking documents."
     )
-
 
     context_parts = [MARK_DESCRIPTOR_SUMMARY]
 
@@ -129,17 +127,7 @@ def call_ollama(
             "Mark primarily on economic understanding, use of theory, structure, and clarity."
         )
 
-    user = f"""
-You are marking a student's exam script in economics.
-
-CONTEXT DOCUMENTS (to infer questions, criteria and weights):
-{context}
-
-STUDENT FILE NAME: {filename}
-
-STUDENT ANSWER:
-\"\"\"{text}\"\"\"
-
+    instructions = """
 INSTRUCTIONS:
 
 1. From the context documents, identify:
@@ -147,54 +135,66 @@ INSTRUCTIONS:
    - the mark allocation / weights for each question (e.g. Q1 40 marks, Q2 45 marks, total 85),
    - any explicit criteria for each question.
 
-2. If the documents clearly specify a total mark and per-question marks, you MUST use those.
-   For example, if the brief or marking scheme says "Q1 (40 marks), Q2 (45 marks), total 85",
-   then Q1.max_mark = 40, Q2.max_mark = 45, total max_mark = 85.
+2. If the documents clearly specify a total mark and per-question marks, you MUST use those
+   to guide your judgment. However, your final output will only contain an overall mark
+   for the whole script (no per-question breakdown in the JSON).
 
-3. If the documents do NOT clearly specify a total mark:
-   - Decide whether the exam is QUALITATIVE (essay-style, discursive, open answers)
-     or QUANTITATIVE (mathematical, clearly right/wrong).
-   - If it is QUALITATIVE, use the DMU-style QUALITATIVE scale 0–85:
-       scale = "qualitative_0_85"
-       max_mark = 85
-   - If it is clearly QUANTITATIVE, use scale 0–100:
-       scale = "quantitative_0_100"
-       max_mark = 100
+3. MARKING AND FEEDBACK
 
-4. Always:
-   - Assign a mark for EACH QUESTION (field questions[i].mark) and a max_mark for that question.
-   - Provide brief, focused feedback per question.
-   - Provide a short overall feedback summary at the end (overall_feedback).
+   - You MUST:
+       * Assign a single overall numeric mark for the script: total_mark.
+       * Use max_mark = 85, unless the context clearly specifies a different total mark.
+       * Provide overall_feedback that is at least 150 words.
 
-5. The overall total_mark must be the sum of the question marks
-   and must not exceed max_mark.
+   - FEEDBACK QUALITY REQUIREMENTS:
+       * overall_feedback MUST clearly state:
+           - what the student did well (strengths),
+           - what the student needs to improve,
+           - how they can improve in future submissions (concrete advice).
+       * If there is more than one question in the exam, overall_feedback MUST explicitly
+         mention each question, using labels such as:
+         "Regarding Q1, ...", "Regarding Q2, ...", etc.
 
-Return ONLY valid JSON in this exact structure (no commentary, no markdown):
+4. OUTPUT FORMAT
 
-{{
+   - You MUST return ONLY a single JSON object with exactly these keys:
+       * "scale" (string),
+       * "total_mark" (number),
+       * "max_mark" (number),
+       * "overall_feedback" (string).
+
+   - Use this scale unless the context clearly specifies a 0–100 scheme:
+       * scale = "qualitative_0_85"
+       * max_mark = 85
+
+   - All marks must be numeric (not strings).
+
+   - Do NOT include any extra keys, explanations, or text outside this JSON object.
+
+EXAMPLE OF THE REQUIRED JSON SHAPE (values here are placeholders only):
+
+{
   "scale": "qualitative_0_85",
-  "total_mark": 68,
+  "total_mark": 0,
   "max_mark": 85,
-  "questions": [
-    {{
-      "id": "Q1",
-      "mark": 32,
-      "max_mark": 40,
-      "feedback": "Short feedback specific to question 1."
-    }},
-    {{
-      "id": "Q2",
-      "mark": 36,
-      "max_mark": 45,
-      "feedback": "Short feedback specific to question 2."
-    }}
-  ],
-  "overall_feedback": "Short overall feedback for the whole script."
-}}
+  "overall_feedback": "overall feedback for the whole script, explicitly mentioning each question."
+}
 """
+
+    user = (
+        "You are marking a student's exam script in economics.\n\n"
+        "CONTEXT DOCUMENTS (to infer questions, criteria and weights):\n"
+        f"{context}\n\n"
+        f"STUDENT FILE NAME: {filename}\n\n"
+        "STUDENT ANSWER:\n"
+        f"\"\"\"{text}\"\"\"\n\n"
+        f"{instructions}"
+    )
 
     payload = {
         "model": model_name,
+        # If your Ollama build supports it, this forces pure-JSON replies:
+        "format": "json",
         "messages": [
             {"role": "system", "content": system},
             {"role": "user", "content": user},
@@ -206,10 +206,11 @@ Return ONLY valid JSON in this exact structure (no commentary, no markdown):
     r.raise_for_status()
     content = r.json()["message"]["content"]
 
-    match = re.search(r"\{.*\}", content, re.DOTALL)
-    if not match:
-        raise ValueError(f"No JSON object found in model response:\n{content}")
-    data = json.loads(match.group(0))
+    # Expect pure JSON now
+    try:
+        data = json.loads(content)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Model did not return valid JSON: {e}\nFull content:\n{content}")
 
     # Safety: if model ignores the scale and returns a total_mark > max_mark but ≤ 100,
     # treat total_mark as a percentage and rescale to max_mark.
@@ -227,6 +228,15 @@ Return ONLY valid JSON in this exact structure (no commentary, no markdown):
         elif scale == "quantitative_0_100":
             data["max_mark"] = 100
 
+    # Final sanity checks on total_mark
+    if not isinstance(data.get("total_mark"), (int, float)):
+        raise ValueError(f"Model did not return a valid numeric total_mark. JSON was: {data}")
+
+    if isinstance(data.get("max_mark"), (int, float)) and data["max_mark"] > 0:
+        if data["total_mark"] < 0:
+            data["total_mark"] = 0
+        elif data["total_mark"] > data["max_mark"]:
+            data["total_mark"] = data["max_mark"]
 
     return data
 
@@ -250,16 +260,37 @@ def main():
         "and example grading, and get an Excel file with marks and feedback from two local models."
     )
 
-    # STEP 1 – Models (info only)
+    # STEP 1 – Models (information + selection)
     st.header("Step 1 – Models (information)")
     st.markdown(
         "This app uses local models via Ollama. "
-        "Please install Ollama and pull these models before running marking:"
+        "Please install Ollama and pull at least the **recommended** model before running marking."
     )
-    for model_name, _ in MODELS:
+
+    # Show pull commands for all available models
+    for display_name, (model_name, _) in AVAILABLE_MODELS.items():
+        st.markdown(f"**{display_name}**")
         st.code(f"ollama pull {model_name}", language="bash")
 
+    st.markdown("---")
+    st.subheader("Model selection")
+
+    model_choices = list(AVAILABLE_MODELS.keys())
+
+    selected_model_keys = st.multiselect(
+        "Choose which models to run (default: Llama 3.1 8B only, for speed)",
+        options=model_choices,
+        default=["Llama 3.1 8B (recommended – more rigorous)"],
+    )
+
+    if not selected_model_keys:
+        st.warning("Please select at least one model above before running the marking.")
+        selected_models = []
+    else:
+        selected_models = [AVAILABLE_MODELS[k] for k in selected_model_keys]
+
     # STEP 2 – Upload scripts (required)
+
     st.header("Step 2 – Upload scripts (required)")
     st.caption("Upload one or more student scripts (.pdf or .docx).")
     script_files = st.file_uploader(
@@ -350,7 +381,11 @@ def main():
 
             row = {"filename": filename}
 
-            for model_name, label in MODELS:
+            if not selected_models:
+                st.error("No models selected in Step 1. Please select at least one model.")
+                return
+
+            for model_name, label in selected_models:
                 try:
                     result = call_ollama(
                         script_text,
@@ -378,12 +413,16 @@ def main():
 
         df = pd.DataFrame(rows)
 
-        # Add comparison columns
-        if "Gemma3_4B_mark" in df.columns and "Llama3.1_8B_mark" in df.columns:
-            df["average_mark"] = df[["Gemma3_4B_mark", "Llama3.1_8B_mark"]].mean(axis=1)
-            df["mark_difference"] = (
-                df["Gemma3_4B_mark"] - df["Llama3.1_8B_mark"]
-            ).abs()
+        # Add comparison columns dynamically based on available *_mark columns
+        mark_cols = [c for c in df.columns if c.endswith("_mark")]
+
+        if len(mark_cols) >= 2:
+            # Average of all selected models
+            df["average_mark"] = df[mark_cols].mean(axis=1)
+
+            # If exactly two models, provide a simple difference column as well
+            if len(mark_cols) == 2:
+                df["mark_difference"] = (df[mark_cols[0]] - df[mark_cols[1]]).abs()
 
         st.success("Marking completed.")
         sidebar_status.success("✅ Marking completed")
