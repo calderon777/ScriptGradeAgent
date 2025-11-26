@@ -146,16 +146,60 @@ INSTRUCTIONS:
        * Use max_mark = 85, unless the context clearly specifies a different total mark.
        * Provide overall_feedback that is at least 150 words.
 
-   - FEEDBACK QUALITY REQUIREMENTS:
-       * overall_feedback MUST clearly state:
-           - what the student did well (strengths),
-           - what the student needs to improve,
-           - how they can improve in future submissions (concrete advice).
-       * If there is more than one question in the exam, overall_feedback MUST explicitly
-         mention each question, using labels such as:
-         "Regarding Q1, ...", "Regarding Q2, ...", etc.
+   - BAND CLASSIFICATION (for an 0–85 scale):
+       * 70–85  → First.
+       * 60–69  → Upper Second (2:1).
+       * 50–59  → Lower Second (2:2).
+       * 40–49  → Third.
+       * 0–39   → Fail / insufficient.
 
-4. OUTPUT FORMAT
+   - In overall_feedback you MUST:
+       * Explicitly name the band, for example:
+         "Overall, this sits in the Upper Second (60–69) band because..."
+       * Give AT LEAST:
+           - 2 concrete strengths, each clearly linked to something that appears in the answer.
+           - 2 concrete weaknesses, each clearly linked to something that appears in the answer.
+         Refer explicitly to what the student actually wrote (quote or paraphrase short phrases).
+
+4. TONE AND CONSISTENCY RULES
+
+   - Your tone MUST be consistent with the numeric mark AND the band:
+
+       * If total_mark < 40 (Fail):
+           - The majority of the feedback must highlight serious gaps, misunderstanding,
+             missing analysis, or very weak structure.
+           - Praise, if any, must be minimal, cautious, and very specific (e.g.
+             "One positive aspect is that you attempted to define X...").
+           - You MUST NOT describe the work as "excellent", "very strong", "outstanding",
+             "impressive overall", or similar.
+
+       * If 40 ≤ total_mark < 50 (Third / weak pass):
+           - Clearly signal that this is a borderline or weak pass.
+           - Emphasise that important aspects are missing or underdeveloped.
+           - Any positive comments must be framed as limited or partial (e.g.
+             "There is some basic understanding of...").
+
+       * If 50 ≤ total_mark < 60 (Lower Second / 2:2):
+           - Acknowledge that the core material is covered, but stress limits in depth,
+             critical engagement, structure, or originality.
+           - Avoid very strong praise. Do NOT call the work "outstanding" or "excellent".
+
+       * If 60 ≤ total_mark < 70 (Upper Second / 2:1):
+           - Recognise clear strengths (good structure, solid understanding, some critique),
+             but also point out at least two areas where the work falls short of First-class level.
+
+       * If total_mark ≥ 70 (First):
+           - Clearly justify why this is First-class, referencing originality, depth,
+             synthesis, or very strong structure.
+           - You MUST NOT describe the overall work as "weak", "basic", or "poor".
+
+5. QUESTION-BY-QUESTION REFERENCES
+
+   - If there is more than one question in the exam, overall_feedback MUST explicitly
+     mention each question, using labels such as:
+     "Regarding Q1, ...", "Regarding Q2, ...", etc.
+
+6. OUTPUT FORMAT
 
    - You MUST return ONLY a single JSON object with exactly these keys:
        * "scale" (string),
@@ -177,9 +221,10 @@ EXAMPLE OF THE REQUIRED JSON SHAPE (values here are placeholders only):
   "scale": "qualitative_0_85",
   "total_mark": 0,
   "max_mark": 85,
-  "overall_feedback": "overall feedback for the whole script, explicitly mentioning each question."
+  "overall_feedback": "overall feedback for the whole script, explicitly mentioning each question and with tone consistent with the band."
 }
 """
+
 
     user = (
         "You are marking a student's exam script in economics.\n\n"
@@ -193,14 +238,19 @@ EXAMPLE OF THE REQUIRED JSON SHAPE (values here are placeholders only):
 
     payload = {
         "model": model_name,
-        # If your Ollama build supports it, this forces pure-JSON replies:
-        "format": "json",
+        "format": "json",  # if supported by your Ollama build
         "messages": [
             {"role": "system", "content": system},
             {"role": "user", "content": user},
         ],
         "stream": False,
+        "options": {
+            "temperature": 0.3,   # lower = more deterministic, less waffly
+            "top_p": 0.9,
+            "num_ctx": 8192,      # allow long context (rubric + script)
+        },
     }
+
 
     r = requests.post(OLLAMA_URL, json=payload, timeout=300)
     r.raise_for_status()
@@ -511,7 +561,24 @@ def main():
             sidebar_status.info("📚 Ready to mark")
             return
 
-        df = pd.DataFrame(rows)
+        # Build results dataframe; if CSV input was used, merge marks back into original CSV columns
+        if csv_file is not None:
+            df_marks = pd.DataFrame(rows)
+            try:
+                df_input_copy = df_input.copy()
+                # Use the chosen ID column to align rows
+                df_input_copy["_stmark_id"] = df_input_copy[csv_id_col].astype(str)
+                df_marks["_stmark_id"] = df_marks["filename"].astype(str)
+                df = df_input_copy.merge(
+                    df_marks.drop(columns=["filename"]),
+                    on="_stmark_id",
+                    how="left",
+                ).drop(columns=["_stmark_id"])
+            except Exception:
+                # Fallback: if something goes wrong with merge, just use marks dataframe
+                df = pd.DataFrame(rows)
+        else:
+            df = pd.DataFrame(rows)
 
         # Add comparison columns dynamically based on available *_mark columns
         mark_cols = [c for c in df.columns if c.endswith("_mark")]
@@ -530,7 +597,7 @@ def main():
         st.subheader("Preview of results")
         st.dataframe(df, use_container_width=True)
 
-        # Create Excel in memory
+        # Create Excel and CSV in memory
         output = io.BytesIO()
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         excel_filename = f"St.Mark.GPT_results_{timestamp}.xlsx"
