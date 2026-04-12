@@ -1,20 +1,13 @@
-import os
-import re
-import json
-import pdfplumber
-import requests
-import pandas as pd
 from datetime import datetime
 
+import pandas as pd
 
-# === CONFIG ===
-BASE_DIR = r"C:\Users\Cam\Documents\GitProjects\ScriptGradeAgent"
+from marking_pipeline import MarkingContext, ROOT_DIR, call_ollama, list_submission_files, prepare_marking_context, read_path_text
 
-SCRIPTS_DIR = os.path.join(BASE_DIR, "scripts", "test")
-RUBRIC_FILE = os.path.join(BASE_DIR, "rubrics", "labour_year2_rubric.txt")
-OUTPUT_DIR = os.path.join(BASE_DIR, "output")
 
-OLLAMA_URL = "http://localhost:11434/api/chat"
+SCRIPTS_DIR = ROOT_DIR / "scripts" / "test"
+RUBRIC_FILE = ROOT_DIR / "rubrics" / "labour_year2_rubric.txt"
+OUTPUT_DIR = ROOT_DIR / "output"
 
 MODELS = [
     ("gemma3:4b", "Gemma3_4B"),
@@ -22,108 +15,86 @@ MODELS = [
 ]
 
 
-def list_pdfs(folder):
-    return [f for f in os.listdir(folder) if f.lower().endswith(".pdf")]
+def load_marking_context() -> MarkingContext:
+    rubric_text = RUBRIC_FILE.read_text(encoding="utf-8")
+    return prepare_marking_context(
+        rubric_text=rubric_text,
+        brief_text="",
+        marking_scheme_text="",
+        graded_sample_text="",
+        other_context_text="",
+    )
 
 
-def extract_text_from_pdf(path):
-    text = ""
-    with pdfplumber.open(path) as pdf:
-        for page in pdf.pages:
-            text += (page.extract_text() or "") + "\n"
-    return text.strip()
+def apply_model_result(row: dict[str, object], label: str, result: dict[str, object] | None = None, error: Exception | None = None) -> None:
+    row[f"{label}_status"] = "ok" if error is None else "error"
+    row[f"{label}_error"] = "" if error is None else str(error)
+    if result is None:
+        row[f"{label}_mark"] = None
+        row[f"{label}_feedback"] = ""
+        return
+    row[f"{label}_mark"] = result["total_mark"]
+    row[f"{label}_feedback"] = result["overall_feedback"]
 
 
-def load_rubric(path):
-    with open(path, "r", encoding="utf-8") as f:
-        return f.read()
-
-
-def call_ollama(text, rubric, filename, model_name):
-    system = "You are a fair university examiner."
-
-    user = f"""
-RUBRIC:
-{rubric}
-
-STUDENT FILE: {filename}
-
-STUDENT ANSWER:
-\"\"\"{text}\"\"\"
-
-Return JSON only:
-{{"total_mark": number, "max_mark": number, "feedback": "text"}}
-"""
-
-    payload = {
-        "model": model_name,
-        "messages": [
-            {"role": "system", "content": system},
-            {"role": "user", "content": user},
-        ],
-        "stream": False
-    }
-
-    r = requests.post(OLLAMA_URL, json=payload, timeout=300)
-    r.raise_for_status()
-    content = r.json()["message"]["content"]
-
-    match = re.search(r"\{.*\}", content, re.DOTALL)
-    if not match:
-        raise ValueError("No JSON found in model output")
-
-    return json.loads(match.group(0))
-
-
-def main():
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
-
-    rubric = load_rubric(RUBRIC_FILE)
-    files = list_pdfs(SCRIPTS_DIR)
-
-    if not files:
-        print("No PDFs found.")
+def main() -> None:
+    OUTPUT_DIR.mkdir(exist_ok=True)
+    if not SCRIPTS_DIR.exists():
+        print(f"Submission directory not found: {SCRIPTS_DIR}")
+        return
+    if not RUBRIC_FILE.exists():
+        print(f"Rubric file not found: {RUBRIC_FILE}")
         return
 
-    rows = []
+    try:
+        marking_context = load_marking_context()
+    except ValueError as exc:
+        print(f"Cannot start marking: {exc}")
+        return
 
-    for file in files:
-        print(f"\nMarking: {file}")
-        path = os.path.join(SCRIPTS_DIR, file)
-        text = extract_text_from_pdf(path)
+    submission_paths = list_submission_files(SCRIPTS_DIR)
+    if not submission_paths:
+        print(f"No supported submission files found in {SCRIPTS_DIR}")
+        return
 
-        row = {
-            "filename": file
-        }
+    rows: list[dict[str, object]] = []
+    for submission_path in submission_paths:
+        print(f"\nMarking: {submission_path.name}")
+        row: dict[str, object] = {"filename": submission_path.name}
+        try:
+            script_text = read_path_text(submission_path)
+        except Exception as exc:
+            print(f"  Could not read file: {exc}")
+            continue
 
         for model_name, label in MODELS:
             try:
-                result = call_ollama(text, rubric, file, model_name)
-                row[f"{label}_mark"] = result["total_mark"]
-                row[f"{label}_feedback"] = result["feedback"]
+                result = call_ollama(
+                    script_text=script_text,
+                    context=marking_context,
+                    filename=submission_path.name,
+                    model_name=model_name,
+                )
+                apply_model_result(row, label, result=result)
                 print(f"  {label}: {result['total_mark']}/{result['max_mark']}")
-            except Exception as e:
-                row[f"{label}_mark"] = None
-                row[f"{label}_feedback"] = f"ERROR: {e}"
-
+            except Exception as exc:
+                apply_model_result(row, label, error=exc)
+                print(f"  {label}: ERROR - {exc}")
         rows.append(row)
 
-    # Create dataframe
+    if not rows:
+        print("No results were produced.")
+        return
+
     df = pd.DataFrame(rows)
-
-    # Add comparison columns
-    if "Gemma3_4B_mark" in df and "Llama3.1_8B_mark" in df:
+    if "Gemma3_4B_mark" in df.columns and "Llama3.1_8B_mark" in df.columns:
         df["average_mark"] = df[["Gemma3_4B_mark", "Llama3.1_8B_mark"]].mean(axis=1)
-        df["mark_difference"] = (
-            df["Gemma3_4B_mark"] - df["Llama3.1_8B_mark"]
-        ).abs()
+        df["mark_difference"] = (df["Gemma3_4B_mark"] - df["Llama3.1_8B_mark"]).abs()
 
-    # Save to Excel
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    outfile = os.path.join(OUTPUT_DIR, f"marks_{timestamp}.xlsx")
-    df.to_excel(outfile, index=False)
-
-    print(f"\nDone. Results saved to:\n{outfile}")
+    output_path = OUTPUT_DIR / f"marks_{timestamp}.xlsx"
+    df.to_excel(output_path, index=False)
+    print(f"\nDone. Results saved to: {output_path}")
 
 
 if __name__ == "__main__":

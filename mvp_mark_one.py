@@ -1,123 +1,65 @@
-import os
-import re
-import json
-import pdfplumber
-import requests
+from marking_pipeline import ROOT_DIR, call_ollama, list_submission_files, prepare_marking_context, read_path_text
 
 
-# Base folder for ScriptGradeAgent
-BASE_DIR = r"C:\Users\Cam\Documents\GitProjects\ScriptGradeAgent"
+SCRIPTS_DIR = ROOT_DIR / "scripts" / "test"
+RUBRIC_FILE = ROOT_DIR / "rubrics" / "labour_year2_rubric.txt"
 
-SCRIPTS_DIR = os.path.join(BASE_DIR, "scripts", "test")
-RUBRIC_FILE = os.path.join(BASE_DIR, "rubrics", "labour_year2_rubric.txt")
-
-OLLAMA_URL = "http://localhost:11434/api/chat"
-
-# (model_name_in_ollama, nice_label_for_printing)
 MODELS = [
     ("gemma3:4b", "Gemma3_4B"),
     ("llama3.1:8b", "Llama3.1_8B"),
 ]
 
 
-def find_first_pdf(folder: str) -> str:
-    """Return the full path of the first .pdf file in the folder."""
-    for f in os.listdir(folder):
-        if f.lower().endswith(".pdf"):
-            return os.path.join(folder, f)
-    raise FileNotFoundError(f"No PDF found in {folder}")
-
-
-def extract_text_from_pdf(path: str) -> str:
-    """Extract text from a digital (non-scanned) PDF using pdfplumber."""
-    print(f"Reading PDF: {os.path.basename(path)}")
-    text = ""
-    with pdfplumber.open(path) as pdf:
-        for page in pdf.pages:
-            text += (page.extract_text() or "") + "\n"
-    return text.strip()
-
-
-def load_rubric(path: str) -> str:
-    with open(path, "r", encoding="utf-8") as f:
-        return f.read()
-
-
-def call_ollama(text: str, rubric: str, filename: str, model_name: str) -> dict:
-    """
-    Send rubric + student answer to local LLM via Ollama.
-    Expect JSON with: total_mark, max_mark, feedback.
-    """
-    system = "You are a fair and consistent university examiner in economics."
-    user = f"""
-You are marking a student's script.
-
-RUBRIC:
-{rubric}
-
-STUDENT FILE: {filename}
-
-STUDENT ANSWER:
-\"\"\"{text}\"\"\"
-
-TASK:
-1. Assign a single overall mark (field "total_mark").
-2. Repeat the maximum mark from the rubric as "max_mark".
-3. Give concise feedback (field "feedback") in no more than 200 words.
-
-Return ONLY valid JSON in this exact format:
-{{
-  "total_mark": 15,
-  "max_mark": 20,
-  "feedback": "Your answer shows good understanding of..."
-}}
-"""
-
-    payload = {
-        "model": model_name,
-        "messages": [
-            {"role": "system", "content": system},
-            {"role": "user", "content": user},
-        ],
-        "stream": False,
-    }
-
-    print(f"Sending to local model: {model_name} ...")
-    r = requests.post(OLLAMA_URL, json=payload, timeout=300)
-    r.raise_for_status()
-    content = r.json()["message"]["content"]
-
-    # Find JSON object in the response (in case it adds ```json fences)
-    match = re.search(r"\{.*\}", content, re.DOTALL)
-    if not match:
-        raise ValueError(f"No JSON object found in model response:\n{content}")
-    return json.loads(match.group(0))
-
-
-def main():
-    pdf_path = find_first_pdf(SCRIPTS_DIR)
-    filename = os.path.basename(pdf_path)
-
-    text = extract_text_from_pdf(pdf_path)
-    if not text:
-        print("No text extracted. For the MVP, use a digital (non-scanned) PDF.")
+def main() -> None:
+    if not SCRIPTS_DIR.exists():
+        print(f"Submission directory not found: {SCRIPTS_DIR}")
+        return
+    if not RUBRIC_FILE.exists():
+        print(f"Rubric file not found: {RUBRIC_FILE}")
         return
 
-    rubric = load_rubric(RUBRIC_FILE)
+    submission_paths = list_submission_files(SCRIPTS_DIR)
+    if not submission_paths:
+        print(f"No supported submission files found in {SCRIPTS_DIR}")
+        return
 
-    print(f"\n=== MARKING {filename} WITH MULTIPLE MODELS ===")
+    rubric_text = RUBRIC_FILE.read_text(encoding="utf-8")
+    try:
+        marking_context = prepare_marking_context(
+            rubric_text=rubric_text,
+            brief_text="",
+            marking_scheme_text="",
+            graded_sample_text="",
+            other_context_text="",
+        )
+    except ValueError as exc:
+        print(f"Cannot start marking: {exc}")
+        return
 
+    submission_path = submission_paths[0]
+    try:
+        script_text = read_path_text(submission_path)
+    except Exception as exc:
+        print(f"Could not read {submission_path.name}: {exc}")
+        return
+
+    print(f"\n=== MARKING {submission_path.name} WITH MULTIPLE MODELS ===")
     for model_name, label in MODELS:
         try:
-            result = call_ollama(text, rubric, filename, model_name)
+            result = call_ollama(
+                script_text=script_text,
+                context=marking_context,
+                filename=submission_path.name,
+                model_name=model_name,
+            )
             print(f"\n--- {label} ---")
             print(f"Mark: {result['total_mark']}/{result['max_mark']}")
             print("\nFeedback:")
-            print(result["feedback"])
+            print(result["overall_feedback"])
             print("------------------------")
-        except Exception as e:
+        except Exception as exc:
             print(f"\n--- {label} ---")
-            print(f"ERROR while using model {model_name}: {e}")
+            print(f"ERROR while using model {model_name}: {exc}")
             print("------------------------")
 
 
