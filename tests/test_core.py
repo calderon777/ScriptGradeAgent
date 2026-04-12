@@ -18,6 +18,7 @@ from marking_pipeline.core import (
     infer_max_mark_from_texts,
     normalize_detected_parts,
     normalize_marking_result,
+    normalize_moderated_part_scores,
     normalize_verification_result,
     parse_json_object,
     prepare_marking_context,
@@ -207,6 +208,51 @@ class NormalizationTests(unittest.TestCase):
             ],
         )
         self.assertEqual(total, 68.0)
+
+    def test_normalizes_moderated_part_scores(self) -> None:
+        parts = [
+            SubmissionPart(label="Part 1", max_mark=20.0),
+            SubmissionPart(label="Part 2", max_mark=30.0),
+        ]
+        moderated = normalize_moderated_part_scores(
+            {
+                "adjusted_sections": [
+                    {"section_label": "Part 1", "adjusted_provisional_score": 15.0, "adjusted_provisional_score_0_to_100": None, "rationale": "Slightly harsh relative to Part 2."},
+                    {"section_label": "Part 2", "adjusted_provisional_score": 23.0, "adjusted_provisional_score_0_to_100": None, "rationale": "Slightly generous relative to Part 1."},
+                ]
+            },
+            parts=parts,
+            part_analyses=[
+                {"section_label": "Part 1", "provisional_score": 14.0, "provisional_score_0_to_100": None, "strengths": [], "weaknesses": [], "evidence": [], "coverage_comment": ""},
+                {"section_label": "Part 2", "provisional_score": 24.0, "provisional_score_0_to_100": None, "strengths": [], "weaknesses": [], "evidence": [], "coverage_comment": ""},
+            ],
+        )
+        self.assertEqual(moderated[0]["provisional_score"], 15.0)
+        self.assertEqual(moderated[0]["moderation_delta"], 1.0)
+        self.assertEqual(moderated[1]["provisional_score"], 23.0)
+        self.assertEqual(moderated[1]["moderation_delta"], -1.0)
+
+    def test_moderation_allows_null_or_missing_adjustments_as_unchanged(self) -> None:
+        parts = [
+            SubmissionPart(label="Part 1", max_mark=20.0),
+            SubmissionPart(label="Part 2", max_mark=30.0),
+        ]
+        moderated = normalize_moderated_part_scores(
+            {
+                "adjusted_sections": [
+                    {"section_label": "Part 1", "adjusted_provisional_score": None, "adjusted_provisional_score_0_to_100": None, "rationale": "Keep unchanged."}
+                ]
+            },
+            parts=parts,
+            part_analyses=[
+                {"section_label": "Part 1", "provisional_score": 14.0, "provisional_score_0_to_100": None, "strengths": [], "weaknesses": [], "evidence": [], "coverage_comment": ""},
+                {"section_label": "Part 2", "provisional_score": 24.0, "provisional_score_0_to_100": None, "strengths": [], "weaknesses": [], "evidence": [], "coverage_comment": ""},
+            ],
+        )
+        self.assertEqual(moderated[0]["provisional_score"], 14.0)
+        self.assertEqual(moderated[0]["moderation_delta"], 0.0)
+        self.assertEqual(moderated[1]["provisional_score"], 24.0)
+        self.assertEqual(moderated[1]["moderation_delta"], 0.0)
 
 class SubmissionStructureTests(unittest.TestCase):
     def test_normalizes_detected_parts(self) -> None:
@@ -599,7 +645,14 @@ class CallOllamaTests(unittest.TestCase):
             }
         }
         synthesis.raise_for_status.return_value = None
-        mock_post.side_effect = [structure, part_one, part_two, synthesis]
+        moderation = Mock()
+        moderation.json.return_value = {
+            "message": {
+                "content": '{"adjusted_sections": [{"section_label": "Question 1", "adjusted_provisional_score": 9, "adjusted_provisional_score_0_to_100": null, "rationale": "Keep as is."}, {"section_label": "Question 2", "adjusted_provisional_score": 10, "adjusted_provisional_score_0_to_100": null, "rationale": "Keep as is."}]}'
+            }
+        }
+        moderation.raise_for_status.return_value = None
+        mock_post.side_effect = [structure, part_one, part_two, moderation, synthesis]
 
         result = call_ollama("Question 1\nStudent answer text\nQuestion 2\nMore answer text", context, "student1.pdf", "llama3.1:8b")
 

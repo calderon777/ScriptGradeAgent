@@ -349,6 +349,55 @@ def build_subpart_structure_messages(parent_part: SubmissionPart, filename: str,
     return [{"role": "system", "content": system}, {"role": "user", "content": user}]
 
 
+def build_moderation_messages(
+    script_text: str,
+    parts: list[SubmissionPart],
+    part_analyses: list[dict[str, Any]],
+    context: MarkingContext,
+    filename: str,
+) -> list[dict[str, str]]:
+    context_text = _build_context_text(context)
+    payload = []
+    for part, analysis in zip(parts, part_analyses):
+        payload.append(
+            {
+                "section_label": part.label,
+                "section_max_mark": part.max_mark,
+                "current_provisional_score": analysis.get("provisional_score"),
+                "current_provisional_score_0_to_100": analysis.get("provisional_score_0_to_100"),
+                "strengths": analysis.get("strengths", []),
+                "weaknesses": analysis.get("weaknesses", []),
+                "evidence": analysis.get("evidence", []),
+                "coverage_comment": analysis.get("coverage_comment", ""),
+            }
+        )
+    analyses_text = json.dumps(payload, ensure_ascii=True, indent=2)
+    system = (
+        "You are moderating section-by-section marks within a single student's submission. "
+        "Compare the sections against each other for internal consistency. "
+        "Adjust a section only when the current score is clearly too harsh or too generous relative to the evidence and the other sections. "
+        "The final overall mark will be computed separately by arithmetic, so you must only return section-level adjustments."
+    )
+    user = (
+        f"{context_text}\n\n"
+        f"STUDENT FILE NAME: {filename}\n\n"
+        "FULL STUDENT ANSWER:\n"
+        f"\"\"\"{script_text}\"\"\"\n\n"
+        "CURRENT SECTION ANALYSES:\n"
+        f"{analyses_text}\n\n"
+        "Return only one JSON object with exactly this structure:\n"
+        '{ "adjusted_sections": [ { "section_label": string, "adjusted_provisional_score": number|null, "adjusted_provisional_score_0_to_100": number|null, "rationale": string } ] }\n\n'
+        "Rules:\n"
+        "1. Include every section exactly once.\n"
+        "2. Use adjusted_provisional_score only for sections that have an explicit max mark.\n"
+        "3. Use adjusted_provisional_score_0_to_100 only when the section is on a percentage scale.\n"
+        "4. Keep changes bounded and evidence-based; do not rewrite the whole assessment.\n"
+        "5. If a current section score already looks internally consistent, keep it unchanged.\n"
+        "6. Do not include markdown fences or any text outside the JSON object."
+    )
+    return [{"role": "system", "content": system}, {"role": "user", "content": user}]
+
+
 def build_synthesis_messages(
     script_text: str,
     parts: list[SubmissionPart],
@@ -552,6 +601,17 @@ def call_ollama(
             ollama_url=ollama_url,
         )
         part_analyses.append(normalize_part_analysis(analysis, expected_label=part.label))
+
+    if len(part_analyses) > 1:
+        part_analyses = moderate_part_analyses_across_submission(
+            script_text=script_text,
+            context=context,
+            filename=filename,
+            parts=parts,
+            part_analyses=part_analyses,
+            model_name=model_name,
+            ollama_url=ollama_url,
+        )
 
     synthesis_messages = build_synthesis_messages(script_text, parts, part_analyses, context, filename)
     return _run_final_result_with_retry(
@@ -923,6 +983,102 @@ def normalize_part_analysis(data: dict[str, Any], expected_label: str) -> dict[s
     }
 
 
+def moderate_part_analyses_across_submission(
+    script_text: str,
+    context: MarkingContext,
+    filename: str,
+    parts: list[SubmissionPart],
+    part_analyses: list[dict[str, Any]],
+    model_name: str,
+    ollama_url: str = DEFAULT_OLLAMA_URL,
+) -> list[dict[str, Any]]:
+    data = _call_ollama_json(
+        model_name=model_name,
+        messages=build_moderation_messages(script_text, parts, part_analyses, context, filename),
+        ollama_url=ollama_url,
+    )
+    return normalize_moderated_part_scores(data, parts, part_analyses)
+
+
+def normalize_moderated_part_scores(
+    data: dict[str, Any],
+    parts: list[SubmissionPart],
+    part_analyses: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    adjusted_sections = data.get("adjusted_sections")
+    if not isinstance(adjusted_sections, list):
+        raise ValueError(f"Model returned invalid adjusted_sections for moderation: {data}")
+
+    current_by_key = {_normalize_label_key(analysis["section_label"]): dict(analysis) for analysis in part_analyses}
+    part_by_key = {_normalize_label_key(part.label): part for part in parts}
+    original_by_key = {_normalize_label_key(analysis["section_label"]): analysis for analysis in part_analyses}
+    moderated: dict[str, dict[str, Any]] = {}
+
+    for item in adjusted_sections:
+        if not isinstance(item, dict):
+            raise ValueError(f"Moderation item was not an object: {item}")
+        label = str(item.get("section_label", "")).strip()
+        key = _normalize_label_key(label)
+        if key not in current_by_key or key not in part_by_key:
+            raise ValueError(f"Moderation returned an unknown section label: {label}")
+        current = dict(current_by_key[key])
+        part = part_by_key[key]
+        rationale = item.get("rationale")
+        if not isinstance(rationale, str) or not rationale.strip():
+            raise ValueError(f"Moderation did not return a rationale for {label}: {item}")
+
+        adjusted_abs = item.get("adjusted_provisional_score")
+        adjusted_pct = item.get("adjusted_provisional_score_0_to_100")
+        if adjusted_abs is not None and adjusted_pct is not None:
+            raise ValueError(f"Moderation returned both absolute and percentage scores for {label}: {item}")
+
+        original_score = original_by_key[key]
+        before = original_score.get("provisional_score")
+        if before is None:
+            before = original_score.get("provisional_score_0_to_100")
+
+        if part.max_mark is not None:
+            if adjusted_abs is None:
+                adjusted_value = float(before)
+            else:
+                if isinstance(adjusted_abs, bool) or not isinstance(adjusted_abs, (int, float)):
+                    raise ValueError(f"Moderation did not return an absolute score for {label}: {item}")
+                adjusted_value = round(float(adjusted_abs), 2)
+                if adjusted_value < 0 or adjusted_value > float(part.max_mark):
+                    raise ValueError(f"Moderation returned out-of-range score for {label}: {item}")
+            current["provisional_score"] = adjusted_value
+            current["provisional_score_0_to_100"] = None
+        else:
+            if adjusted_pct is None:
+                adjusted_value = float(before)
+            else:
+                if isinstance(adjusted_pct, bool) or not isinstance(adjusted_pct, (int, float)):
+                    raise ValueError(f"Moderation did not return a percentage score for {label}: {item}")
+                adjusted_value = round(float(adjusted_pct), 2)
+                if adjusted_value < 0 or adjusted_value > 100:
+                    raise ValueError(f"Moderation returned out-of-range percentage for {label}: {item}")
+            current["provisional_score"] = None
+            current["provisional_score_0_to_100"] = adjusted_value
+
+        after = current.get("provisional_score")
+        if after is None:
+            after = current.get("provisional_score_0_to_100")
+        current["moderation_rationale"] = rationale.strip()
+        current["moderation_delta"] = round(float(after) - float(before), 2)
+        moderated[key] = current
+
+    for analysis in part_analyses:
+        key = _normalize_label_key(analysis["section_label"])
+        if key in moderated:
+            continue
+        preserved = dict(analysis)
+        preserved["moderation_rationale"] = "No moderation change returned."
+        preserved["moderation_delta"] = 0.0
+        moderated[key] = preserved
+
+    return [moderated[_normalize_label_key(part.label)] for part in parts]
+
+
 def normalize_marking_result(
     data: dict[str, Any],
     expected_max_mark: float,
@@ -1006,8 +1162,11 @@ def normalize_marking_result(
             float(item["provisional_score"] if item.get("provisional_score") is not None else item["provisional_score_0_to_100"])
             for item in part_analyses
         ]
+        moderation_deltas = [abs(float(item.get("moderation_delta", 0.0))) for item in part_analyses if item.get("moderation_delta") is not None]
         spread = max(provisional_scores) - min(provisional_scores)
         validation_notes.append(f"part_score_spread={spread:.2f}")
+        if moderation_deltas:
+            validation_notes.append(f"part_moderation_max_delta={max(moderation_deltas):.2f}")
         math_total = compute_total_mark_from_part_scores(expected_max_mark, parts or [], part_analyses)
         if math_total is None:
             raise ValueError("Could not compute deterministic total from part scores.")
