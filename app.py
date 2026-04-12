@@ -1,18 +1,40 @@
-import io
-from collections import Counter
-from datetime import datetime
+from pathlib import Path
+from tkinter import Tk, filedialog
 
 import pandas as pd
 import streamlit as st
 
-from marking_pipeline import MarkingContext, call_ollama, prepare_marking_context, read_uploaded_files_text
+from marking_pipeline import (
+    DEFAULT_CONTEXT_PATTERNS,
+    SCALE_PRESETS,
+    AssessmentBundle,
+    MarkingContext,
+    build_single_assessment_bundle,
+    build_consistency_report,
+    build_document_based_marking_text,
+    build_marking_context_with_optional_override,
+    build_results_bundle,
+    build_verifier_report,
+    call_ollama,
+    combine_text_sections,
+    discover_assessment_bundles,
+    parse_keyword_patterns,
+    read_path_text,
+    read_paths_text,
+    read_uploaded_files_text,
+    suggest_marking_scale,
+    apply_cross_student_calibration,
+    apply_model_result,
+    apply_verifier_result,
+    maybe_run_regrade_loop,
+)
 
 
 AVAILABLE_MODELS = {
-    "Llama 3.1 8B": ("llama3.1:8b", "Llama3.1_8B"),
-    "Mistral 7B": ("mistral:7b", "Mistral_7B"),
     "Qwen2 7B": ("qwen2:7b", "Qwen2_7B"),
     "Gemma 3 4B": ("gemma3:4b", "Gemma3_4B"),
+    "Llama 3.1 8B": ("llama3.1:8b", "Llama3.1_8B"),
+    "Mistral 7B": ("mistral:7b", "Mistral_7B"),
 }
 
 
@@ -28,173 +50,52 @@ def build_csv_script_text(row_data: pd.Series, columns: list[str]) -> str:
     return "\n\n".join(parts).strip()
 
 
-def build_document_based_marking_text(
-    brief_text: str,
-    marking_scheme_text: str,
-    graded_sample_text: str,
-    other_context_text: str,
-) -> str:
-    sections: list[str] = []
-    if marking_scheme_text.strip():
-        sections.append(f"MARKING SCHEME:\n{marking_scheme_text.strip()}")
-    if brief_text.strip():
-        sections.append(f"ASSIGNMENT BRIEF:\n{brief_text.strip()}")
-    if graded_sample_text.strip():
-        sections.append(f"EXAMPLE GRADED SCRIPT:\n{graded_sample_text.strip()}")
-    if other_context_text.strip():
-        sections.append(f"OTHER SUPPORTING DOCUMENTS:\n{other_context_text.strip()}")
-    return "\n\n".join(sections).strip()
-
-
-def build_marking_context_with_optional_override(
-    rubric_text: str,
-    brief_text: str,
-    marking_scheme_text: str,
-    graded_sample_text: str,
-    other_context_text: str,
-    manual_max_mark: float | None,
-) -> MarkingContext:
-    try:
-        return prepare_marking_context(
-            rubric_text=rubric_text,
-            brief_text=brief_text,
-            marking_scheme_text=marking_scheme_text,
-            graded_sample_text=graded_sample_text,
-            other_context_text=other_context_text,
-        )
-    except ValueError as exc:
-        if manual_max_mark is None or "Could not infer the maximum mark" not in str(exc):
-            raise
-
-    if not (rubric_text.strip() or marking_scheme_text.strip()):
-        raise ValueError("Provide a rubric or marking scheme before grading.")
-
-    return MarkingContext(
-        rubric_text=rubric_text.strip(),
-        brief_text=brief_text.strip(),
-        marking_scheme_text=marking_scheme_text.strip(),
-        graded_sample_text=graded_sample_text.strip(),
-        other_context_text=other_context_text.strip(),
-        max_mark=float(manual_max_mark),
-    )
-
-
-def render_results_download(df: pd.DataFrame) -> None:
-    output = io.BytesIO()
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    excel_filename = f"ScriptGradeAgent_results_{timestamp}.xlsx"
-    with pd.ExcelWriter(output, engine="openpyxl") as writer:
-        df.to_excel(writer, index=False)
-    output.seek(0)
-
-    st.download_button(
-        label="Download Excel file",
-        data=output,
-        file_name=excel_filename,
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    )
-
-
-def build_consistency_report(df: pd.DataFrame, selected_models: list[tuple[str, str]], max_mark: float) -> str:
-    lines = [
-        "# Consistency Report",
-        "",
-        f"Scripts processed: {len(df)}",
-        f"Configured maximum mark: {max_mark:g}",
-        "",
-    ]
-
-    for _, label in selected_models:
-        status_col = f"{label}_status"
-        error_col = f"{label}_error"
-        mark_col = f"{label}_mark"
-        feedback_col = f"{label}_feedback"
-
-        lines.extend([f"## {label}", ""])
-        if status_col not in df.columns or mark_col not in df.columns:
-            lines.extend(["No data available for this model.", ""])
-            continue
-
-        statuses = df[status_col].fillna("missing").astype(str)
-        marks = pd.to_numeric(df[mark_col], errors="coerce")
-        feedbacks = df[feedback_col].fillna("").astype(str) if feedback_col in df.columns else pd.Series(dtype=str)
-
-        ok_count = int((statuses == "ok").sum())
-        error_count = int((statuses == "error").sum())
-        non_null_marks = marks.dropna()
-
-        lines.append(f"Successful scripts: {ok_count}")
-        lines.append(f"Failed scripts: {error_count}")
-
-        if non_null_marks.empty:
-            lines.extend(["No marks available.", ""])
-            continue
-
-        top_mark_count = int((non_null_marks == max_mark).sum())
-        unique_marks = sorted(non_null_marks.unique().tolist())
-        lines.append(f"Marks returned: {len(non_null_marks)}")
-        lines.append(f"Mean mark: {non_null_marks.mean():.2f}")
-        lines.append(f"Median mark: {non_null_marks.median():.2f}")
-        lines.append(f"Min / Max: {non_null_marks.min():.2f} / {non_null_marks.max():.2f}")
-        lines.append(f"Distinct marks: {', '.join(_format_report_number(value) for value in unique_marks)}")
-        lines.append(f"Top-mark rate: {top_mark_count}/{len(non_null_marks)} ({(top_mark_count / len(non_null_marks)):.1%})")
-
-        distribution = non_null_marks.value_counts().sort_index()
-        lines.extend(["", "### Mark Distribution", ""])
-        for mark_value, count in distribution.items():
-            lines.append(f"- {_format_report_number(float(mark_value))}: {int(count)}")
-
-        repeated_starts = Counter(_feedback_signature(text) for text in feedbacks if text.strip())
-        common_starts = [(phrase, count) for phrase, count in repeated_starts.most_common(5) if phrase]
-        lines.extend(["", "### Repeated Feedback Starts", ""])
-        if common_starts:
-            for phrase, count in common_starts:
-                lines.append(f"- {count}x: {phrase}")
-        else:
-            lines.append("- None detected")
-
-        if error_count:
-            error_messages = Counter(str(value).strip() for value in df[error_col].fillna("").astype(str) if str(value).strip())
-            lines.extend(["", "### Error Summary", ""])
-            for message, count in error_messages.most_common(5):
-                lines.append(f"- {count}x: {message}")
-
-        lines.append("")
-
-    return "\n".join(lines).strip() + "\n"
-
-
 def render_consistency_report(report_text: str) -> None:
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f"ScriptGradeAgent_consistency_report_{timestamp}.md"
     st.subheader("Consistency Report")
     st.code(report_text, language="markdown")
+
+
+def render_results_bundle_download(df: pd.DataFrame, report_text: str) -> None:
+    bundle_bytes, bundle_filename = build_results_bundle(df, report_text)
     st.download_button(
-        label="Download consistency report",
-        data=report_text,
-        file_name=filename,
-        mime="text/markdown",
+        label="Download marksheet and consistency report",
+        data=bundle_bytes,
+        file_name=bundle_filename,
+        mime="application/zip",
     )
 
 
-def apply_model_result(row: dict[str, object], label: str, result: dict[str, object] | None = None, error: Exception | None = None) -> None:
-    row[f"{label}_status"] = "ok" if error is None else "error"
-    row[f"{label}_error"] = "" if error is None else str(error)
-    if result is None:
-        row[f"{label}_mark"] = None
-        row[f"{label}_feedback"] = ""
-        return
-    row[f"{label}_mark"] = result["total_mark"]
-    row[f"{label}_feedback"] = result["overall_feedback"]
+def build_bundle_summary_rows(bundles: list[AssessmentBundle]) -> list[dict[str, object]]:
+    rows: list[dict[str, object]] = []
+    for bundle in bundles:
+        rows.append(
+            {
+                "assessment": bundle.name,
+                "submissions": len(bundle.submission_files),
+                "rubrics": len(bundle.rubric_files),
+                "briefs": len(bundle.brief_files),
+                "marking_schemes": len(bundle.marking_scheme_files),
+                "graded_samples": len(bundle.graded_sample_files),
+                "other_docs": len(bundle.other_files),
+            }
+        )
+    return rows
 
 
-def _feedback_signature(text: str) -> str:
-    words = str(text).split()
-    return " ".join(words[:12])
+def parse_keyword_setting(value: str, default_key: str) -> tuple[str, ...]:
+    parsed = parse_keyword_patterns(value)
+    return parsed or DEFAULT_CONTEXT_PATTERNS[default_key]
 
 
-def _format_report_number(value: float) -> str:
-    return str(int(value)) if float(value).is_integer() else f"{value:.2f}"
+def choose_directory(initial_dir: str = "") -> str:
+    root = Tk()
+    root.withdraw()
+    root.attributes("-topmost", True)
+    try:
+        selected = filedialog.askdirectory(initialdir=initial_dir or None)
+    finally:
+        root.destroy()
+    return selected
 
 
 def main() -> None:
@@ -212,65 +113,199 @@ def main() -> None:
     )
 
     st.header("Step 1 - Models")
-    st.markdown("Select one or more local models. Make sure Ollama is running and the models are already pulled.")
-    for display_name, (model_name, _) in AVAILABLE_MODELS.items():
-        st.code(f"ollama pull {model_name}", language="bash")
-
-    selected_model_keys = st.multiselect(
-        "Models to run",
-        options=list(AVAILABLE_MODELS.keys()),
-        default=["Llama 3.1 8B"],
+    model_examples = ", ".join(model_name for model_name, _ in AVAILABLE_MODELS.values())
+    st.markdown(
+        "Choose the primary grader and, optionally, a verifier. Make sure Ollama is running and the models are already pulled "
+        f"(e.g. `{model_examples}`)."
     )
-    selected_models = [AVAILABLE_MODELS[key] for key in selected_model_keys]
-
-    st.header("Step 2 - Student Submissions")
-    script_files = st.file_uploader(
-        "Upload student scripts (.pdf or .docx)",
-        type=["pdf", "docx"],
-        accept_multiple_files=True,
+    model_keys = list(AVAILABLE_MODELS.keys())
+    grader_model_key = st.selectbox(
+        "Primary grader",
+        options=model_keys,
+        index=model_keys.index("Qwen2 7B"),
     )
-
-    st.subheader("Or upload a CSV with text answers")
-    csv_file = st.file_uploader(
-        "CSV file with one row per student",
-        type=["csv"],
-        key="csv_assessments",
-    )
-
-    df_csv_preview = None
-    if csv_file is not None:
-        try:
-            csv_file.seek(0)
-            df_csv_preview = pd.read_csv(csv_file)
-        except UnicodeDecodeError:
-            csv_file.seek(0)
-            df_csv_preview = pd.read_csv(csv_file, encoding="cp1252")
-
-        st.caption("Preview")
-        st.dataframe(df_csv_preview.head(), use_container_width=True)
-
-        columns = list(df_csv_preview.columns)
-        default_id_index = columns.index("Id") if "Id" in columns else 0
-        st.selectbox(
-            "Column to use as the submission identifier",
-            options=columns,
-            index=default_id_index,
-            key="csv_id_col",
+    use_verifier = st.checkbox("Use verifier", value=True)
+    verifier_model_key = None
+    if use_verifier:
+        verifier_model_key = st.selectbox(
+            "Verifier",
+            options=model_keys,
+            index=model_keys.index("Gemma 3 4B"),
         )
 
-        default_text_columns = [column for column in columns if "question" in column.lower() or df_csv_preview[column].dtype == object]
-        if not default_text_columns:
-            default_text_columns = columns
+    grader_model = AVAILABLE_MODELS[grader_model_key]
+    selected_models = [grader_model]
+    verifier_model = AVAILABLE_MODELS[verifier_model_key] if verifier_model_key else None
 
-        st.multiselect(
-            "Columns containing answers to mark",
-            options=columns,
-            default=default_text_columns,
-            key="csv_text_cols",
+    st.header("Step 2 - Mark Scale")
+    st.caption("The final mark is always the deterministic sum of the section marks. If there is only one section, that section mark is the overall mark.")
+    scale_options = list(SCALE_PRESETS.keys())
+    scale_profile = st.selectbox(
+        "Choose the grading scale",
+        options=scale_options,
+        index=scale_options.index("Detect from documents"),
+    )
+    manual_max_mark = None
+    if scale_profile == "Custom":
+        manual_max_mark = st.number_input(
+            "Custom maximum mark",
+            min_value=1.0,
+            step=1.0,
+            value=100.0,
+        )
+    else:
+        manual_max_mark = SCALE_PRESETS[scale_profile]
+        if manual_max_mark is not None:
+            st.info(f"Using a fixed {manual_max_mark:g}-point scale.")
+
+    st.header("Step 3 - Student Submissions")
+    use_assessment_folders = st.checkbox(
+        "Load assessments from subfolders inside one parent folder",
+        value=False,
+        help="Use this when one parent folder contains one folder per assessment.",
+    )
+    single_assessment_folder_mode = False
+
+    script_files = []
+    csv_file = None
+    rubric_text = ""
+    brief_text = ""
+    marking_scheme_text = ""
+    graded_sample_text = ""
+    other_context_text = ""
+    assessment_bundles: list[AssessmentBundle] = []
+
+    if use_assessment_folders:
+        st.caption("Choose one parent folder. Each child folder will be treated as a separate assessment.")
+        single_assessment_folder_mode = st.checkbox(
+            "Selected folder is one assessment with many student subfolders",
+            value=False,
+            help="Use this when the chosen folder contains student folders for a single assessment rather than multiple assessment folders.",
         )
 
-    st.header("Step 3 - Marking Documents")
-    st.caption("Upload a rubric when you have one. If not, you can tell the app to grade from the uploaded marking documents instead.")
+        browse_col, path_col = st.columns([1, 4])
+        with browse_col:
+            if st.button("Browse folders", use_container_width=True):
+                selected_dir = choose_directory(st.session_state.get("assessment_root", ""))
+                if selected_dir:
+                    st.session_state["assessment_root"] = selected_dir
+        with path_col:
+            st.text_input(
+                "Selected parent folder",
+                value=st.session_state.get("assessment_root", ""),
+                key="assessment_root_display",
+                disabled=True,
+            )
+
+        assessment_root = st.session_state.get("assessment_root", "").strip()
+
+        with st.expander("Folder matching rules"):
+            rubric_keywords = parse_keyword_setting(
+                st.text_input("Rubric filename keywords", value=", ".join(DEFAULT_CONTEXT_PATTERNS["rubric"])),
+                "rubric",
+            )
+            brief_keywords = parse_keyword_setting(
+                st.text_input("Brief filename keywords", value=", ".join(DEFAULT_CONTEXT_PATTERNS["brief"])),
+                "brief",
+            )
+            marking_scheme_keywords = parse_keyword_setting(
+                st.text_input("Marking scheme filename keywords", value=", ".join(DEFAULT_CONTEXT_PATTERNS["marking_scheme"])),
+                "marking_scheme",
+            )
+            graded_sample_keywords = parse_keyword_setting(
+                st.text_input("Example graded script keywords", value=", ".join(DEFAULT_CONTEXT_PATTERNS["graded_sample"])),
+                "graded_sample",
+            )
+            other_keywords = parse_keyword_setting(
+                st.text_input("Other supporting document keywords", value=", ".join(DEFAULT_CONTEXT_PATTERNS["other"])),
+                "other",
+            )
+
+        if assessment_root:
+            try:
+                if single_assessment_folder_mode:
+                    assessment_bundles = [
+                        build_single_assessment_bundle(
+                            Path(assessment_root),
+                            assessment_name=Path(assessment_root).name,
+                            rubric_keywords=rubric_keywords,
+                            brief_keywords=brief_keywords,
+                            marking_scheme_keywords=marking_scheme_keywords,
+                            graded_sample_keywords=graded_sample_keywords,
+                            other_keywords=other_keywords,
+                        )
+                    ]
+                else:
+                    assessment_bundles = discover_assessment_bundles(
+                        Path(assessment_root),
+                        rubric_keywords=rubric_keywords,
+                        brief_keywords=brief_keywords,
+                        marking_scheme_keywords=marking_scheme_keywords,
+                        graded_sample_keywords=graded_sample_keywords,
+                        other_keywords=other_keywords,
+                    )
+            except ValueError as exc:
+                st.error(str(exc))
+            else:
+                if assessment_bundles:
+                    st.caption("Discovered assessment folders")
+                    st.dataframe(pd.DataFrame(build_bundle_summary_rows(assessment_bundles)), use_container_width=True)
+                else:
+                    st.warning("No assessment folders were found under the selected parent folder.")
+    else:
+        script_files = st.file_uploader(
+            "Upload student scripts (.pdf or .docx)",
+            type=["pdf", "docx"],
+            accept_multiple_files=True,
+        )
+
+        st.subheader("Or upload a CSV with text answers")
+        csv_file = st.file_uploader(
+            "CSV file with one row per student",
+            type=["csv"],
+            key="csv_assessments",
+        )
+
+        df_csv_preview = None
+        if csv_file is not None:
+            try:
+                csv_file.seek(0)
+                df_csv_preview = pd.read_csv(csv_file)
+            except UnicodeDecodeError:
+                csv_file.seek(0)
+                df_csv_preview = pd.read_csv(csv_file, encoding="cp1252")
+
+            st.caption("Preview")
+            st.dataframe(df_csv_preview.head(), use_container_width=True)
+
+            columns = list(df_csv_preview.columns)
+            default_id_index = columns.index("Id") if "Id" in columns else 0
+            st.selectbox(
+                "Column to use as the submission identifier",
+                options=columns,
+                index=default_id_index,
+                key="csv_id_col",
+            )
+
+            default_text_columns = [column for column in columns if "question" in column.lower() or df_csv_preview[column].dtype == object]
+            if not default_text_columns:
+                default_text_columns = columns
+
+            st.multiselect(
+                "Columns containing answers to mark",
+                options=columns,
+                default=default_text_columns,
+                key="csv_text_cols",
+            )
+
+    st.header("Step 4 - Marking Documents")
+    if use_assessment_folders:
+        st.caption(
+            "Upload shared marking documents here when they should apply to every discovered assessment folder. "
+            "Folder-specific documents will still be used when present."
+        )
+    else:
+        st.caption("Upload a rubric when you have one. If not, you can tell the app to grade from the uploaded marking documents instead.")
 
     rubric_files = st.file_uploader(
         "Rubric files (.txt, .pdf, .docx)",
@@ -321,57 +356,167 @@ def main() -> None:
             "example grading, and other supporting documents as the grading basis when no rubric is provided."
         )
 
-    manual_max_mark_enabled = st.checkbox(
-        "Enter maximum mark manually",
-        value=False,
-        help="Use this when the uploaded documents do not state the total mark in a way the app can detect.",
+    scale_suggestion = suggest_marking_scale(
+        rubric_text=rubric_text,
+        brief_text=brief_text,
+        marking_scheme_text=marking_scheme_text,
+        graded_sample_text=graded_sample_text,
+        other_context_text=other_context_text,
     )
-    manual_max_mark = None
-    if manual_max_mark_enabled:
-        manual_max_mark = st.number_input(
-            "Maximum mark",
-            min_value=1.0,
-            step=1.0,
-            value=100.0,
+    if scale_suggestion["max_mark"] is not None:
+        st.caption(f"Document suggestion: {scale_suggestion['label']} ({scale_suggestion['reason']})")
+    else:
+        st.caption(f"Document suggestion: {scale_suggestion['label']} ({scale_suggestion['reason']})")
+
+    if manual_max_mark is not None and scale_suggestion["max_mark"] is not None and abs(float(manual_max_mark) - float(scale_suggestion["max_mark"])) > 1e-9:
+        st.warning(
+            f"Chosen scale is {manual_max_mark:g}, but the uploaded documents suggest {float(scale_suggestion['max_mark']):g}. "
+            "The chosen scale will be used."
         )
 
-    st.header("Step 4 - Run Marking")
+    run_step_label = "Step 5 - Run Marking"
+    st.header(run_step_label)
     if st.button("Run marking", type="primary"):
         if not selected_models:
             st.error("Select at least one model before running the marking.")
             return
-        if not script_files and csv_file is None:
-            st.error("Upload at least one script or a CSV file.")
-            return
-
-        try:
-            effective_rubric_text = rubric_text
-            if not effective_rubric_text.strip() and st.session_state.get("document_only_mode", False):
-                effective_rubric_text = build_document_based_marking_text(
-                    brief_text=brief_text,
-                    marking_scheme_text=marking_scheme_text,
-                    graded_sample_text=graded_sample_text,
-                    other_context_text=other_context_text,
-                )
-
-            marking_context = build_marking_context_with_optional_override(
-                rubric_text=effective_rubric_text,
-                brief_text=brief_text,
-                marking_scheme_text=marking_scheme_text,
-                graded_sample_text=graded_sample_text,
-                other_context_text=other_context_text,
-                manual_max_mark=manual_max_mark,
-            )
-        except ValueError as exc:
-            st.error(str(exc))
-            return
-
-        sidebar_status.info(f"Marking in progress ({marking_context.max_mark:g}-point scale)")
         rows: list[dict[str, object]] = []
         progress = st.progress(0)
         status = st.empty()
 
-        if csv_file is not None:
+        if use_assessment_folders:
+            if not assessment_bundles:
+                st.error("Enter a valid parent folder that contains one or more assessment subfolders.")
+                return
+
+            total = sum(len(bundle.submission_files) for bundle in assessment_bundles)
+            if total == 0:
+                st.error("No student submissions were found in the discovered assessment folders.")
+                return
+
+            processed = 0
+            max_marks: dict[str, float] = {}
+            contexts_by_assessment: dict[str, MarkingContext] = {}
+
+            for bundle in assessment_bundles:
+                try:
+                    rubric_bundle_text = combine_text_sections(read_paths_text(bundle.rubric_files), rubric_text)
+                    brief_bundle_text = combine_text_sections(read_paths_text(bundle.brief_files), brief_text)
+                    marking_scheme_bundle_text = combine_text_sections(
+                        read_paths_text(bundle.marking_scheme_files),
+                        marking_scheme_text,
+                    )
+                    graded_sample_bundle_text = combine_text_sections(
+                        read_paths_text(bundle.graded_sample_files),
+                        graded_sample_text,
+                    )
+                    other_bundle_text = combine_text_sections(read_paths_text(bundle.other_files), other_context_text)
+
+                    effective_rubric_text = rubric_bundle_text
+                    if not effective_rubric_text.strip() and st.session_state.get("document_only_mode", False):
+                        effective_rubric_text = build_document_based_marking_text(
+                            brief_text=brief_bundle_text,
+                            marking_scheme_text=marking_scheme_bundle_text,
+                            graded_sample_text=graded_sample_bundle_text,
+                            other_context_text=other_bundle_text,
+                        )
+
+                    marking_context = build_marking_context_with_optional_override(
+                        rubric_text=effective_rubric_text,
+                        brief_text=brief_bundle_text,
+                        marking_scheme_text=marking_scheme_bundle_text,
+                        graded_sample_text=graded_sample_bundle_text,
+                        other_context_text=other_bundle_text,
+                        manual_max_mark=manual_max_mark,
+                    )
+                except ValueError as exc:
+                    st.error(f"{bundle.name}: {exc}")
+                    return
+
+                contexts_by_assessment[bundle.name] = marking_context
+                max_marks[bundle.name] = marking_context.max_mark
+                sidebar_status.info(f"Marking {bundle.name} ({marking_context.max_mark:g}-point scale)")
+
+                for submission_path in bundle.submission_files:
+                    processed += 1
+                    status.text(f"Marking {bundle.name} / {submission_path.name} ({processed}/{total})")
+
+                    row: dict[str, object] = {
+                        "assessment_name": bundle.name,
+                        "filename": submission_path.name,
+                        "source_path": str(submission_path),
+                    }
+                    try:
+                        script_text = read_path_text(submission_path)
+                    except Exception as exc:
+                        for _, label in selected_models:
+                            apply_model_result(row, label, error=exc)
+                        if verifier_model is not None:
+                            apply_verifier_result(row, verifier_model[1], error=exc)
+                        rows.append(row)
+                        progress.progress(processed / total)
+                        continue
+
+                    for model_name, label in selected_models:
+                        try:
+                            result = call_ollama(
+                                script_text=script_text,
+                                context=marking_context,
+                                filename=submission_path.name,
+                                model_name=model_name,
+                            )
+                            apply_model_result(row, label, result=result)
+                        except Exception as exc:
+                            apply_model_result(row, label, error=exc)
+
+                    maybe_run_regrade_loop(
+                        row=row,
+                        script_text=script_text,
+                        context=marking_context,
+                        filename=submission_path.name,
+                        grader_model=grader_model,
+                        verifier_model=verifier_model,
+                    )
+
+                    rows.append(row)
+                    progress.progress(processed / total)
+
+            df = pd.DataFrame(rows)
+            df = apply_cross_student_calibration(df, selected_models, contexts_by_assessment)
+            report_sections = []
+            for assessment_name, assessment_df in df.groupby("assessment_name", sort=True):
+                report_sections.append(
+                    build_consistency_report(
+                        assessment_df.reset_index(drop=True),
+                        selected_models,
+                        max_marks[assessment_name],
+                    ).strip()
+                )
+            consistency_report = "\n\n".join(report_sections) + "\n"
+        elif csv_file is not None:
+            try:
+                effective_rubric_text = rubric_text
+                if not effective_rubric_text.strip() and st.session_state.get("document_only_mode", False):
+                    effective_rubric_text = build_document_based_marking_text(
+                        brief_text=brief_text,
+                        marking_scheme_text=marking_scheme_text,
+                        graded_sample_text=graded_sample_text,
+                        other_context_text=other_context_text,
+                    )
+
+                marking_context = build_marking_context_with_optional_override(
+                    rubric_text=effective_rubric_text,
+                    brief_text=brief_text,
+                    marking_scheme_text=marking_scheme_text,
+                    graded_sample_text=graded_sample_text,
+                    other_context_text=other_context_text,
+                    manual_max_mark=manual_max_mark,
+                )
+            except ValueError as exc:
+                st.error(str(exc))
+                return
+
+            sidebar_status.info(f"Marking in progress ({marking_context.max_mark:g}-point scale)")
             try:
                 csv_file.seek(0)
                 try:
@@ -406,6 +551,15 @@ def main() -> None:
                     except Exception as exc:
                         apply_model_result(row, label, error=exc)
 
+                maybe_run_regrade_loop(
+                    row=row,
+                    script_text=script_text,
+                    context=marking_context,
+                    filename=filename,
+                    grader_model=grader_model,
+                    verifier_model=verifier_model,
+                )
+
                 rows.append(row)
                 progress.progress(index / total)
 
@@ -421,7 +575,36 @@ def main() -> None:
                 ).drop(columns=["_scriptgrade_id"])
             except Exception:
                 df = df_marks
+            df = apply_cross_student_calibration(df, selected_models, {"All Submissions": marking_context})
+            consistency_report = build_consistency_report(df, selected_models, marking_context.max_mark)
         else:
+            if not script_files:
+                st.error("Upload at least one script or a CSV file.")
+                return
+
+            try:
+                effective_rubric_text = rubric_text
+                if not effective_rubric_text.strip() and st.session_state.get("document_only_mode", False):
+                    effective_rubric_text = build_document_based_marking_text(
+                        brief_text=brief_text,
+                        marking_scheme_text=marking_scheme_text,
+                        graded_sample_text=graded_sample_text,
+                        other_context_text=other_context_text,
+                    )
+
+                marking_context = build_marking_context_with_optional_override(
+                    rubric_text=effective_rubric_text,
+                    brief_text=brief_text,
+                    marking_scheme_text=marking_scheme_text,
+                    graded_sample_text=graded_sample_text,
+                    other_context_text=other_context_text,
+                    manual_max_mark=manual_max_mark,
+                )
+            except ValueError as exc:
+                st.error(str(exc))
+                return
+
+            sidebar_status.info(f"Marking in progress ({marking_context.max_mark:g}-point scale)")
             total = len(script_files)
             for index, uploaded in enumerate(script_files, start=1):
                 filename = uploaded.name
@@ -441,15 +624,31 @@ def main() -> None:
                     except Exception as exc:
                         apply_model_result(row, label, error=exc)
 
+                maybe_run_regrade_loop(
+                    row=row,
+                    script_text=script_text,
+                    context=marking_context,
+                    filename=filename,
+                    grader_model=grader_model,
+                    verifier_model=verifier_model,
+                )
+
                 rows.append(row)
                 progress.progress(index / total)
 
             df = pd.DataFrame(rows)
+            df = apply_cross_student_calibration(df, selected_models, {"All Submissions": marking_context})
+            consistency_report = build_consistency_report(df, selected_models, marking_context.max_mark)
 
         if df.empty:
             st.warning("No results to show.")
             sidebar_status.info("Ready")
             return
+
+        if verifier_model is not None:
+            verifier_report = build_verifier_report(df, verifier_model[1])
+            if verifier_report.strip():
+                consistency_report = consistency_report.rstrip() + "\n\n" + verifier_report
 
         mark_columns = [column for column in df.columns if column.endswith("_mark")]
         if len(mark_columns) >= 2:
@@ -461,8 +660,7 @@ def main() -> None:
         sidebar_status.success("Completed")
         st.subheader("Results")
         st.dataframe(df, use_container_width=True)
-        render_results_download(df)
-        consistency_report = build_consistency_report(df, selected_models, marking_context.max_mark)
+        render_results_bundle_download(df, consistency_report)
         render_consistency_report(consistency_report)
 
 
