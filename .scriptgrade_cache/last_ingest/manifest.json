@@ -1,0 +1,45 @@
+{
+  "use_assessment_folders": true,
+  "single_assessment_folder_mode": true,
+  "assessment_root": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040",
+  "folder_keywords": {
+    "rubric": [
+      "rubric"
+    ],
+    "brief": [
+      "brief",
+      "assignment"
+    ],
+    "marking_scheme": [
+      "marking_scheme",
+      "marking scheme",
+      "scheme"
+    ],
+    "graded_sample": [
+      "graded_sample",
+      "graded sample",
+      "sample",
+      "example"
+    ],
+    "other": [
+      "support",
+      "context",
+      "guidance",
+      "instruction"
+    ]
+  },
+  "scale_profile": "Custom 85",
+  "manual_max_mark": 85.0,
+  "document_only_mode": true,
+  "script_files": [],
+  "csv_file": "",
+  "documents": {
+    "rubric_files": [],
+    "brief_files": [],
+    "marking_scheme_files": [
+      "C:\\Users\\Cam\\Documents\\GitProjects\\ScriptGradeAgent\\.scriptgrade_cache\\last_ingest\\marking_scheme\\001_Final_Main_2025_V03_-_solutions.pdf"
+    ],
+    "graded_sample_files": [],
+    "other_files": []
+  }
+}
