@@ -1,3 +1,4 @@
+from .cache import get_last_ingest_manifest_path, load_ingest_snapshot, save_ingest_snapshot
 from .core import (
     DEFAULT_CONTEXT_PATTERNS,
     DEFAULT_OLLAMA_URL,
@@ -55,6 +56,8 @@ __all__ = [
     "DEFAULT_CONTEXT_PATTERNS",
     "DEFAULT_OLLAMA_URL",
     "ROOT_DIR",
+    "get_last_ingest_manifest_path",
+    "load_ingest_snapshot",
     "SCALE_PRESETS",
     "AssessmentBundle",
     "MarkingContext",
@@ -96,6 +99,7 @@ __all__ = [
     "read_uploaded_files_text",
     "regrade_marking_result",
     "segment_submission_parts",
+    "save_ingest_snapshot",
     "suggest_marking_scale",
     "apply_cross_student_calibration",
     "apply_model_result",

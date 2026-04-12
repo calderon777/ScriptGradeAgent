@@ -18,10 +18,13 @@ from marking_pipeline import (
     call_ollama,
     combine_text_sections,
     discover_assessment_bundles,
+    get_last_ingest_manifest_path,
+    load_ingest_snapshot,
     parse_keyword_patterns,
     read_path_text,
     read_paths_text,
     read_uploaded_files_text,
+    save_ingest_snapshot,
     suggest_marking_scale,
     apply_cross_student_calibration,
     apply_model_result,
@@ -96,6 +99,27 @@ def choose_directory(initial_dir: str = "") -> str:
     finally:
         root.destroy()
     return selected
+
+
+def read_csv_source(csv_source: object) -> pd.DataFrame:
+    if isinstance(csv_source, Path):
+        try:
+            return pd.read_csv(csv_source)
+        except UnicodeDecodeError:
+            return pd.read_csv(csv_source, encoding="cp1252")
+
+    csv_source.seek(0)
+    try:
+        return pd.read_csv(csv_source)
+    except UnicodeDecodeError:
+        csv_source.seek(0)
+        return pd.read_csv(csv_source, encoding="cp1252")
+
+
+def load_submission_source_text(submission_source: object) -> tuple[str, str]:
+    if isinstance(submission_source, Path):
+        return read_path_text(submission_source), submission_source.name
+    return read_uploaded_files_text([submission_source]), submission_source.name
 
 
 def main() -> None:
@@ -174,6 +198,11 @@ def main() -> None:
     graded_sample_text = ""
     other_context_text = ""
     assessment_bundles: list[AssessmentBundle] = []
+    rubric_keywords = DEFAULT_CONTEXT_PATTERNS["rubric"]
+    brief_keywords = DEFAULT_CONTEXT_PATTERNS["brief"]
+    marking_scheme_keywords = DEFAULT_CONTEXT_PATTERNS["marking_scheme"]
+    graded_sample_keywords = DEFAULT_CONTEXT_PATTERNS["graded_sample"]
+    other_keywords = DEFAULT_CONTEXT_PATTERNS["other"]
 
     if use_assessment_folders:
         st.caption("Choose one parent folder. Each child folder will be treated as a separate assessment.")
@@ -374,22 +403,131 @@ def main() -> None:
             "The chosen scale will be used."
         )
 
-    run_step_label = "Step 5 - Run Marking"
+    st.header("Step 5 - Warm Test Snapshot")
+    last_snapshot = load_ingest_snapshot()
+    if last_snapshot is not None:
+        st.caption(f"Saved snapshot: `{get_last_ingest_manifest_path()}`")
+    use_saved_snapshot = st.checkbox(
+        "Use saved warm-test snapshot for this run",
+        value=False,
+        disabled=last_snapshot is None,
+        help="Reuse the most recently saved ingest without re-uploading files.",
+    )
+    if st.button("Save current ingest snapshot"):
+        try:
+            snapshot_path = save_ingest_snapshot(
+                use_assessment_folders=use_assessment_folders,
+                single_assessment_folder_mode=single_assessment_folder_mode,
+                assessment_root=st.session_state.get("assessment_root", ""),
+                folder_keywords={
+                    "rubric": rubric_keywords,
+                    "brief": brief_keywords,
+                    "marking_scheme": marking_scheme_keywords,
+                    "graded_sample": graded_sample_keywords,
+                    "other": other_keywords,
+                },
+                scale_profile=scale_profile,
+                manual_max_mark=manual_max_mark,
+                document_only_mode=st.session_state.get("document_only_mode", False),
+                script_files=script_files,
+                csv_file=csv_file,
+                rubric_files=rubric_files,
+                brief_files=brief_files,
+                marking_scheme_files=marking_scheme_files,
+                graded_sample_files=graded_sample_files,
+                other_files=other_files,
+            )
+        except Exception as exc:
+            st.error(f"Could not save ingest snapshot: {exc}")
+        else:
+            st.success(f"Saved warm-test snapshot to {snapshot_path}")
+
+    run_step_label = "Step 6 - Run Marking"
     st.header(run_step_label)
     if st.button("Run marking", type="primary"):
         if not selected_models:
             st.error("Select at least one model before running the marking.")
             return
+
+        run_use_assessment_folders = use_assessment_folders
+        run_single_assessment_folder_mode = single_assessment_folder_mode
+        run_assessment_bundles = assessment_bundles
+        run_script_files: list[object] = list(script_files)
+        run_csv_file: object | None = csv_file
+        run_rubric_text = rubric_text
+        run_brief_text = brief_text
+        run_marking_scheme_text = marking_scheme_text
+        run_graded_sample_text = graded_sample_text
+        run_other_context_text = other_context_text
+        run_manual_max_mark = manual_max_mark
+        run_document_only_mode = st.session_state.get("document_only_mode", False)
+
+        if use_saved_snapshot:
+            snapshot = load_ingest_snapshot()
+            if snapshot is None:
+                st.error("No saved warm-test snapshot is available.")
+                return
+            run_use_assessment_folders = bool(snapshot.get("use_assessment_folders"))
+            run_single_assessment_folder_mode = bool(snapshot.get("single_assessment_folder_mode"))
+            run_manual_max_mark = snapshot.get("manual_max_mark")
+            run_document_only_mode = bool(snapshot.get("document_only_mode"))
+            documents = snapshot.get("documents", {})
+            run_rubric_text = read_paths_text([Path(path) for path in documents.get("rubric_files", [])])
+            run_brief_text = read_paths_text([Path(path) for path in documents.get("brief_files", [])])
+            run_marking_scheme_text = read_paths_text([Path(path) for path in documents.get("marking_scheme_files", [])])
+            run_graded_sample_text = read_paths_text([Path(path) for path in documents.get("graded_sample_files", [])])
+            run_other_context_text = read_paths_text([Path(path) for path in documents.get("other_files", [])])
+
+            if run_use_assessment_folders:
+                assessment_root = str(snapshot.get("assessment_root", "")).strip()
+                if not assessment_root:
+                    st.error("Saved snapshot does not contain a valid assessment folder path.")
+                    return
+                folder_keywords = snapshot.get("folder_keywords", {})
+                snapshot_rubric_keywords = tuple(folder_keywords.get("rubric", DEFAULT_CONTEXT_PATTERNS["rubric"]))
+                snapshot_brief_keywords = tuple(folder_keywords.get("brief", DEFAULT_CONTEXT_PATTERNS["brief"]))
+                snapshot_marking_scheme_keywords = tuple(folder_keywords.get("marking_scheme", DEFAULT_CONTEXT_PATTERNS["marking_scheme"]))
+                snapshot_graded_sample_keywords = tuple(folder_keywords.get("graded_sample", DEFAULT_CONTEXT_PATTERNS["graded_sample"]))
+                snapshot_other_keywords = tuple(folder_keywords.get("other", DEFAULT_CONTEXT_PATTERNS["other"]))
+                try:
+                    if run_single_assessment_folder_mode:
+                        run_assessment_bundles = [
+                            build_single_assessment_bundle(
+                                Path(assessment_root),
+                                assessment_name=Path(assessment_root).name,
+                                rubric_keywords=snapshot_rubric_keywords,
+                                brief_keywords=snapshot_brief_keywords,
+                                marking_scheme_keywords=snapshot_marking_scheme_keywords,
+                                graded_sample_keywords=snapshot_graded_sample_keywords,
+                                other_keywords=snapshot_other_keywords,
+                            )
+                        ]
+                    else:
+                        run_assessment_bundles = discover_assessment_bundles(
+                            Path(assessment_root),
+                            rubric_keywords=snapshot_rubric_keywords,
+                            brief_keywords=snapshot_brief_keywords,
+                            marking_scheme_keywords=snapshot_marking_scheme_keywords,
+                            graded_sample_keywords=snapshot_graded_sample_keywords,
+                            other_keywords=snapshot_other_keywords,
+                        )
+                except ValueError as exc:
+                    st.error(f"Saved snapshot could not be loaded: {exc}")
+                    return
+            else:
+                run_script_files = [Path(path) for path in snapshot.get("script_files", [])]
+                run_csv_file = Path(snapshot["csv_file"]) if snapshot.get("csv_file") else None
+
         rows: list[dict[str, object]] = []
         progress = st.progress(0)
         status = st.empty()
 
-        if use_assessment_folders:
-            if not assessment_bundles:
+        if run_use_assessment_folders:
+            if not run_assessment_bundles:
                 st.error("Enter a valid parent folder that contains one or more assessment subfolders.")
                 return
 
-            total = sum(len(bundle.submission_files) for bundle in assessment_bundles)
+            total = sum(len(bundle.submission_files) for bundle in run_assessment_bundles)
             if total == 0:
                 st.error("No student submissions were found in the discovered assessment folders.")
                 return
@@ -398,22 +536,22 @@ def main() -> None:
             max_marks: dict[str, float] = {}
             contexts_by_assessment: dict[str, MarkingContext] = {}
 
-            for bundle in assessment_bundles:
+            for bundle in run_assessment_bundles:
                 try:
-                    rubric_bundle_text = combine_text_sections(read_paths_text(bundle.rubric_files), rubric_text)
-                    brief_bundle_text = combine_text_sections(read_paths_text(bundle.brief_files), brief_text)
+                    rubric_bundle_text = combine_text_sections(read_paths_text(bundle.rubric_files), run_rubric_text)
+                    brief_bundle_text = combine_text_sections(read_paths_text(bundle.brief_files), run_brief_text)
                     marking_scheme_bundle_text = combine_text_sections(
                         read_paths_text(bundle.marking_scheme_files),
-                        marking_scheme_text,
+                        run_marking_scheme_text,
                     )
                     graded_sample_bundle_text = combine_text_sections(
                         read_paths_text(bundle.graded_sample_files),
-                        graded_sample_text,
+                        run_graded_sample_text,
                     )
-                    other_bundle_text = combine_text_sections(read_paths_text(bundle.other_files), other_context_text)
+                    other_bundle_text = combine_text_sections(read_paths_text(bundle.other_files), run_other_context_text)
 
                     effective_rubric_text = rubric_bundle_text
-                    if not effective_rubric_text.strip() and st.session_state.get("document_only_mode", False):
+                    if not effective_rubric_text.strip() and run_document_only_mode:
                         effective_rubric_text = build_document_based_marking_text(
                             brief_text=brief_bundle_text,
                             marking_scheme_text=marking_scheme_bundle_text,
@@ -427,7 +565,7 @@ def main() -> None:
                         marking_scheme_text=marking_scheme_bundle_text,
                         graded_sample_text=graded_sample_bundle_text,
                         other_context_text=other_bundle_text,
-                        manual_max_mark=manual_max_mark,
+                        manual_max_mark=run_manual_max_mark,
                     )
                 except ValueError as exc:
                     st.error(f"{bundle.name}: {exc}")
@@ -493,24 +631,24 @@ def main() -> None:
                     ).strip()
                 )
             consistency_report = "\n\n".join(report_sections) + "\n"
-        elif csv_file is not None:
+        elif run_csv_file is not None:
             try:
-                effective_rubric_text = rubric_text
-                if not effective_rubric_text.strip() and st.session_state.get("document_only_mode", False):
+                effective_rubric_text = run_rubric_text
+                if not effective_rubric_text.strip() and run_document_only_mode:
                     effective_rubric_text = build_document_based_marking_text(
-                        brief_text=brief_text,
-                        marking_scheme_text=marking_scheme_text,
-                        graded_sample_text=graded_sample_text,
-                        other_context_text=other_context_text,
+                        brief_text=run_brief_text,
+                        marking_scheme_text=run_marking_scheme_text,
+                        graded_sample_text=run_graded_sample_text,
+                        other_context_text=run_other_context_text,
                     )
 
                 marking_context = build_marking_context_with_optional_override(
                     rubric_text=effective_rubric_text,
-                    brief_text=brief_text,
-                    marking_scheme_text=marking_scheme_text,
-                    graded_sample_text=graded_sample_text,
-                    other_context_text=other_context_text,
-                    manual_max_mark=manual_max_mark,
+                    brief_text=run_brief_text,
+                    marking_scheme_text=run_marking_scheme_text,
+                    graded_sample_text=run_graded_sample_text,
+                    other_context_text=run_other_context_text,
+                    manual_max_mark=run_manual_max_mark,
                 )
             except ValueError as exc:
                 st.error(str(exc))
@@ -518,12 +656,7 @@ def main() -> None:
 
             sidebar_status.info(f"Marking in progress ({marking_context.max_mark:g}-point scale)")
             try:
-                csv_file.seek(0)
-                try:
-                    df_input = pd.read_csv(csv_file)
-                except UnicodeDecodeError:
-                    csv_file.seek(0)
-                    df_input = pd.read_csv(csv_file, encoding="cp1252")
+                df_input = read_csv_source(run_csv_file)
             except Exception as exc:
                 st.error(f"Error reading CSV file: {exc}")
                 return
@@ -578,38 +711,37 @@ def main() -> None:
             df = apply_cross_student_calibration(df, selected_models, {"All Submissions": marking_context})
             consistency_report = build_consistency_report(df, selected_models, marking_context.max_mark)
         else:
-            if not script_files:
+            if not run_script_files:
                 st.error("Upload at least one script or a CSV file.")
                 return
 
             try:
-                effective_rubric_text = rubric_text
-                if not effective_rubric_text.strip() and st.session_state.get("document_only_mode", False):
+                effective_rubric_text = run_rubric_text
+                if not effective_rubric_text.strip() and run_document_only_mode:
                     effective_rubric_text = build_document_based_marking_text(
-                        brief_text=brief_text,
-                        marking_scheme_text=marking_scheme_text,
-                        graded_sample_text=graded_sample_text,
-                        other_context_text=other_context_text,
+                        brief_text=run_brief_text,
+                        marking_scheme_text=run_marking_scheme_text,
+                        graded_sample_text=run_graded_sample_text,
+                        other_context_text=run_other_context_text,
                     )
 
                 marking_context = build_marking_context_with_optional_override(
                     rubric_text=effective_rubric_text,
-                    brief_text=brief_text,
-                    marking_scheme_text=marking_scheme_text,
-                    graded_sample_text=graded_sample_text,
-                    other_context_text=other_context_text,
-                    manual_max_mark=manual_max_mark,
+                    brief_text=run_brief_text,
+                    marking_scheme_text=run_marking_scheme_text,
+                    graded_sample_text=run_graded_sample_text,
+                    other_context_text=run_other_context_text,
+                    manual_max_mark=run_manual_max_mark,
                 )
             except ValueError as exc:
                 st.error(str(exc))
                 return
 
             sidebar_status.info(f"Marking in progress ({marking_context.max_mark:g}-point scale)")
-            total = len(script_files)
-            for index, uploaded in enumerate(script_files, start=1):
-                filename = uploaded.name
+            total = len(run_script_files)
+            for index, uploaded in enumerate(run_script_files, start=1):
+                script_text, filename = load_submission_source_text(uploaded)
                 status.text(f"Marking {filename} ({index}/{total})")
-                script_text = read_uploaded_files_text([uploaded])
 
                 row = {"filename": filename}
                 for model_name, label in selected_models:

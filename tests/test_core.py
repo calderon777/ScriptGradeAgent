@@ -9,6 +9,7 @@ from marking_pipeline.core import (
     build_single_assessment_bundle,
     build_submission_diagnostics,
     extract_expected_parts_from_context,
+    extract_expected_subparts_from_context,
     extract_structure_guidance,
     calibrate_marks_across_students,
     call_ollama,
@@ -22,10 +23,12 @@ from marking_pipeline.core import (
     prepare_marking_context,
     reconcile_detected_parts,
     regrade_marking_result,
+    refine_submission_granularity,
     segment_submission_parts,
     SubmissionPart,
     verify_marking_result,
 )
+from marking_pipeline import cache as cache_module
 from marking_pipeline.workflow import suggest_marking_scale
 
 LONG_FEEDBACK = (
@@ -155,6 +158,46 @@ class NormalizationTests(unittest.TestCase):
         )
         self.assertEqual(total, 40.0)
 
+    def test_accepts_feedback_only_final_synthesis_when_math_total_is_available(self) -> None:
+        parts = [
+            SubmissionPart(label="Part 1", max_mark=20.0),
+            SubmissionPart(label="Part 2", max_mark=30.0),
+        ]
+        result = normalize_marking_result(
+            {
+                "overall_feedback": LONG_FEEDBACK,
+                "covered_parts": ["Part 1", "Part 2"],
+                "strengths": ["clear explanation", "good structure"],
+                "weaknesses": ["limited depth", "some missing precision"],
+            },
+            expected_max_mark=50.0,
+            parts=parts,
+            part_analyses=[
+                {"provisional_score": 16.0, "provisional_score_0_to_100": None},
+                {"provisional_score": 24.0, "provisional_score_0_to_100": None},
+            ],
+        )
+        self.assertEqual(result["total_mark"], 40.0)
+        self.assertIsNone(result["ai_total_mark"])
+        self.assertEqual(result["math_total_mark"], 40.0)
+
+    def test_rejects_feedback_only_final_synthesis_when_math_total_is_unavailable(self) -> None:
+        with self.assertRaises(ValueError):
+            normalize_marking_result(
+                {
+                    "overall_feedback": LONG_FEEDBACK,
+                    "covered_parts": ["Part 1", "Part 2"],
+                    "strengths": ["clear explanation", "good structure"],
+                    "weaknesses": ["limited depth", "some missing precision"],
+                },
+                expected_max_mark=50.0,
+                parts=[SubmissionPart(label="Part 1"), SubmissionPart(label="Part 2")],
+                part_analyses=[
+                    {"provisional_score": None, "provisional_score_0_to_100": 80.0},
+                    {"provisional_score": None, "provisional_score_0_to_100": 70.0},
+                ],
+            )
+
     def test_computes_single_part_total_from_expected_max_mark(self) -> None:
         total = compute_total_mark_from_part_scores(
             expected_max_mark=85.0,
@@ -206,6 +249,71 @@ class SubmissionStructureTests(unittest.TestCase):
         self.assertNotIn("General comment about presentation.", guidance)
         self.assertNotIn("Read the dataset appendix carefully.", guidance)
 
+    def test_expected_parts_ignore_inline_question_references(self) -> None:
+        context = prepare_marking_context(
+            rubric_text="Part 1 (15 marks)\nPart 2 (40 marks)\nPart 3 (30 marks)\nPart 4 (15 marks)\nout of 85",
+            brief_text="",
+            marking_scheme_text=(
+                "conditions in question 2 are satisfied, then\n"
+                "However, as shown in question 4, an increase in VAT can switch the equilibrium.\n"
+            ),
+            graded_sample_text="",
+            other_context_text="",
+        )
+        expected = extract_expected_parts_from_context(context)
+        self.assertEqual([part.label for part in expected], ["Part 1", "Part 2", "Part 3", "Part 4"])
+
+    def test_extracts_expected_subparts_from_context(self) -> None:
+        context = prepare_marking_context(
+            rubric_text=(
+                "Part 2 (40 marks)\n"
+                "1. [5 marks] First item\n"
+                "2. [7.5 marks] Second item\n"
+                "3. [7.5 marks] Third item\n"
+                "Part 3 (30 marks)\n"
+                "1. [7.5 marks] First item\n"
+                "2. [7.5 marks] Second item\n"
+                "out of 100\n"
+            ),
+            brief_text="",
+            marking_scheme_text="",
+            graded_sample_text="",
+            other_context_text="",
+        )
+        child_map = extract_expected_subparts_from_context(context)
+        self.assertEqual(
+            [part.label for part in child_map["part 2"]],
+            ["Part 2 Q1", "Part 2 Q2", "Part 2 Q3"],
+        )
+        self.assertEqual(child_map["part 2"][0].max_mark, 5.0)
+
+    def test_refines_segmented_parts_to_subparts(self) -> None:
+        context = prepare_marking_context(
+            rubric_text=(
+                "Part 2 (40 marks)\n"
+                "1. [5 marks] First item\n"
+                "2. [7.5 marks] Second item\n"
+                "3. [7.5 marks] Third item\n"
+                "4. [5 marks] Fourth item\n"
+                "out of 40\n"
+            ),
+            brief_text="",
+            marking_scheme_text="",
+            graded_sample_text="",
+            other_context_text="",
+        )
+        parts = [
+            SubmissionPart(
+                label="Part 2",
+                anchor_text="Part 2",
+                section_text="Part 2\nQ1\nAnswer one\nQ2\nAnswer two\nQ3\nAnswer three\nQ4\nAnswer four",
+                max_mark=40.0,
+            )
+        ]
+        refined = refine_submission_granularity(parts, context, "student.docx", "qwen2:7b")
+        self.assertEqual([part.label for part in refined], ["Part 2 Q1", "Part 2 Q2", "Part 2 Q3", "Part 2 Q4"])
+        self.assertTrue(all(part.max_mark is not None for part in refined))
+
     def test_reconciles_detected_parts_with_expected_parts(self) -> None:
         context = prepare_marking_context(
             rubric_text="Part 1 (15 marks)\nPart 2 (40 marks)\nPart 3 (20 marks)\nPart 4 (10 marks)\nout of 85",
@@ -220,6 +328,26 @@ class SubmissionStructureTests(unittest.TestCase):
         reconciled = reconcile_detected_parts(detected, context)
         self.assertEqual([part.label for part in reconciled], ["Part 1", "Part 3", "Part 2", "Part 4"])
         self.assertEqual([part.label for part in extract_expected_parts_from_context(context)], ["Part 1", "Part 2", "Part 3", "Part 4"])
+
+    def test_discards_placeholder_and_unexpected_parts_when_context_defines_structure(self) -> None:
+        context = prepare_marking_context(
+            rubric_text="Part 1 (15 marks)\nPart 2 (40 marks)\nPart 3 (15 marks)\nPart 4 (15 marks)\nout of 85",
+            brief_text="",
+            marking_scheme_text="",
+            graded_sample_text="",
+            other_context_text="",
+        )
+        detected = normalize_detected_parts(
+            {
+                "sections": [
+                    {"label": "Section above", "focus_hint": "junk", "anchor_text": "Section above"},
+                    {"label": "Question 1", "focus_hint": "wrong structure", "anchor_text": "Question 1"},
+                    {"label": "Part 2", "focus_hint": "matched", "anchor_text": "Part 2"},
+                ]
+            }
+        )
+        reconciled = reconcile_detected_parts(detected, context)
+        self.assertEqual([part.label for part in reconciled], ["Part 2", "Part 1", "Part 3", "Part 4"])
 
 
 class CalibrationTests(unittest.TestCase):
@@ -387,10 +515,62 @@ class AssessmentBundleTests(unittest.TestCase):
         self.assertEqual(sorted(path.name for path in bundle.submission_files), ["answer1.txt", "answer2.txt"])
 
 
+class CacheTests(unittest.TestCase):
+    class FakeUpload:
+        def __init__(self, name: str, content: bytes) -> None:
+            self.name = name
+            self._content = content
+
+        def getvalue(self) -> bytes:
+            return self._content
+
+    def make_temp_dir(self) -> Path:
+        path = Path("tests") / f".tmp_{uuid4().hex}"
+        path.mkdir(parents=True, exist_ok=False)
+        self.addCleanup(lambda: rmtree(path, ignore_errors=True))
+        return path
+
+    def test_saves_and_loads_last_ingest_snapshot(self) -> None:
+        temp_root = self.make_temp_dir()
+        cache_dir = temp_root / "cache"
+        ingest_dir = cache_dir / "last_ingest"
+        manifest_path = ingest_dir / "manifest.json"
+
+        with (
+            patch.object(cache_module, "CACHE_ROOT", cache_dir),
+            patch.object(cache_module, "LAST_INGEST_DIR", ingest_dir),
+            patch.object(cache_module, "LAST_INGEST_MANIFEST", manifest_path),
+        ):
+            saved_path = cache_module.save_ingest_snapshot(
+                use_assessment_folders=False,
+                single_assessment_folder_mode=False,
+                assessment_root="",
+                folder_keywords={"rubric": ("rubric",), "brief": ("brief",), "marking_scheme": ("scheme",), "graded_sample": ("sample",), "other": ("other",)},
+                scale_profile="Analytical / evaluative (0-85, typical 20-80)",
+                manual_max_mark=85.0,
+                document_only_mode=True,
+                script_files=[self.FakeUpload("student one.pdf", b"script")],
+                csv_file=None,
+                rubric_files=[self.FakeUpload("rubric.pdf", b"rubric")],
+                brief_files=[],
+                marking_scheme_files=[],
+                graded_sample_files=[],
+                other_files=[],
+            )
+
+            self.assertEqual(saved_path, manifest_path)
+            loaded = cache_module.load_ingest_snapshot()
+            self.assertIsNotNone(loaded)
+            self.assertEqual(loaded["manual_max_mark"], 85.0)
+            self.assertEqual(len(loaded["script_files"]), 1)
+            self.assertTrue(Path(loaded["script_files"][0]).exists())
+            self.assertTrue(Path(loaded["documents"]["rubric_files"][0]).exists())
+
+
 class CallOllamaTests(unittest.TestCase):
     @patch("marking_pipeline.core.requests.post")
     def test_call_ollama_normalizes_percentage_scale(self, mock_post: Mock) -> None:
-        context = prepare_marking_context("Maximum mark: 20", "", "", "", "")
+        context = prepare_marking_context("Question 1 (10 marks)\nQuestion 2 (10 marks)\nMaximum mark: 20", "", "", "", "")
         structure = Mock()
         structure.json.return_value = {
             "message": {
@@ -415,7 +595,7 @@ class CallOllamaTests(unittest.TestCase):
         synthesis = Mock()
         synthesis.json.return_value = {
             "message": {
-                "content": '{"total_mark": 95, "max_mark": 100, "overall_feedback": "Question 1 is handled well and Question 2 is also handled well. The response includes clear explanation, relevant evidence, strong structure, and engagement with the policy problem. It shows a solid grasp of the theoretical core, a sensible attempt to apply the framework, and a reasonably disciplined use of the supplied material across both sections. The analysis is coherent, the answer remains focused on the task, and the student usually explains why their claims follow from the evidence they provide. There are still some limitations in depth and precision, and one omission remains in the treatment of the evidence. Even so, the script demonstrates strong command of the material across both sections and reaches a high standard overall with room for refinement in a few places, especially when moving from explanation to evaluation and from description to judgement.", "covered_parts": ["Question 1", "Question 2"], "strengths": ["clear explanation", "relevant evidence"], "weaknesses": ["limited depth", "limited precision"]}'
+                "content": '{"overall_feedback": "Question 1 is handled well and Question 2 is also handled well. The response includes clear explanation, relevant evidence, strong structure, and engagement with the policy problem. It shows a solid grasp of the theoretical core, a sensible attempt to apply the framework, and a reasonably disciplined use of the supplied material across both sections. The analysis is coherent, the answer remains focused on the task, and the student usually explains why their claims follow from the evidence they provide. There are still some limitations in depth and precision, and one omission remains in the treatment of the evidence. Even so, the script demonstrates strong command of the material across both sections and reaches a high standard overall with room for refinement in a few places, especially when moving from explanation to evaluation and from description to judgement.", "covered_parts": ["Question 1", "Question 2"], "strengths": ["clear explanation", "relevant evidence"], "weaknesses": ["limited depth", "limited precision"]}'
             }
         }
         synthesis.raise_for_status.return_value = None

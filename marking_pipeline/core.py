@@ -1,9 +1,11 @@
 import io
 import json
 import re
+import zipfile
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+from xml.etree import ElementTree as ET
 
 import pdfplumber
 import requests
@@ -82,7 +84,13 @@ def extract_text_from_pdf(file_obj: Any) -> str:
 
 
 def extract_text_from_docx(file_obj: Any) -> str:
-    doc = Document(file_obj)
+    raw = file_obj.read()
+    if hasattr(file_obj, "seek"):
+        file_obj.seek(0)
+    xml_text = _extract_text_from_docx_xml(raw)
+    if xml_text.strip():
+        return xml_text.strip()
+    doc = Document(io.BytesIO(raw))
     return "\n".join(paragraph.text for paragraph in doc.paragraphs).strip()
 
 
@@ -301,12 +309,42 @@ def build_structure_messages_with_guidance(script_text: str, filename: str, stru
         "Rules:\n"
         "1. Use the structure hints from marking documents only when they contain useful section labels, marks, or weights.\n"
         "2. If the structure hints are vague or irrelevant, rely on the student's submission instead.\n"
-        "3. If there are clearly multiple questions or parts, return them in order.\n"
-        "4. label should be short, such as 'Question 1' or 'Part 2'.\n"
-        "5. focus_hint should briefly say what content belongs to that section.\n"
-        "6. anchor_text must be a short exact quote copied verbatim from near the start of that section in the student submission.\n"
-        "7. If the script does not clearly separate sections, return one section labelled 'Whole Submission'.\n"
-        "8. Do not include markdown fences or any text outside the JSON object."
+        "3. Choose the finest grading granularity that is clearly supported by both the marking documents and the student's submission.\n"
+        "4. If subquestions are clearly separated and should be graded separately, return them individually; otherwise keep the coarser part.\n"
+        "5. If you are not confident that a finer split is correct, prefer the coarser structure.\n"
+        "6. label should be short, such as 'Question 1', 'Part 2', or 'Part 2 Q3'.\n"
+        "7. focus_hint should briefly say what content belongs to that section.\n"
+        "8. anchor_text must be a short exact quote copied verbatim from near the start of that section in the student submission.\n"
+        "9. If the script does not clearly separate sections, return one section labelled 'Whole Submission'.\n"
+        "10. Do not include markdown fences or any text outside the JSON object."
+    )
+    return [{"role": "system", "content": system}, {"role": "user", "content": user}]
+
+
+def build_subpart_structure_messages(parent_part: SubmissionPart, filename: str, child_specs: list[SubmissionPart]) -> list[dict[str, str]]:
+    child_labels = ", ".join(
+        f"{child.label} ({_format_number(child.max_mark) if child.max_mark is not None else '?'})"
+        for child in child_specs
+    )
+    system = (
+        "You are refining the grading structure inside one section of a student's submission. "
+        "Only split this section into smaller grading units when the split is clearly supported by the section text. "
+        "If you are not confident, keep the original parent section as one unit."
+    )
+    user = (
+        f"STUDENT FILE NAME: {filename}\n"
+        f"PARENT SECTION: {parent_part.label}\n"
+        f"EXPECTED CHILD UNITS FROM MARKING DOCUMENTS: {child_labels}\n\n"
+        "PARENT SECTION TEXT:\n"
+        f"\"\"\"{parent_part.section_text}\"\"\"\n\n"
+        "Return only one JSON object with exactly this structure:\n"
+        '{ "sections": [ { "label": string, "focus_hint": string, "anchor_text": string } ] }\n\n'
+        "Rules:\n"
+        "1. Use child labels only when the student's section text clearly separates them.\n"
+        "2. If the split is unclear, return one section with the parent label.\n"
+        "3. anchor_text must be a short exact quote copied verbatim from near the start of that child section.\n"
+        "4. Do not invent labels beyond the parent and expected child units.\n"
+        "5. Do not include markdown fences or any text outside the JSON object."
     )
     return [{"role": "system", "content": system}, {"role": "user", "content": user}]
 
@@ -341,21 +379,17 @@ def build_synthesis_messages(
         "SECTION ANALYSES:\n"
         f"{analyses_text}\n\n"
         "Return only one JSON object with exactly these keys:\n"
-        '- "total_mark": number\n'
-        '- "max_mark": number\n'
         '- "overall_feedback": string\n'
         '- "covered_parts": array of strings\n'
         '- "strengths": array of strings\n'
         '- "weaknesses": array of strings\n\n'
         "Rules:\n"
-        f"1. Use max_mark = {max_mark_text}.\n"
-        f"2. total_mark must be between 0 and {max_mark_text}.\n"
-        "2a. Use the section analyses and section marks to derive a defensible total; do not ignore a weaker section simply because other sections are strong.\n"
+        f"1. The overall maximum mark is {max_mark_text}, but do not return any mark fields.\n"
+        "2. Use the section analyses and section marks to support feedback; do not ignore a weaker section simply because other sections are strong.\n"
         "3. overall_feedback must be at least 140 words.\n"
         "4. overall_feedback must explicitly mention every detected section label.\n"
         "5. covered_parts must list every detected section label.\n"
-        "6. If you describe major weaknesses such as missing analysis, incorrect calculations, or poor specification, do not award full marks.\n"
-        "7. Do not include markdown fences or any text outside the JSON object."
+        "6. Do not include markdown fences or any text outside the JSON object."
     )
     return [{"role": "system", "content": system}, {"role": "user", "content": user}]
 
@@ -507,6 +541,7 @@ def call_ollama(
 
     detected_parts = detect_submission_parts(script_text, filename, model_name, context=context, ollama_url=ollama_url)
     parts = segment_submission_parts(script_text, detected_parts)
+    parts = refine_submission_granularity(parts, context, filename, model_name, ollama_url=ollama_url)
     diagnostics = build_submission_diagnostics(script_text, parts)
 
     part_analyses = []
@@ -579,7 +614,7 @@ def normalize_detected_parts(data: dict[str, Any]) -> list[SubmissionPart]:
         if not isinstance(item, dict):
             continue
         label = str(item.get("label", "")).strip()
-        if not label:
+        if not label or _is_placeholder_section_label(label):
             continue
         focus_hint = str(item.get("focus_hint", "")).strip()
         anchor_text = str(item.get("anchor_text", "")).strip()
@@ -601,15 +636,24 @@ def reconcile_detected_parts(detected_parts: list[SubmissionPart], context: Mark
     if not expected_parts:
         return detected_parts
 
-    resolved = list(detected_parts)
-    seen = {_normalize_label_key(part.label) for part in resolved}
+    expected_by_key = {_normalize_label_key(part.label): part for part in expected_parts}
+    matched_detected = []
+    seen: set[str] = set()
+    for part in detected_parts:
+        key = _normalize_label_key(part.label)
+        if key not in expected_by_key or key in seen:
+            continue
+        matched_detected.append(part)
+        seen.add(key)
+
+    resolved = list(matched_detected)
     for expected in expected_parts:
-        if _normalize_label_key(expected.label) in seen:
+        key = _normalize_label_key(expected.label)
+        if key in seen:
             continue
         resolved.append(expected)
-        seen.add(_normalize_label_key(expected.label))
+        seen.add(key)
     enriched = []
-    expected_by_key = {_normalize_label_key(part.label): part for part in expected_parts}
     for part in resolved:
         expected = expected_by_key.get(_normalize_label_key(part.label))
         if expected is None:
@@ -673,6 +717,36 @@ def segment_submission_parts(script_text: str, detected_parts: list[SubmissionPa
     return segmented
 
 
+def refine_submission_granularity(
+    segmented_parts: list[SubmissionPart],
+    context: MarkingContext | None,
+    filename: str,
+    model_name: str,
+    ollama_url: str = DEFAULT_OLLAMA_URL,
+) -> list[SubmissionPart]:
+    if context is None or not segmented_parts:
+        return segmented_parts
+
+    child_map = extract_expected_subparts_from_context(context)
+    if not child_map:
+        return segmented_parts
+
+    refined: list[SubmissionPart] = []
+    for part in segmented_parts:
+        child_specs = child_map.get(_normalize_label_key(part.label), [])
+        if len(child_specs) < 2:
+            refined.append(part)
+            continue
+        segmented_children = _segment_subparts_within_section(part, child_specs)
+        if segmented_children is None:
+            segmented_children = _detect_subparts_with_model(part, filename, child_specs, model_name, ollama_url)
+            if segmented_children is None:
+                refined.append(part)
+                continue
+        refined.extend(segmented_children)
+    return refined
+
+
 def extract_structure_guidance(context: MarkingContext) -> str:
     source_text = "\n\n".join(
         text.strip()
@@ -710,7 +784,10 @@ def extract_expected_parts_from_context(context: MarkingContext) -> list[Submiss
 
     parts: list[SubmissionPart] = []
     seen: set[str] = set()
-    pattern = re.compile(r"\b(?P<kind>question|part|section)\s+(?P<id>[a-z0-9ivx]+)\b(?:\s*\((?P<marks>\d+(?:\.\d+)?)\s*marks?\))?", flags=re.IGNORECASE)
+    pattern = re.compile(
+        r"^(?P<kind>question|part|section)\s+(?P<id>\d+|[ivx]+|[a-d])\b(?:\s*[:.)-]|\s*\((?P<marks>\d+(?:\.\d+)?)\s*marks?\)|$)",
+        flags=re.IGNORECASE,
+    )
     lines = [line.strip() for line in source_text.splitlines() if line.strip()]
     for index, line in enumerate(lines):
         match = pattern.search(line)
@@ -739,6 +816,61 @@ def extract_expected_parts_from_context(context: MarkingContext) -> list[Submiss
             )
         )
     return parts
+
+
+def extract_expected_subparts_from_context(context: MarkingContext) -> dict[str, list[SubmissionPart]]:
+    source_text = "\n\n".join(
+        text.strip()
+        for text in (context.rubric_text, context.brief_text, context.marking_scheme_text)
+        if text and text.strip()
+    )
+    if not source_text:
+        return {}
+
+    top_level_pattern = re.compile(
+        r"^(?P<kind>question|part|section)\s+(?P<id>\d+|[ivx]+|[a-d])\b(?:\s*[:.)-]|\s*\((?P<marks>\d+(?:\.\d+)?)\s*marks?\)|$)",
+        flags=re.IGNORECASE,
+    )
+    subpart_pattern = re.compile(
+        r"^(?P<id>\d+)\.\s*\[(?P<marks>\d+(?:\.\d+)?)\s*marks?\]",
+        flags=re.IGNORECASE,
+    )
+
+    lines = [line.strip() for line in source_text.splitlines() if line.strip()]
+    child_map: dict[str, list[SubmissionPart]] = {}
+    current_parent: str | None = None
+    current_children: list[SubmissionPart] = []
+
+    def flush_children() -> None:
+        nonlocal current_parent, current_children
+        if current_parent and len(current_children) >= 2:
+            child_map[current_parent] = list(current_children)
+        current_children = []
+
+    for line in lines:
+        top_match = top_level_pattern.search(line)
+        if top_match:
+            flush_children()
+            current_parent = _normalize_label_key(f"{top_match.group('kind').title()} {top_match.group('id')}")
+            continue
+        if current_parent is None:
+            continue
+        sub_match = subpart_pattern.search(line)
+        if not sub_match:
+            continue
+        question_id = sub_match.group("id")
+        current_children.append(
+            SubmissionPart(
+                label=f"{_restore_label_from_key(current_parent)} Q{question_id}",
+                focus_hint=line,
+                anchor_text=f"Q{question_id}",
+                max_mark=float(sub_match.group("marks")),
+                marking_guidance=line,
+            )
+        )
+
+    flush_children()
+    return child_map
 
 
 def build_submission_diagnostics(script_text: str, parts: list[SubmissionPart] | None = None) -> SubmissionDiagnostics:
@@ -798,22 +930,26 @@ def normalize_marking_result(
     parts: list[SubmissionPart] | None = None,
     part_analyses: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
-    total_mark = data.get("total_mark")
-    if isinstance(total_mark, bool) or not isinstance(total_mark, (int, float)):
-        raise ValueError(f"Model did not return a numeric total_mark: {data}")
-
     feedback = data.get("overall_feedback") or data.get("feedback")
     if not isinstance(feedback, str) or not feedback.strip():
         raise ValueError(f"Model did not return feedback text: {data}")
 
+    total_mark = data.get("total_mark")
     model_max_mark = data.get("max_mark")
     if isinstance(model_max_mark, bool):
         raise ValueError(f"Model returned an invalid max_mark: {data}")
 
-    normalized_total = float(total_mark)
+    normalized_total = None
     normalized_max = expected_max_mark
 
+    if total_mark is not None:
+        if isinstance(total_mark, bool) or not isinstance(total_mark, (int, float)):
+            raise ValueError(f"Model did not return a numeric total_mark: {data}")
+        normalized_total = float(total_mark)
+
     if isinstance(model_max_mark, (int, float)):
+        if normalized_total is None:
+            raise ValueError(f"Model returned max_mark without a numeric total_mark: {data}")
         normalized_model_max = float(model_max_mark)
         if normalized_model_max <= 0:
             raise ValueError(f"Model returned a non-positive max_mark: {data}")
@@ -826,10 +962,10 @@ def normalize_marking_result(
                 "Model returned a max_mark that conflicts with the uploaded marking documents: "
                 f"expected {_format_number(expected_max_mark)}, got {_format_number(normalized_model_max)}."
             )
-    elif normalized_total > expected_max_mark and normalized_total <= 100 and expected_max_mark != 100:
+    elif normalized_total is not None and normalized_total > expected_max_mark and normalized_total <= 100 and expected_max_mark != 100:
         normalized_total = round((normalized_total * expected_max_mark) / 100.0, 2)
 
-    if normalized_total < 0 or normalized_total > expected_max_mark:
+    if normalized_total is not None and (normalized_total < 0 or normalized_total > expected_max_mark):
         raise ValueError(
             "Model returned a total_mark outside the expected range: "
             f"{_format_number(normalized_total)} / {_format_number(expected_max_mark)}."
@@ -843,15 +979,12 @@ def normalize_marking_result(
     covered_parts_raw = data.get("covered_parts")
     covered_parts = _normalize_string_list(covered_parts_raw, "covered_parts", "final result", minimum=1) if covered_parts_raw is not None else []
     if parts:
-        expected_parts = [part.label for part in parts]
-        missing_parts = [label for label in expected_parts if label not in covered_parts and label.lower() not in feedback.lower()]
-        if missing_parts:
-            raise ValueError("Model did not explicitly cover all detected sections: " + ", ".join(missing_parts))
+        covered_parts = [part.label for part in parts]
 
     if len(feedback.split()) < 120:
         raise ValueError("Model returned feedback that is shorter than the required minimum length.")
 
-    if normalized_total == expected_max_mark and _has_major_weaknesses(weaknesses, feedback):
+    if normalized_total is not None and normalized_total == expected_max_mark and _has_major_weaknesses(weaknesses, feedback):
         raise ValueError("Model awarded full marks while also describing substantial weaknesses.")
 
     if diagnostics and diagnostics.low_text:
@@ -864,7 +997,7 @@ def normalize_marking_result(
         if diagnostics.low_text:
             validation_notes.append("low_text")
 
-    ai_total_mark = _clean_number(normalized_total)
+    ai_total_mark = _clean_number(normalized_total) if normalized_total is not None else None
     math_total_mark = None
     ai_math_mark_delta = None
 
@@ -877,14 +1010,17 @@ def normalize_marking_result(
         validation_notes.append(f"part_score_spread={spread:.2f}")
         math_total = compute_total_mark_from_part_scores(expected_max_mark, parts or [], part_analyses)
         if math_total is None:
-            validation_notes.append("math_total_unavailable")
+            raise ValueError("Could not compute deterministic total from part scores.")
         else:
             math_total_mark = _clean_number(math_total)
-            ai_math_mark_delta = _clean_number(round(ai_total_mark - math_total_mark, 2))
             normalized_total = math_total
             validation_notes.append("math_total_used")
-            if abs(ai_total_mark - math_total_mark) > 1e-9:
+            if ai_total_mark is not None:
+                ai_math_mark_delta = _clean_number(round(ai_total_mark - math_total_mark, 2))
+            if ai_total_mark is not None and abs(ai_total_mark - math_total_mark) > 1e-9:
                 validation_notes.append(f"ai_total_disagreement={abs(ai_total_mark - math_total_mark):.2f}")
+    elif normalized_total is None:
+        raise ValueError("No deterministic part scores were available and the model did not return a total_mark.")
 
     return {
         "total_mark": _clean_number(normalized_total),
@@ -1361,6 +1497,145 @@ def _has_major_weaknesses(weaknesses: list[str], feedback: str) -> bool:
         "limited discussion",
     )
     return any(pattern in text for pattern in patterns)
+
+
+def _is_placeholder_section_label(label: str) -> bool:
+    normalized = _normalize_label_key(label)
+    placeholders = {
+        "section above",
+        "section below",
+        "answer above",
+        "answer below",
+        "above",
+        "below",
+    }
+    return normalized in placeholders
+
+
+def _extract_text_from_docx_xml(raw: bytes) -> str:
+    namespaces = {
+        "w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main",
+        "m": "http://schemas.openxmlformats.org/officeDocument/2006/math",
+    }
+    try:
+        with zipfile.ZipFile(io.BytesIO(raw)) as archive:
+            xml_bytes = archive.read("word/document.xml")
+    except (KeyError, zipfile.BadZipFile):
+        return ""
+
+    root = ET.fromstring(xml_bytes)
+    paragraphs: list[str] = []
+    for paragraph in root.findall(".//w:p", namespaces):
+        text_parts: list[str] = []
+        for node in paragraph.iter():
+            tag = node.tag.rsplit("}", 1)[-1]
+            if tag in {"t", "delText"} and node.text:
+                text_parts.append(node.text)
+            elif tag == "tab":
+                text_parts.append("\t")
+        paragraph_text = "".join(text_parts).strip()
+        if paragraph_text:
+            paragraphs.append(paragraph_text)
+    return "\n".join(paragraphs)
+
+
+def _restore_label_from_key(key: str) -> str:
+    parts = key.split()
+    if len(parts) >= 2:
+        return f"{parts[0].title()} {parts[1].upper() if parts[1].isalpha() else parts[1]}"
+    return key.title()
+
+
+def _segment_subparts_within_section(parent_part: SubmissionPart, child_specs: list[SubmissionPart]) -> list[SubmissionPart] | None:
+    section_text = parent_part.section_text.strip()
+    if not section_text:
+        return None
+
+    anchors: list[tuple[int, SubmissionPart]] = []
+    used_positions: set[int] = set()
+    for child in child_specs:
+        position = _find_subpart_anchor_position(section_text, child)
+        if position == -1 or position in used_positions:
+            continue
+        used_positions.add(position)
+        anchors.append((position, child))
+
+    if len(anchors) < max(2, len(child_specs) // 2 + 1):
+        return None
+
+    anchors.sort(key=lambda item: item[0])
+    segmented: list[SubmissionPart] = []
+    for index, (start, child) in enumerate(anchors):
+        end = anchors[index + 1][0] if index + 1 < len(anchors) else len(section_text)
+        child_text = section_text[start:end].strip()
+        segmented.append(
+            SubmissionPart(
+                label=child.label,
+                focus_hint=child.focus_hint,
+                anchor_text=child.anchor_text,
+                section_text=child_text,
+                max_mark=child.max_mark,
+                marking_guidance=child.marking_guidance,
+            )
+        )
+    return segmented
+
+
+def _find_subpart_anchor_position(section_text: str, child: SubmissionPart) -> int:
+    normalized_text = section_text.replace("\r\n", "\n")
+    question_match = re.search(r"\bQ(?P<id>\d+)\b", child.label, flags=re.IGNORECASE)
+    if not question_match:
+        return -1
+    question_id = question_match.group("id")
+    patterns = [
+        rf"(?im)^\s*Q{question_id}\b",
+        rf"(?im)^\s*Question\s+{question_id}\b",
+        rf"(?im)^\s*{question_id}\.\s",
+        rf"(?im)^\s*{question_id}\)\s",
+        rf"(?im)^\s*\({question_id}\)\s",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, normalized_text)
+        if match:
+            return match.start()
+    return -1
+
+
+def _detect_subparts_with_model(
+    parent_part: SubmissionPart,
+    filename: str,
+    child_specs: list[SubmissionPart],
+    model_name: str,
+    ollama_url: str,
+) -> list[SubmissionPart] | None:
+    data = _call_ollama_json(
+        model_name=model_name,
+        messages=build_subpart_structure_messages(parent_part, filename, child_specs),
+        ollama_url=ollama_url,
+    )
+    detected = normalize_detected_parts(data)
+    if len(detected) == 1 and _normalize_label_key(detected[0].label) == _normalize_label_key(parent_part.label):
+        return None
+
+    child_by_key = {_normalize_label_key(child.label): child for child in child_specs}
+    normalized_children: list[SubmissionPart] = []
+    for child in detected:
+        key = _normalize_label_key(child.label)
+        expected = child_by_key.get(key)
+        if expected is None:
+            continue
+        normalized_children.append(
+            SubmissionPart(
+                label=expected.label,
+                focus_hint=child.focus_hint or expected.focus_hint,
+                anchor_text=child.anchor_text or expected.anchor_text,
+                max_mark=expected.max_mark,
+                marking_guidance=expected.marking_guidance,
+            )
+        )
+    if len(normalized_children) < 2:
+        return None
+    return _segment_subparts_within_section(parent_part, normalized_children)
 
 
 def _list_supported_files_recursive(folder: Path) -> list[Path]:
