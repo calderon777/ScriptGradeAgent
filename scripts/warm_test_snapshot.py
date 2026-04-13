@@ -149,6 +149,7 @@ def main() -> None:
                 context=context,
                 filename=submission_path.name,
                 model_name=grader_model[0],
+                rubric_verifier_model_name=verifier_model[0],
             )
             apply_model_result(row, grader_model[1], result=result)
             print(f"  grader: {result['total_mark']}/{result['max_mark']}")

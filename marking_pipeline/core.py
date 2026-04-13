@@ -2,7 +2,7 @@ import io
 import json
 import re
 import zipfile
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any
 from xml.etree import ElementTree as ET
@@ -64,6 +64,26 @@ class SubmissionDiagnostics:
     detected_part_labels: tuple[str, ...]
     low_text: bool
     possible_extraction_issue: bool
+
+
+@dataclass(frozen=True)
+class AssessmentUnit:
+    label: str
+    max_mark: float | None = None
+    parent_label: str = ""
+    grading_mode: str = "deterministic"
+    dependency_group: str = ""
+    marking_guidance: str = ""
+    rubric_text: str = ""
+    rubric_confidence_0_to_100: float | None = None
+    rubric_issues: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
+class AssessmentMap:
+    units: tuple[AssessmentUnit, ...]
+    overall_max_mark: float
+    scale_confidence_0_to_100: float
 
 
 def decode_text_bytes(raw: bytes) -> str:
@@ -251,6 +271,23 @@ def build_part_messages(
     guidance_block = ""
     if part.marking_guidance.strip():
         guidance_block = f"RELEVANT MARKING-SCHEME EXCERPT:\n{part.marking_guidance.strip()}\n\n"
+    rubric_use_rules: list[str] = []
+    guidance_text = part.marking_guidance.lower()
+    if part.marking_guidance.strip():
+        rubric_use_rules.append("Use the marking-scheme excerpt as the primary scoring rubric for this section.")
+    if any(band in guidance_text for band in ("first", "2:1", "2:2", "third/pass", "missing/unfinished", "fail")):
+        rubric_use_rules.append(
+            "For analytical sections, first decide the quality bracket from the rubric wording, then place the score within that bracket using the strength of evidence in this section."
+        )
+    if any(term in guidance_text for term in ("partial credit", "algebra", "equation", "deriv", "method", "interpretation")):
+        rubric_use_rules.append(
+            "For deterministic sections, use the rubric wording to award explicit partial credit for correct setup, method, algebra, equations, and interpretation."
+        )
+    rubric_use_rule_text = ""
+    if rubric_use_rules:
+        rubric_use_rule_text = "\n" + "\n".join(
+            f"{index}. {rule}" for index, rule in enumerate(rubric_use_rules, start=6)
+        )
     system = (
         "You are a careful university examiner working in stages. "
         "Assess only the supplied section of the student's submission. "
@@ -279,6 +316,7 @@ def build_part_messages(
         "3. weaknesses must contain at least 2 concrete items.\n"
         "4. evidence must contain concrete references to the section content.\n"
         "5. Do not include markdown fences or any text outside the JSON object."
+        f"{rubric_use_rule_text}"
     )
     return [{"role": "system", "content": system}, {"role": "user", "content": user}]
 
@@ -579,6 +617,25 @@ def call_ollama(
     context: MarkingContext,
     filename: str,
     model_name: str,
+    rubric_verifier_model_name: str | None = None,
+    ollama_url: str = DEFAULT_OLLAMA_URL,
+) -> dict[str, Any]:
+    return call_ollama_comparative_first(
+        script_text=script_text,
+        context=context,
+        filename=filename,
+        model_name=model_name,
+        rubric_verifier_model_name=rubric_verifier_model_name,
+        ollama_url=ollama_url,
+    )
+
+
+def call_ollama_comparative_first(
+    script_text: str,
+    context: MarkingContext,
+    filename: str,
+    model_name: str,
+    rubric_verifier_model_name: str | None = None,
     ollama_url: str = DEFAULT_OLLAMA_URL,
 ) -> dict[str, Any]:
     script_text = script_text.strip()
@@ -588,9 +645,18 @@ def call_ollama(
             "OCR is not implemented yet, so use a text-based PDF, DOCX, or CSV answer."
         )
 
+    assessment_map = build_assessment_map(context)
+    if rubric_verifier_model_name:
+        assessment_map = verify_assessment_rubrics(
+            assessment_map=assessment_map,
+            context=context,
+            verifier_model_name=rubric_verifier_model_name,
+            ollama_url=ollama_url,
+        )
     detected_parts = detect_submission_parts(script_text, filename, model_name, context=context, ollama_url=ollama_url)
     parts = segment_submission_parts(script_text, detected_parts)
     parts = refine_submission_granularity(parts, context, filename, model_name, ollama_url=ollama_url)
+    parts = apply_assessment_map_to_submission_parts(parts, assessment_map)
     diagnostics = build_submission_diagnostics(script_text, parts)
 
     part_analyses = []
@@ -603,12 +669,13 @@ def call_ollama(
         part_analyses.append(normalize_part_analysis(analysis, expected_label=part.label))
 
     if len(part_analyses) > 1:
-        part_analyses = moderate_part_analyses_across_submission(
+        part_analyses = moderate_linked_part_analyses(
             script_text=script_text,
             context=context,
             filename=filename,
             parts=parts,
             part_analyses=part_analyses,
+            assessment_map=assessment_map,
             model_name=model_name,
             ollama_url=ollama_url,
         )
@@ -951,6 +1018,272 @@ def split_submission_into_parts(script_text: str) -> list[SubmissionPart]:
     return [SubmissionPart(label="Whole Submission", focus_hint="Assess the full script as one piece of work.")]
 
 
+def build_assessment_map(context: MarkingContext) -> AssessmentMap:
+    top_level_parts = extract_expected_parts_from_context(context)
+    child_map = extract_expected_subparts_from_context(context)
+
+    units: list[AssessmentUnit] = []
+    if top_level_parts:
+        for part in top_level_parts:
+            children = child_map.get(_normalize_label_key(part.label), [])
+            if children:
+                for child in children:
+                    mode = infer_grading_mode(child.label, child.marking_guidance or part.marking_guidance or part.focus_hint)
+                    dependency = infer_dependency_group(child.label, child.marking_guidance, parent_label=part.label)
+                    units.append(
+                        AssessmentUnit(
+                            label=child.label,
+                            max_mark=child.max_mark,
+                            parent_label=part.label,
+                            grading_mode=mode,
+                            dependency_group=dependency,
+                            marking_guidance=child.marking_guidance,
+                            rubric_text=build_unit_rubric_text(
+                                label=child.label,
+                                max_mark=child.max_mark,
+                                grading_mode=mode,
+                                marking_guidance=child.marking_guidance,
+                            ),
+                        )
+                    )
+            else:
+                mode = infer_grading_mode(part.label, part.marking_guidance or part.focus_hint)
+                dependency = infer_dependency_group(part.label, part.marking_guidance, parent_label=part.label)
+                units.append(
+                    AssessmentUnit(
+                        label=part.label,
+                        max_mark=part.max_mark,
+                        parent_label="",
+                        grading_mode=mode,
+                        dependency_group=dependency,
+                        marking_guidance=part.marking_guidance,
+                        rubric_text=build_unit_rubric_text(
+                            label=part.label,
+                            max_mark=part.max_mark,
+                            grading_mode=mode,
+                            marking_guidance=part.marking_guidance,
+                        ),
+                    )
+                )
+
+    if not units:
+        units.append(
+            AssessmentUnit(
+                label="Whole Submission",
+                max_mark=context.max_mark,
+                grading_mode="analytical",
+                dependency_group="",
+                marking_guidance="Assess the full submission as one unit.",
+                rubric_text=build_unit_rubric_text(
+                    label="Whole Submission",
+                    max_mark=context.max_mark,
+                    grading_mode="analytical",
+                    marking_guidance="Assess the full submission as one unit.",
+                ),
+            )
+        )
+
+    scale_confidence = 95.0 if any(unit.max_mark is not None for unit in units) else 60.0
+    return AssessmentMap(
+        units=tuple(units),
+        overall_max_mark=context.max_mark,
+        scale_confidence_0_to_100=scale_confidence,
+    )
+
+
+def build_rubric_verification_messages(unit: AssessmentUnit, context: MarkingContext) -> list[dict[str, str]]:
+    max_mark_text = _format_number(unit.max_mark) if unit.max_mark is not None else _format_number(context.max_mark)
+    structure_context = extract_structure_guidance(context)
+    system = (
+        "You are verifying and enriching one grading rubric unit before marking begins. "
+        "You must preserve the unit label, max mark, grading mode, and dependency structure. "
+        "You may only improve the rubric prose so it is clearer, more discriminating, and better aligned with the assessment documents. "
+        'Return JSON with keys "rubric_text", "issues", and "confidence_0_to_100".'
+    )
+    user = (
+        f"Unit label: {unit.label}\n"
+        f"Parent label: {unit.parent_label or 'None'}\n"
+        f"Unit max mark: {max_mark_text}\n"
+        f"Grading mode: {unit.grading_mode}\n"
+        f"Dependency group: {unit.dependency_group or 'independent'}\n\n"
+        f"Current rubric text:\n{unit.rubric_text or unit.marking_guidance or '(empty)'}\n\n"
+        f"Structure and marks evidence from the assessment documents:\n{structure_context or '(none)'}\n\n"
+        "Verification rules:\n"
+        "1. Do not assign a score and do not write a final mark.\n"
+        "2. Do not change the label, max mark, part structure, or dependency structure.\n"
+        "3. Use the assessment documents only when they add useful information about structure, marks, weights, or question numbering.\n"
+        "4. If the unit is deterministic, enforce full-range discrimination, partial credit, method marks, equation or algebra checks, interpretation checks, and avoid compressing marks into the middle.\n"
+        "5. If the unit is analytical, enforce UK classification language and distinctions: First, 2:1, 2:2, Third/Pass, Fail, Missing/unfinished. Map those bands to the unit mark range and make the top band rare and evidence-based.\n"
+        "6. If a rule is already good, keep it.\n"
+        "7. Put any concerns or missing evidence in issues.\n"
+        "8. confidence_0_to_100 must be a number from 0 to 100.\n"
+        "9. Return only JSON."
+    )
+    return [{"role": "system", "content": system}, {"role": "user", "content": user}]
+
+
+def normalize_verified_rubric(data: dict[str, Any], unit: AssessmentUnit) -> dict[str, Any]:
+    rubric_text = data.get("rubric_text")
+    if not isinstance(rubric_text, str) or not rubric_text.strip():
+        raise ValueError(f"Verifier did not return rubric_text for {unit.label}: {data}")
+
+    issues = data.get("issues", [])
+    if issues is None:
+        issues = []
+    if not isinstance(issues, list) or any(not isinstance(item, str) or not item.strip() for item in issues):
+        raise ValueError(f"Verifier returned invalid issues for {unit.label}: {data}")
+
+    confidence = data.get("confidence_0_to_100")
+    if isinstance(confidence, bool) or not isinstance(confidence, (int, float)):
+        raise ValueError(f"Verifier returned invalid confidence for {unit.label}: {data}")
+    confidence_value = round(float(confidence), 2)
+    if confidence_value < 0 or confidence_value > 100:
+        raise ValueError(f"Verifier returned out-of-range confidence for {unit.label}: {data}")
+
+    return {
+        "rubric_text": rubric_text.strip(),
+        "issues": tuple(item.strip() for item in issues if item.strip()),
+        "confidence_0_to_100": confidence_value,
+    }
+
+
+def verify_assessment_rubrics(
+    assessment_map: AssessmentMap,
+    context: MarkingContext,
+    verifier_model_name: str,
+    ollama_url: str = DEFAULT_OLLAMA_URL,
+) -> AssessmentMap:
+    verified_units: list[AssessmentUnit] = []
+    for unit in assessment_map.units:
+        messages = build_rubric_verification_messages(unit, context)
+        normalized: dict[str, Any] | None = None
+        last_error: Exception | None = None
+        for attempt in range(2):
+            try:
+                data = _call_ollama_json(
+                    model_name=verifier_model_name,
+                    messages=messages,
+                    ollama_url=ollama_url,
+                )
+                normalized = normalize_verified_rubric(data, unit)
+                break
+            except Exception as exc:
+                last_error = exc
+                if attempt == 0:
+                    messages = _build_rubric_verification_retry_messages(messages, unit, exc)
+                    continue
+
+        if normalized is None:
+            fallback_issues = list(unit.rubric_issues)
+            if last_error is not None:
+                fallback_issues.append(f"rubric_verifier_failed: {last_error}")
+            verified_units.append(
+                replace(
+                    unit,
+                    rubric_confidence_0_to_100=0.0,
+                    rubric_issues=tuple(fallback_issues),
+                )
+            )
+            continue
+
+        verified_units.append(
+            replace(
+                unit,
+                rubric_text=normalized["rubric_text"],
+                rubric_confidence_0_to_100=normalized["confidence_0_to_100"],
+                rubric_issues=normalized["issues"],
+            )
+        )
+
+    return replace(assessment_map, units=tuple(verified_units))
+
+
+def infer_grading_mode(label: str, marking_guidance: str) -> str:
+    text = f"{label}\n{marking_guidance}".lower()
+    analytical_patterns = (
+        "summary",
+        "discuss",
+        "evaluate",
+        "commentary",
+        "in your own words",
+        "good idea",
+        "benefit",
+        "cost",
+        "fairness",
+        "equity",
+        "efficiency",
+    )
+    deterministic_patterns = (
+        "derive",
+        "equation",
+        "regression",
+        "condition",
+        "hypothesis",
+        "measure",
+        "data source",
+        "calculate",
+        "show carefully",
+        "parameter",
+        "endogeneity",
+    )
+    if any(pattern in text for pattern in deterministic_patterns):
+        return "deterministic"
+    if any(pattern in text for pattern in analytical_patterns):
+        return "analytical"
+    return "deterministic"
+
+
+def infer_dependency_group(label: str, marking_guidance: str, parent_label: str = "") -> str:
+    text = marking_guidance.lower()
+    if any(
+        phrase in text
+        for phrase in (
+            "question 1 above",
+            "question 2 above",
+            "part 2",
+            "using the theoretical model",
+            "prediction from your answer",
+            "from the model above",
+        )
+    ):
+        return _normalize_label_key(parent_label or label)
+    return ""
+
+
+def build_unit_rubric_text(
+    label: str,
+    max_mark: float | None,
+    grading_mode: str,
+    marking_guidance: str,
+) -> str:
+    if grading_mode == "analytical":
+        return build_analytical_rubric_text(label, max_mark, marking_guidance)
+    return build_deterministic_rubric_text(label, max_mark, marking_guidance)
+
+
+def build_deterministic_rubric_text(label: str, max_mark: float | None, marking_guidance: str) -> str:
+    max_text = _format_number(max_mark) if max_mark is not None else "the available marks"
+    return (
+        f"{label}: award marks across the full 0 to {max_text} range.\n"
+        "Prioritize correctness, completeness, algebraic precision, method, and interpretation.\n"
+        "Give partial credit for valid setup, intermediate steps, or partly correct empirical specification.\n"
+        "Penalize missing steps, incorrect derivations, unsupported claims, and vague or incomplete answers.\n"
+        f"Marking guidance:\n{marking_guidance}".strip()
+    )
+
+
+def build_analytical_rubric_text(label: str, max_mark: float | None, marking_guidance: str) -> str:
+    max_text = _format_number(max_mark) if max_mark is not None else "the available marks"
+    return (
+        f"{label}: use holistic but evidenced judgement across 0 to {max_text}.\n"
+        "Use UK-style quality bands in wording: First, 2:1, 2:2, Third/Pass, Fail, Missing/unfinished.\n"
+        "Reserve top-band marks for precise, well-supported, and genuinely insightful answers.\n"
+        "Treat missing or unfinished attempts as 0 to 20 percent of the unit's range unless the script clearly earns more.\n"
+        "Use the full mark range when justified; do not compress marks into the middle without evidence.\n"
+        f"Marking guidance:\n{marking_guidance}".strip()
+    )
+
+
 def normalize_part_analysis(data: dict[str, Any], expected_label: str) -> dict[str, Any]:
     score = data.get("provisional_score")
     score_field = "provisional_score"
@@ -998,6 +1331,47 @@ def moderate_part_analyses_across_submission(
         ollama_url=ollama_url,
     )
     return normalize_moderated_part_scores(data, parts, part_analyses)
+
+
+def moderate_linked_part_analyses(
+    script_text: str,
+    context: MarkingContext,
+    filename: str,
+    parts: list[SubmissionPart],
+    part_analyses: list[dict[str, Any]],
+    assessment_map: AssessmentMap,
+    model_name: str,
+    ollama_url: str = DEFAULT_OLLAMA_URL,
+) -> list[dict[str, Any]]:
+    unit_by_key = {_normalize_label_key(unit.label): unit for unit in assessment_map.units}
+    groups: dict[str, list[int]] = {}
+    for index, part in enumerate(parts):
+        unit = unit_by_key.get(_normalize_label_key(part.label))
+        if unit is None or not unit.dependency_group:
+            continue
+        groups.setdefault(unit.dependency_group, []).append(index)
+
+    if not groups:
+        return part_analyses
+
+    updated = [dict(item) for item in part_analyses]
+    for _, indexes in groups.items():
+        if len(indexes) < 2:
+            continue
+        grouped_parts = [parts[index] for index in indexes]
+        grouped_analyses = [updated[index] for index in indexes]
+        moderated = moderate_part_analyses_across_submission(
+            script_text=script_text,
+            context=context,
+            filename=filename,
+            parts=grouped_parts,
+            part_analyses=grouped_analyses,
+            model_name=model_name,
+            ollama_url=ollama_url,
+        )
+        for index, moderated_item in zip(indexes, moderated):
+            updated[index] = moderated_item
+    return updated
 
 
 def normalize_moderated_part_scores(
@@ -1515,6 +1889,27 @@ def build_marking_context_from_bundle(bundle: AssessmentBundle) -> MarkingContex
     )
 
 
+def apply_assessment_map_to_submission_parts(parts: list[SubmissionPart], assessment_map: AssessmentMap) -> list[SubmissionPart]:
+    unit_by_key = {_normalize_label_key(unit.label): unit for unit in assessment_map.units}
+    enriched: list[SubmissionPart] = []
+    for part in parts:
+        unit = unit_by_key.get(_normalize_label_key(part.label))
+        if unit is None:
+            enriched.append(part)
+            continue
+        enriched.append(
+            SubmissionPart(
+                label=part.label,
+                focus_hint=part.focus_hint,
+                anchor_text=part.anchor_text,
+                section_text=part.section_text,
+                max_mark=unit.max_mark if unit.max_mark is not None else part.max_mark,
+                marking_guidance=unit.rubric_text or unit.marking_guidance or part.marking_guidance,
+            )
+        )
+    return enriched
+
+
 def _parse_first_json_object(content: str) -> dict[str, Any]:
     start = content.find("{")
     while start != -1:
@@ -1606,8 +2001,9 @@ def _run_final_result_with_retry(
     ollama_url: str,
 ) -> dict[str, Any]:
     last_error: Exception | None = None
+    current_messages = list(messages)
     for attempt in range(2):
-        data = _call_ollama_json(model_name=model_name, messages=messages, ollama_url=ollama_url)
+        data = _call_ollama_json(model_name=model_name, messages=current_messages, ollama_url=ollama_url)
         try:
             return normalize_marking_result(
                 data,
@@ -1620,6 +2016,7 @@ def _run_final_result_with_retry(
             last_error = exc
             if attempt == 1 or not _should_retry_final_result(exc):
                 raise
+            current_messages = _build_final_result_retry_messages(current_messages, exc)
     if last_error is not None:
         raise last_error
     raise ValueError("Final result generation failed without a captured error.")
@@ -1632,6 +2029,42 @@ def _should_retry_final_result(exc: ValueError) -> bool:
         "did not explicitly cover all detected sections",
     )
     return any(pattern in message for pattern in retryable_patterns)
+
+
+def _build_rubric_verification_retry_messages(
+    messages: list[dict[str, str]],
+    unit: AssessmentUnit,
+    exc: Exception,
+) -> list[dict[str, str]]:
+    retry_note = (
+        "Previous attempt failed. Return exactly one valid JSON object with keys "
+        '"rubric_text", "issues", and "confidence_0_to_100". '
+        f"Do not truncate the JSON for {unit.label}. "
+        f"Failure reason: {exc}"
+    )
+    return [*messages, {"role": "user", "content": retry_note}]
+
+
+def _build_final_result_retry_messages(messages: list[dict[str, str]], exc: ValueError) -> list[dict[str, str]]:
+    message = str(exc)
+    if "shorter than the required minimum length" in message:
+        retry_note = (
+            "Previous attempt failed because overall_feedback was too short. "
+            "Retry now and make overall_feedback at least 180 words, concrete, and explicitly tied to the section analyses and section labels. "
+            "Return only the required JSON object."
+        )
+    elif "did not explicitly cover all detected sections" in message:
+        retry_note = (
+            "Previous attempt failed because not all detected sections were explicitly covered. "
+            "Retry now and mention every detected section label in overall_feedback and covered_parts. "
+            "Return only the required JSON object."
+        )
+    else:
+        retry_note = (
+            f"Previous attempt failed validation: {message}. "
+            "Retry now and satisfy the validation rule. Return only the required JSON object."
+        )
+    return [*messages, {"role": "user", "content": retry_note}]
 
 
 def _normalize_string_list(value: Any, field_name: str, label: str, minimum: int) -> list[str]:

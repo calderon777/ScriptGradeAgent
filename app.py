@@ -602,6 +602,7 @@ def main() -> None:
                                 context=marking_context,
                                 filename=submission_path.name,
                                 model_name=model_name,
+                                rubric_verifier_model_name=verifier_model[0] if verifier_model is not None else None,
                             )
                             apply_model_result(row, label, result=result)
                         except Exception as exc:
@@ -679,6 +680,7 @@ def main() -> None:
                             context=marking_context,
                             filename=filename,
                             model_name=model_name,
+                            rubric_verifier_model_name=verifier_model[0] if verifier_model is not None else None,
                         )
                         apply_model_result(row, label, result=result)
                     except Exception as exc:
@@ -751,6 +753,7 @@ def main() -> None:
                             context=marking_context,
                             filename=filename,
                             model_name=model_name,
+                            rubric_verifier_model_name=verifier_model[0] if verifier_model is not None else None,
                         )
                         apply_model_result(row, label, result=result)
                     except Exception as exc:

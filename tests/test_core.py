@@ -5,7 +5,11 @@ import unittest
 from unittest.mock import Mock, patch
 
 from marking_pipeline.core import (
+    AssessmentMap,
+    AssessmentUnit,
     build_marking_context_from_bundle,
+    build_assessment_map,
+    build_rubric_verification_messages,
     build_single_assessment_bundle,
     build_submission_diagnostics,
     extract_expected_parts_from_context,
@@ -18,6 +22,8 @@ from marking_pipeline.core import (
     infer_max_mark_from_texts,
     normalize_detected_parts,
     normalize_marking_result,
+    normalize_verified_rubric,
+    moderate_linked_part_analyses,
     normalize_moderated_part_scores,
     normalize_verification_result,
     parse_json_object,
@@ -27,6 +33,7 @@ from marking_pipeline.core import (
     refine_submission_granularity,
     segment_submission_parts,
     SubmissionPart,
+    verify_assessment_rubrics,
     verify_marking_result,
 )
 from marking_pipeline import cache as cache_module
@@ -254,6 +261,39 @@ class NormalizationTests(unittest.TestCase):
         self.assertEqual(moderated[1]["provisional_score"], 24.0)
         self.assertEqual(moderated[1]["moderation_delta"], 0.0)
 
+    @patch("marking_pipeline.core.moderate_part_analyses_across_submission")
+    def test_moderates_only_linked_groups(self, mock_moderate: Mock) -> None:
+        mock_moderate.side_effect = lambda **kwargs: kwargs["part_analyses"]
+        assessment_map = type("Map", (), {
+            "units": (
+                type("Unit", (), {"label": "Part 1", "dependency_group": ""})(),
+                type("Unit", (), {"label": "Part 2 Q1", "dependency_group": "part 2"})(),
+                type("Unit", (), {"label": "Part 2 Q2", "dependency_group": "part 2"})(),
+            )
+        })()
+        parts = [
+            SubmissionPart(label="Part 1", max_mark=15.0),
+            SubmissionPart(label="Part 2 Q1", max_mark=5.0),
+            SubmissionPart(label="Part 2 Q2", max_mark=7.5),
+        ]
+        analyses = [
+            {"section_label": "Part 1", "provisional_score": 10.0, "provisional_score_0_to_100": None},
+            {"section_label": "Part 2 Q1", "provisional_score": 4.0, "provisional_score_0_to_100": None},
+            {"section_label": "Part 2 Q2", "provisional_score": 6.0, "provisional_score_0_to_100": None},
+        ]
+        moderate_linked_part_analyses(
+            script_text="Student answer",
+            context=prepare_marking_context("Maximum mark: 20", "", "", "", ""),
+            filename="student.docx",
+            parts=parts,
+            part_analyses=analyses,
+            assessment_map=assessment_map,
+            model_name="qwen2:7b",
+        )
+        self.assertEqual(mock_moderate.call_count, 1)
+        call_kwargs = mock_moderate.call_args.kwargs
+        self.assertEqual([part.label for part in call_kwargs["parts"]], ["Part 2 Q1", "Part 2 Q2"])
+
 class SubmissionStructureTests(unittest.TestCase):
     def test_normalizes_detected_parts(self) -> None:
         parts = normalize_detected_parts(
@@ -332,6 +372,135 @@ class SubmissionStructureTests(unittest.TestCase):
             ["Part 2 Q1", "Part 2 Q2", "Part 2 Q3"],
         )
         self.assertEqual(child_map["part 2"][0].max_mark, 5.0)
+
+    def test_builds_assessment_map_with_subparts_and_modes(self) -> None:
+        context = prepare_marking_context(
+            rubric_text=(
+                "Part 1 (15 marks)\n"
+                "Generate a 300-word summary of the VAT policy and discuss likely costs and benefits.\n"
+                "Part 2 (40 marks)\n"
+                "1. [5 marks] Write out the payoff function.\n"
+                "2. [7.5 marks] Derive conditions.\n"
+                "3. [7.5 marks] Derive conditions for scenario 2.\n"
+                "4. [5 marks] Explain how changing each parameter affects the scenario.\n"
+                "Part 3 (30 marks)\n"
+                "1. [7.5 marks] List predictions.\n"
+                "2. [7.5 marks] Explain how each variable could be measured.\n"
+                "3. [7.5 marks] Write down the regression equation.\n"
+                "4. [7.5 marks] Explain why the regression might suffer from endogeneity issues using the theoretical model from Part 2.\n"
+                "Part 4 (15 marks)\n"
+                "Discuss carefully, in your own words, whether you think the introduction of VAT is a good idea.\n"
+                "out of 100\n"
+            ),
+            brief_text="",
+            marking_scheme_text="",
+            graded_sample_text="",
+            other_context_text="",
+        )
+        assessment_map = build_assessment_map(context)
+        labels = [unit.label for unit in assessment_map.units]
+        self.assertIn("Part 2 Q1", labels)
+        self.assertIn("Part 3 Q4", labels)
+        unit_by_label = {unit.label: unit for unit in assessment_map.units}
+        self.assertEqual(unit_by_label["Part 2 Q2"].grading_mode, "deterministic")
+        self.assertEqual(unit_by_label["Part 4"].grading_mode, "analytical")
+        self.assertEqual(unit_by_label["Part 3 Q4"].dependency_group, "part 3")
+        self.assertIn("UK-style quality bands", unit_by_label["Part 4"].rubric_text)
+
+    def test_builds_rubric_verification_messages(self) -> None:
+        context = prepare_marking_context(
+            rubric_text="Part 4 (15 marks)\nDiscuss carefully whether the policy is a good idea.\nout of 15",
+            brief_text="",
+            marking_scheme_text="Use the UK classification language where appropriate.",
+            graded_sample_text="",
+            other_context_text="",
+        )
+        unit = AssessmentUnit(
+            label="Part 4",
+            max_mark=15.0,
+            grading_mode="analytical",
+            rubric_text="Part 4: use holistic judgement.",
+        )
+        messages = build_rubric_verification_messages(unit, context)
+        self.assertEqual(messages[0]["role"], "system")
+        self.assertIn('"rubric_text"', messages[0]["content"])
+        self.assertIn("UK classification language", messages[1]["content"])
+        self.assertIn("Part 4", messages[1]["content"])
+
+    def test_normalizes_verified_rubric(self) -> None:
+        unit = AssessmentUnit(label="Part 2 Q1", max_mark=5.0, grading_mode="deterministic")
+        normalized = normalize_verified_rubric(
+            {
+                "rubric_text": "Award method marks, equation accuracy, and interpretation credit across the full range.",
+                "issues": ["Added explicit algebra check.", "Retained original structure."],
+                "confidence_0_to_100": 88,
+            },
+            unit,
+        )
+        self.assertEqual(normalized["confidence_0_to_100"], 88.0)
+        self.assertEqual(normalized["issues"][0], "Added explicit algebra check.")
+
+    @patch("marking_pipeline.core._call_ollama_json")
+    def test_verifies_assessment_rubrics(self, mock_call: Mock) -> None:
+        context = prepare_marking_context(
+            rubric_text="Part 1 (15 marks)\nDiscuss the policy.\nout of 15",
+            brief_text="",
+            marking_scheme_text="",
+            graded_sample_text="",
+            other_context_text="",
+        )
+        assessment_map = AssessmentMap(
+            units=(
+                AssessmentUnit(
+                    label="Part 1",
+                    max_mark=15.0,
+                    grading_mode="analytical",
+                    rubric_text="Use holistic judgement.",
+                ),
+            ),
+            overall_max_mark=15.0,
+            scale_confidence_0_to_100=95.0,
+        )
+        mock_call.return_value = {
+            "rubric_text": "Use UK classification bands with explicit distinctions between First, 2:1, 2:2, Third/Pass, Fail, and Missing.",
+            "issues": ["Added missing band language."],
+            "confidence_0_to_100": 91,
+        }
+
+        verified = verify_assessment_rubrics(assessment_map, context, verifier_model_name="gemma3:4b")
+        self.assertEqual(verified.units[0].rubric_confidence_0_to_100, 91.0)
+        self.assertEqual(verified.units[0].rubric_issues, ("Added missing band language.",))
+        self.assertIn("First, 2:1, 2:2", verified.units[0].rubric_text)
+        self.assertEqual(mock_call.call_count, 1)
+
+    @patch("marking_pipeline.core._call_ollama_json")
+    def test_rubric_verifier_fails_soft_and_keeps_original_rubric(self, mock_call: Mock) -> None:
+        context = prepare_marking_context(
+            rubric_text="Part 2 Q3 (7.5 marks)\nDerive the relevant conditions.\nout of 7.5",
+            brief_text="",
+            marking_scheme_text="",
+            graded_sample_text="",
+            other_context_text="",
+        )
+        assessment_map = AssessmentMap(
+            units=(
+                AssessmentUnit(
+                    label="Part 2 Q3",
+                    max_mark=7.5,
+                    grading_mode="deterministic",
+                    rubric_text="Original deterministic rubric text.",
+                ),
+            ),
+            overall_max_mark=7.5,
+            scale_confidence_0_to_100=95.0,
+        )
+        mock_call.side_effect = ValueError("No JSON object found in model response: {bad")
+
+        verified = verify_assessment_rubrics(assessment_map, context, verifier_model_name="qwen2:7b")
+        self.assertEqual(verified.units[0].rubric_text, "Original deterministic rubric text.")
+        self.assertEqual(verified.units[0].rubric_confidence_0_to_100, 0.0)
+        self.assertIn("rubric_verifier_failed:", verified.units[0].rubric_issues[0])
+        self.assertEqual(mock_call.call_count, 2)
 
     def test_refines_segmented_parts_to_subparts(self) -> None:
         context = prepare_marking_context(
@@ -645,14 +814,7 @@ class CallOllamaTests(unittest.TestCase):
             }
         }
         synthesis.raise_for_status.return_value = None
-        moderation = Mock()
-        moderation.json.return_value = {
-            "message": {
-                "content": '{"adjusted_sections": [{"section_label": "Question 1", "adjusted_provisional_score": 9, "adjusted_provisional_score_0_to_100": null, "rationale": "Keep as is."}, {"section_label": "Question 2", "adjusted_provisional_score": 10, "adjusted_provisional_score_0_to_100": null, "rationale": "Keep as is."}]}'
-            }
-        }
-        moderation.raise_for_status.return_value = None
-        mock_post.side_effect = [structure, part_one, part_two, moderation, synthesis]
+        mock_post.side_effect = [structure, part_one, part_two, synthesis]
 
         result = call_ollama("Question 1\nStudent answer text\nQuestion 2\nMore answer text", context, "student1.pdf", "llama3.1:8b")
 
