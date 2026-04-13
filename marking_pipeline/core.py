@@ -1,6 +1,7 @@
 import io
 import json
 import re
+import time
 import zipfile
 from dataclasses import dataclass, replace
 from pathlib import Path
@@ -642,6 +643,15 @@ def call_ollama_comparative_first(
     rubric_verifier_model_name: str | None = None,
     ollama_url: str = DEFAULT_OLLAMA_URL,
 ) -> dict[str, Any]:
+    total_started = time.perf_counter()
+    timings: dict[str, float] = {
+        "rubric_verify": 0.0,
+        "structure_detect": 0.0,
+        "part_refine": 0.0,
+        "part_analysis": 0.0,
+        "moderation": 0.0,
+        "finalize": 0.0,
+    }
     script_text = script_text.strip()
     if not script_text:
         raise ValueError(
@@ -651,20 +661,30 @@ def call_ollama_comparative_first(
 
     assessment_map = build_assessment_map(context)
     if rubric_verifier_model_name:
+        stage_started = time.perf_counter()
         assessment_map = verify_assessment_rubrics(
             assessment_map=assessment_map,
             context=context,
             verifier_model_name=rubric_verifier_model_name,
             ollama_url=ollama_url,
         )
+        timings["rubric_verify"] = round(time.perf_counter() - stage_started, 2)
+    stage_started = time.perf_counter()
     detected_parts = detect_submission_parts(script_text, filename, model_name, context=context, ollama_url=ollama_url)
+    timings["structure_detect"] = round(time.perf_counter() - stage_started, 2)
+    stage_started = time.perf_counter()
     parts = segment_submission_parts(script_text, detected_parts)
     parts = refine_submission_granularity(parts, context, filename, model_name, ollama_url=ollama_url)
     parts = apply_assessment_map_to_submission_parts(parts, assessment_map)
+    timings["part_refine"] = round(time.perf_counter() - stage_started, 2)
     diagnostics = build_submission_diagnostics(script_text, parts)
 
     part_analyses = []
+    stage_started = time.perf_counter()
     for part in parts:
+        if not part.section_text.strip():
+            part_analyses.append(build_missing_part_analysis(part))
+            continue
         part_analyses.append(
             _run_part_analysis_with_retry(
                 part=part,
@@ -674,8 +694,10 @@ def call_ollama_comparative_first(
                 ollama_url=ollama_url,
             )
         )
+    timings["part_analysis"] = round(time.perf_counter() - stage_started, 2)
 
     if len(part_analyses) > 1:
+        stage_started = time.perf_counter()
         part_analyses = moderate_linked_part_analyses(
             script_text=script_text,
             context=context,
@@ -686,17 +708,22 @@ def call_ollama_comparative_first(
             model_name=model_name,
             ollama_url=ollama_url,
         )
+        timings["moderation"] = round(time.perf_counter() - stage_started, 2)
 
     if part_analyses:
-        return build_local_final_result(
+        stage_started = time.perf_counter()
+        result = build_local_final_result(
             context=context,
             diagnostics=diagnostics,
             parts=parts,
             part_analyses=part_analyses,
         )
+        timings["finalize"] = round(time.perf_counter() - stage_started, 2)
+        return _attach_latency_metrics(result, timings, total_started, parts)
 
     synthesis_messages = build_synthesis_messages(script_text, parts, part_analyses, context, filename)
-    return _run_final_result_with_retry(
+    stage_started = time.perf_counter()
+    result = _run_final_result_with_retry(
         model_name=model_name,
         messages=synthesis_messages,
         expected_max_mark=context.max_mark,
@@ -705,6 +732,8 @@ def call_ollama_comparative_first(
         part_analyses=part_analyses,
         ollama_url=ollama_url,
     )
+    timings["finalize"] = round(time.perf_counter() - stage_started, 2)
+    return _attach_latency_metrics(result, timings, total_started, parts)
 
 
 def extract_message_content(response_json: dict[str, Any]) -> str:
@@ -779,31 +808,17 @@ def reconcile_detected_parts(detected_parts: list[SubmissionPart], context: Mark
         return detected_parts
 
     expected_by_key = {_normalize_label_key(part.label): part for part in expected_parts}
-    matched_detected = []
-    seen: set[str] = set()
-    for part in detected_parts:
-        key = _normalize_label_key(part.label)
-        if key not in expected_by_key or key in seen:
-            continue
-        matched_detected.append(part)
-        seen.add(key)
-
-    resolved = list(matched_detected)
-    for expected in expected_parts:
-        key = _normalize_label_key(expected.label)
-        if key in seen:
-            continue
-        resolved.append(expected)
-        seen.add(key)
+    detected_by_key = {
+        _normalize_label_key(part.label): part
+        for part in detected_parts
+        if _normalize_label_key(part.label) in expected_by_key
+    }
     enriched = []
-    for part in resolved:
-        expected = expected_by_key.get(_normalize_label_key(part.label))
-        if expected is None:
-            enriched.append(part)
-            continue
+    for expected in expected_parts:
+        part = detected_by_key.get(_normalize_label_key(expected.label), expected)
         enriched.append(
             SubmissionPart(
-                label=part.label,
+                label=expected.label,
                 focus_hint=part.focus_hint or expected.focus_hint,
                 anchor_text=part.anchor_text or expected.anchor_text,
                 section_text=part.section_text,
@@ -879,13 +894,16 @@ def refine_submission_granularity(
         if len(child_specs) < 2:
             refined.append(part)
             continue
+        if not part.section_text.strip():
+            refined.extend(_resolve_expected_child_parts(parent_part=part, child_parts=[] , child_specs=child_specs))
+            continue
         segmented_children = _segment_subparts_within_section(part, child_specs)
         if segmented_children is None:
             segmented_children = _detect_subparts_with_model(part, filename, child_specs, model_name, ollama_url)
-            if segmented_children is None:
-                refined.append(part)
-                continue
-        refined.extend(segmented_children)
+        if segmented_children is None:
+            refined.extend(_resolve_expected_child_parts(parent_part=part, child_parts=[], child_specs=child_specs))
+            continue
+        refined.extend(_resolve_expected_child_parts(parent_part=part, child_parts=segmented_children, child_specs=child_specs))
     return refined
 
 
@@ -1574,6 +1592,46 @@ def _run_part_analysis_with_retry(
     raise ValueError(f"Part analysis failed without a captured error for {part.label}.")
 
 
+def build_missing_part_analysis(part: SubmissionPart) -> dict[str, Any]:
+    guidance = part.marking_guidance
+    zero_score = 0.0
+    grade_band = _normalize_grade_band(
+        value="missing/unfinished",
+        score_pct=zero_score,
+        marking_guidance=guidance,
+    )
+    within_band_position = _normalize_within_band_position(
+        value="low",
+        score_pct=zero_score,
+        grade_band=grade_band,
+        marking_guidance=guidance,
+    )
+    max_mark_text = _format_number(part.max_mark) if part.max_mark is not None else "100"
+    return {
+        "section_label": part.label,
+        "provisional_score_0_to_100": None,
+        "provisional_score": zero_score,
+        "grade_band": grade_band,
+        "within_band_position": within_band_position,
+        "band_confidence_0_to_100": 95.0,
+        "strengths": [
+            "No creditable response was identified for this section.",
+            "The section remains available for explicit zero-credit accounting in the final arithmetic.",
+        ],
+        "weaknesses": [
+            "The expected section content was not found in the extracted submission text.",
+            f"No valid method, evidence, or answer was available to earn marks out of {max_mark_text}.",
+        ],
+        "evidence": [
+            "No section text was matched to this expected assessment unit.",
+        ],
+        "coverage_comment": (
+            "This expected assessment unit was not detected in the submission text. "
+            "It is therefore treated as missing for deterministic arithmetic and awarded zero."
+        ),
+    }
+
+
 def moderate_part_analyses_across_submission(
     script_text: str,
     context: MarkingContext,
@@ -1855,6 +1913,29 @@ def build_local_final_result(
     )
 
 
+def _attach_latency_metrics(
+    result: dict[str, Any],
+    timings: dict[str, float],
+    total_started: float,
+    parts: list[SubmissionPart],
+) -> dict[str, Any]:
+    total_seconds = round(time.perf_counter() - total_started, 2)
+    part_count = max(len(parts), 1)
+    result["latency_seconds_total"] = total_seconds
+    result["latency_seconds_rubric_verify"] = round(timings.get("rubric_verify", 0.0), 2)
+    result["latency_seconds_structure_detect"] = round(timings.get("structure_detect", 0.0), 2)
+    result["latency_seconds_part_refine"] = round(timings.get("part_refine", 0.0), 2)
+    result["latency_seconds_part_analysis"] = round(timings.get("part_analysis", 0.0), 2)
+    result["latency_seconds_moderation"] = round(timings.get("moderation", 0.0), 2)
+    result["latency_seconds_finalize"] = round(timings.get("finalize", 0.0), 2)
+    result["latency_seconds_part_analysis_per_part_avg"] = round(result["latency_seconds_part_analysis"] / part_count, 2)
+    validation_notes = list(result.get("validation_notes", []))
+    validation_notes.append(f"latency_total_seconds={total_seconds:.2f}")
+    validation_notes.append(f"latency_part_analysis_seconds={result['latency_seconds_part_analysis']:.2f}")
+    result["validation_notes"] = validation_notes
+    return result
+
+
 def compute_total_mark_from_part_scores(
     expected_max_mark: float,
     parts: list[SubmissionPart],
@@ -1864,7 +1945,6 @@ def compute_total_mark_from_part_scores(
         return None
 
     part_marks = []
-    part_max_marks = []
     for part, analysis in zip(parts, part_analyses):
         effective_part_max = float(part.max_mark) if part.max_mark is not None else None
         if len(parts) == 1 and effective_part_max is None:
@@ -1873,8 +1953,6 @@ def compute_total_mark_from_part_scores(
         score = analysis.get("provisional_score")
         if score is not None:
             part_marks.append(float(score))
-            if effective_part_max is not None:
-                part_max_marks.append(effective_part_max)
             continue
 
         score_100 = analysis.get("provisional_score_0_to_100")
@@ -1883,17 +1961,11 @@ def compute_total_mark_from_part_scores(
         if effective_part_max is None:
             return None
         part_marks.append((float(score_100) * effective_part_max) / 100.0)
-        part_max_marks.append(effective_part_max)
 
     if not part_marks:
         return None
 
     summed_total = sum(part_marks)
-    summed_max = sum(part_max_marks) if part_max_marks else expected_max_mark
-    if summed_max <= 0:
-        return None
-    if abs(summed_max - expected_max_mark) > 1e-9:
-        summed_total = (summed_total * expected_max_mark) / summed_max
     summed_total = round(summed_total, 2)
     return min(expected_max_mark, max(0.0, summed_total))
 
@@ -2682,6 +2754,29 @@ def _segment_subparts_within_section(parent_part: SubmissionPart, child_specs: l
             )
         )
     return segmented
+
+
+def _resolve_expected_child_parts(
+    parent_part: SubmissionPart,
+    child_parts: list[SubmissionPart],
+    child_specs: list[SubmissionPart],
+) -> list[SubmissionPart]:
+    child_by_key = {_normalize_label_key(child.label): child for child in child_parts}
+    resolved: list[SubmissionPart] = []
+    for expected in child_specs:
+        matched = child_by_key.get(_normalize_label_key(expected.label))
+        section_text = matched.section_text if matched is not None else parent_part.section_text
+        resolved.append(
+            SubmissionPart(
+                label=expected.label,
+                focus_hint=(matched.focus_hint if matched is not None else "") or expected.focus_hint,
+                anchor_text=(matched.anchor_text if matched is not None else "") or expected.anchor_text,
+                section_text=section_text,
+                max_mark=expected.max_mark,
+                marking_guidance=expected.marking_guidance,
+            )
+        )
+    return resolved
 
 
 def _find_subpart_anchor_position(section_text: str, child: SubmissionPart) -> int:

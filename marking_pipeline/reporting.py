@@ -54,6 +54,14 @@ def build_consistency_report(df: pd.DataFrame, selected_models: list[tuple[str, 
         ai_total_col = f"{label}_ai_total_mark"
         math_total_col = f"{label}_math_total_mark"
         delta_col = f"{label}_ai_math_mark_delta"
+        latency_total_col = f"{label}_latency_seconds_total"
+        latency_verify_col = f"{label}_latency_seconds_rubric_verify"
+        latency_structure_col = f"{label}_latency_seconds_structure_detect"
+        latency_refine_col = f"{label}_latency_seconds_part_refine"
+        latency_part_col = f"{label}_latency_seconds_part_analysis"
+        latency_part_avg_col = f"{label}_latency_seconds_part_analysis_per_part_avg"
+        latency_moderation_col = f"{label}_latency_seconds_moderation"
+        latency_finalize_col = f"{label}_latency_seconds_finalize"
 
         lines.extend([f"## {label}", ""])
         if status_col not in df.columns or mark_col not in df.columns:
@@ -85,6 +93,34 @@ def build_consistency_report(df: pd.DataFrame, selected_models: list[tuple[str, 
         if calibration_col in df.columns:
             calibration_count = int(pd.to_numeric(df[calibration_col], errors="coerce").fillna(0).ne(0).sum())
             lines.append(f"Calibrated marks changed: {calibration_count}")
+        if latency_total_col in df.columns:
+            latencies = pd.to_numeric(df[latency_total_col], errors="coerce").dropna()
+            if not latencies.empty:
+                lines.append(f"Latency median (s): {latencies.median():.2f}")
+                lines.append(f"Latency max (s): {latencies.max():.2f}")
+        if latency_part_avg_col in df.columns:
+            part_latencies = pd.to_numeric(df[latency_part_avg_col], errors="coerce").dropna()
+            if not part_latencies.empty:
+                lines.append(f"Part-analysis avg per part median (s): {part_latencies.median():.2f}")
+        stage_columns = [
+            ("Rubric verify", latency_verify_col),
+            ("Structure detect", latency_structure_col),
+            ("Part refine", latency_refine_col),
+            ("Part analysis", latency_part_col),
+            ("Moderation", latency_moderation_col),
+            ("Finalize", latency_finalize_col),
+        ]
+        available_stage_lines = []
+        for stage_label, stage_col in stage_columns:
+            if stage_col not in df.columns:
+                continue
+            stage_values = pd.to_numeric(df[stage_col], errors="coerce").dropna()
+            if stage_values.empty:
+                continue
+            available_stage_lines.append(f"- {stage_label}: median {stage_values.median():.2f}s, max {stage_values.max():.2f}s")
+        if available_stage_lines:
+            lines.extend(["", "### Latency Breakdown", ""])
+            lines.extend(available_stage_lines)
         if delta_col in df.columns:
             deltas = pd.to_numeric(df[delta_col], errors="coerce").dropna().abs()
             if not deltas.empty:

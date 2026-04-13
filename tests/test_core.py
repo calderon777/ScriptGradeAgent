@@ -6,6 +6,7 @@ import unittest
 from unittest.mock import Mock, patch
 
 from marking_pipeline.core import (
+    build_missing_part_analysis,
     _run_part_analysis_with_retry,
     AssessmentMap,
     AssessmentUnit,
@@ -169,6 +170,17 @@ class NormalizationTests(unittest.TestCase):
             ],
         )
         self.assertEqual(total, 40.0)
+
+    def test_does_not_rescale_total_when_part_maxima_do_not_cover_expected_total(self) -> None:
+        parts = [SubmissionPart(label="Part 1", max_mark=20.0)]
+        total = compute_total_mark_from_part_scores(
+            expected_max_mark=50.0,
+            parts=parts,
+            part_analyses=[
+                {"provisional_score": 16.0, "provisional_score_0_to_100": None},
+            ],
+        )
+        self.assertEqual(total, 16.0)
 
     def test_accepts_feedback_only_final_synthesis_when_math_total_is_available(self) -> None:
         parts = [
@@ -702,7 +714,7 @@ class SubmissionStructureTests(unittest.TestCase):
             {"sections": [{"label": "Part 1", "focus_hint": "First", "anchor_text": "Part 1"}, {"label": "Part 3", "focus_hint": "Third", "anchor_text": "Part 3"}]}
         )
         reconciled = reconcile_detected_parts(detected, context)
-        self.assertEqual([part.label for part in reconciled], ["Part 1", "Part 3", "Part 2", "Part 4"])
+        self.assertEqual([part.label for part in reconciled], ["Part 1", "Part 2", "Part 3", "Part 4"])
         self.assertEqual([part.label for part in extract_expected_parts_from_context(context)], ["Part 1", "Part 2", "Part 3", "Part 4"])
 
     def test_discards_placeholder_and_unexpected_parts_when_context_defines_structure(self) -> None:
@@ -723,7 +735,28 @@ class SubmissionStructureTests(unittest.TestCase):
             }
         )
         reconciled = reconcile_detected_parts(detected, context)
-        self.assertEqual([part.label for part in reconciled], ["Part 2", "Part 1", "Part 3", "Part 4"])
+        self.assertEqual([part.label for part in reconciled], ["Part 1", "Part 2", "Part 3", "Part 4"])
+
+    def test_refine_submission_granularity_expands_missing_parent_into_expected_subparts(self) -> None:
+        context = prepare_marking_context(
+            rubric_text="Part 3 (30 marks)\n1. [7.5 marks]\n2. [7.5 marks]\n3. [7.5 marks]\n4. [7.5 marks]\nout of 30",
+            brief_text="",
+            marking_scheme_text="",
+            graded_sample_text="",
+            other_context_text="",
+        )
+        parts = [SubmissionPart(label="Part 3", anchor_text="Part 3", section_text="", max_mark=30.0)]
+        refined = refine_submission_granularity(parts, context, "student.docx", "qwen2:7b")
+        self.assertEqual([part.label for part in refined], ["Part 3 Q1", "Part 3 Q2", "Part 3 Q3", "Part 3 Q4"])
+        self.assertTrue(all(part.section_text == "" for part in refined))
+
+    def test_builds_zero_credit_analysis_for_missing_expected_part(self) -> None:
+        part = SubmissionPart(label="Part 3 Q4", max_mark=7.5, marking_guidance="Deterministic derivation section.")
+        analysis = build_missing_part_analysis(part)
+        self.assertEqual(analysis["section_label"], "Part 3 Q4")
+        self.assertEqual(analysis["provisional_score"], 0.0)
+        self.assertIsNone(analysis["provisional_score_0_to_100"])
+        self.assertIn("zero", analysis["coverage_comment"].lower())
 
 
 class CalibrationTests(unittest.TestCase):
