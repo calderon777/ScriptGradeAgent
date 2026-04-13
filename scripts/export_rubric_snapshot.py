@@ -6,18 +6,11 @@ import pandas as pd
 
 from marking_pipeline import (
     DEFAULT_CONTEXT_PATTERNS,
-    apply_model_result,
-    apply_verifier_result,
-    build_consistency_report,
     build_document_based_marking_text,
     build_marking_context_with_optional_override,
-    build_results_bundle,
     build_rubric_matrix_markdown,
     build_single_assessment_bundle,
-    call_ollama,
     combine_text_sections,
-    maybe_run_regrade_loop,
-    read_path_text,
     read_paths_text,
     save_ingest_snapshot,
 )
@@ -32,22 +25,13 @@ class LocalUpload:
         return self.source_path.read_bytes()
 
 
-AVAILABLE_MODELS = {
-    "Qwen2 7B": ("qwen2:7b", "Qwen2_7B"),
-    "Gemma 3 4B": ("gemma3:4b", "Gemma3_4B"),
-}
-
-
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Save an ingest snapshot and run a warm-test batch.")
+    parser = argparse.ArgumentParser(description="Build and export the rubric matrix without running grading.")
     parser.add_argument("--assessment-root", required=True, help="Folder containing student subfolders for one assessment.")
     parser.add_argument("--marking-scheme", action="append", default=[], help="Marking document path. May be passed multiple times.")
     parser.add_argument("--max-mark", type=float, required=True, help="Configured overall maximum mark.")
-    parser.add_argument("--limit", type=int, default=5, help="Number of scripts to run.")
-    parser.add_argument("--grader", default="Qwen2 7B", choices=AVAILABLE_MODELS.keys())
-    parser.add_argument("--verifier", default="Gemma 3 4B", choices=AVAILABLE_MODELS.keys())
     parser.add_argument("--document-only", action="store_true", help="Use uploaded documents when there is no rubric.")
-    parser.add_argument("--output-dir", default="output", help="Output directory for workbook bundle.")
+    parser.add_argument("--output-dir", default="output", help="Output directory for rubric artifacts.")
     return parser.parse_args()
 
 
@@ -120,67 +104,106 @@ def main() -> None:
         manual_max_mark=float(args.max_mark),
     )
 
-    grader_model = AVAILABLE_MODELS[args.grader]
-    verifier_model = AVAILABLE_MODELS[args.verifier]
-
-    rows: list[dict[str, object]] = []
-    submission_paths = list(bundle.submission_files)[: args.limit]
-    if not submission_paths:
-        raise SystemExit("No submission files found in the assessment root.")
-
-    for index, submission_path in enumerate(submission_paths, start=1):
-        print(f"[{index}/{len(submission_paths)}] {submission_path.name}")
-        row: dict[str, object] = {
-            "assessment_name": bundle.name,
-            "filename": submission_path.name,
-            "source_path": str(submission_path),
-        }
-        try:
-            script_text = read_path_text(submission_path)
-        except Exception as exc:
-            apply_model_result(row, grader_model[1], error=exc)
-            apply_verifier_result(row, verifier_model[1], error=exc)
-            rows.append(row)
-            print(f"  read error: {exc}")
-            continue
-
-        try:
-            result = call_ollama(
-                script_text=script_text,
-                context=context,
-                filename=submission_path.name,
-                model_name=grader_model[0],
-                rubric_verifier_model_name=verifier_model[0],
-            )
-            apply_model_result(row, grader_model[1], result=result)
-            print(f"  grader: {result['total_mark']}/{result['max_mark']}")
-        except Exception as exc:
-            apply_model_result(row, grader_model[1], error=exc)
-            print(f"  grader error: {exc}")
-
-        maybe_run_regrade_loop(
-            row=row,
-            script_text=script_text,
-            context=context,
-            filename=submission_path.name,
-            grader_model=grader_model,
-            verifier_model=verifier_model,
-        )
-        rows.append(row)
-
-    df = pd.DataFrame(rows)
-    report_text = build_consistency_report(df, [grader_model], context.max_mark)
-    bundle_bytes, bundle_name = build_results_bundle(
-        df,
-        report_text,
-        rubric_text=build_rubric_matrix_markdown(context, assessment_name=bundle.name),
-    )
+    rubric_markdown = build_rubric_matrix_markdown(context, assessment_name=bundle.name)
 
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-    output_path = output_dir / bundle_name
-    output_path.write_bytes(bundle_bytes)
-    print(f"Saved results bundle to {output_path}")
+    md_path = output_dir / f"{bundle.name}_rubric_matrix.md"
+    xlsx_path = output_dir / f"{bundle.name}_rubric_matrix.xlsx"
+    md_path.write_text(rubric_markdown, encoding="utf-8")
+    build_rubric_workbook(rubric_markdown, xlsx_path)
+    print(f"Saved rubric markdown to {md_path}")
+    print(f"Saved rubric workbook to {xlsx_path}")
+
+
+def build_rubric_workbook(rubric_markdown: str, output_path: Path) -> None:
+    records = parse_rubric_matrix_markdown(rubric_markdown)
+    raw_df = pd.DataFrame({"rubric_markdown": rubric_markdown.splitlines()})
+    matrix_df = pd.DataFrame(records)
+    with pd.ExcelWriter(output_path, engine="openpyxl") as writer:
+        raw_df.to_excel(writer, sheet_name="raw_markdown", index=False)
+        if not matrix_df.empty:
+            matrix_df.to_excel(writer, sheet_name="rubric_matrix", index=False)
+
+
+def parse_rubric_matrix_markdown(text: str) -> list[dict[str, str]]:
+    records: list[dict[str, str]] = []
+    current_section = ""
+    current_unit = ""
+    max_mark = ""
+    mode = ""
+    classification_question = ""
+    ranking_rule = ""
+    criteria: list[str] = []
+    in_table = False
+
+    for line in text.splitlines():
+        stripped = line.strip()
+        if stripped.startswith("## "):
+            current_section = stripped[3:].strip()
+            current_unit = ""
+            criteria = []
+            in_table = False
+            continue
+        if stripped.startswith("### "):
+            current_unit = stripped[4:].strip()
+            max_mark = ""
+            mode = ""
+            classification_question = ""
+            ranking_rule = ""
+            criteria = []
+            in_table = False
+            continue
+        if stripped.startswith("- Max mark:"):
+            max_mark = stripped.split(":", 1)[1].strip()
+            continue
+        if stripped.startswith("- Mode:"):
+            mode = stripped.split(":", 1)[1].strip()
+            continue
+        if stripped.startswith("- Classification question:"):
+            classification_question = stripped.split(":", 1)[1].strip()
+            continue
+        if stripped.startswith("- Ranking rule:"):
+            ranking_rule = stripped.split(":", 1)[1].strip()
+            continue
+        if stripped == "#### Criteria Sentences":
+            in_table = False
+            continue
+        if (
+            stripped.startswith("- ")
+            and current_unit
+            and not stripped.startswith("- Max mark:")
+            and not stripped.startswith("- Mode:")
+            and not stripped.startswith("- Dependency group:")
+            and not stripped.startswith("- Core criterion:")
+            and not stripped.startswith("- Classification question:")
+            and not stripped.startswith("- Ranking rule:")
+        ):
+            criteria.append(stripped[2:].strip())
+            continue
+        if stripped.startswith("| Band | Descriptor | Within-band placement |"):
+            in_table = True
+            continue
+        if in_table and stripped.startswith("| ---"):
+            continue
+        if in_table and stripped.startswith("|"):
+            parts = [part.strip() for part in stripped.strip("|").split("|")]
+            if len(parts) >= 3:
+                records.append(
+                    {
+                        "section": current_section,
+                        "unit": current_unit,
+                        "max_mark": max_mark,
+                        "mode": mode,
+                        "classification_question": classification_question,
+                        "ranking_rule": ranking_rule,
+                        "criteria_sentences": "\n".join(criteria),
+                        "band": parts[0],
+                        "descriptor": parts[1],
+                        "within_band_placement": parts[2],
+                    }
+                )
+    return records
 
 
 def snapshot_marking_scheme_paths(snapshot_path: Path) -> list[str]:

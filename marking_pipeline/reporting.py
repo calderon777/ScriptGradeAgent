@@ -16,15 +16,18 @@ def build_results_workbook(df: pd.DataFrame) -> tuple[bytes, str]:
     return output.getvalue(), excel_filename
 
 
-def build_results_bundle(df: pd.DataFrame, report_text: str) -> tuple[bytes, str]:
+def build_results_bundle(df: pd.DataFrame, report_text: str, rubric_text: str = "") -> tuple[bytes, str]:
     workbook_bytes, excel_filename = build_results_workbook(df)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     report_filename = f"ScriptGradeAgent_consistency_report_{timestamp}.md"
+    rubric_filename = f"ScriptGradeAgent_rubric_{timestamp}.md"
     bundle_filename = f"ScriptGradeAgent_results_bundle_{timestamp}.zip"
     zip_output = io.BytesIO()
     with zipfile.ZipFile(zip_output, mode="w", compression=zipfile.ZIP_DEFLATED) as archive:
         archive.writestr(excel_filename, workbook_bytes)
         archive.writestr(report_filename, report_text)
+        if rubric_text.strip():
+            archive.writestr(rubric_filename, rubric_text)
     zip_output.seek(0)
     return zip_output.getvalue(), bundle_filename
 

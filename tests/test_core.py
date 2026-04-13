@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from shutil import rmtree
 from uuid import uuid4
@@ -5,10 +6,13 @@ import unittest
 from unittest.mock import Mock, patch
 
 from marking_pipeline.core import (
+    _run_part_analysis_with_retry,
     AssessmentMap,
     AssessmentUnit,
     build_marking_context_from_bundle,
     build_assessment_map,
+    build_part_messages,
+    build_rubric_matrix_markdown,
     build_rubric_verification_messages,
     build_single_assessment_bundle,
     build_submission_diagnostics,
@@ -188,6 +192,65 @@ class NormalizationTests(unittest.TestCase):
         self.assertEqual(result["total_mark"], 40.0)
         self.assertIsNone(result["ai_total_mark"])
         self.assertEqual(result["math_total_mark"], 40.0)
+
+    def test_accepts_structured_feedback_object_when_math_total_is_available(self) -> None:
+        parts = [
+            SubmissionPart(label="Part 1", max_mark=20.0),
+            SubmissionPart(label="Part 2", max_mark=30.0),
+        ]
+        result = normalize_marking_result(
+            {
+                "overall_feedback": {
+                    "length": 180,
+                    "content": [
+                        {
+                            "section_label": "Part 1",
+                            "analysis": (
+                                "The answer covers the main theoretical mechanism with some precision, "
+                                "explains the core logic clearly, and gives enough detail to support a "
+                                "reasoned judgement about quality and coverage. It also keeps the discussion "
+                                "close to the task, uses relevant terminology, and shows enough development "
+                                "to support a meaningful evaluation of both strengths and weaknesses."
+                            ),
+                            "feedback": (
+                                "This section is coherent but misses some finer detail, stronger justification, "
+                                "and closer engagement with a few of the more demanding elements of the task. "
+                                "A stronger answer would sustain the same clarity while tightening the link "
+                                "between the argument, the evidence, and the marking criteria."
+                            ),
+                        },
+                        {
+                            "section_label": "Part 2",
+                            "analysis": (
+                                "The empirical discussion is competent and mostly well supported, "
+                                "with a coherent explanation of evidence, limits, and interpretation "
+                                "that stays close to the assessment task and the student's argument. "
+                                "It offers enough substance to comment on method, interpretation, and "
+                                "the overall balance between confidence and caution in the conclusions."
+                            ),
+                            "feedback": (
+                                "The section would benefit from tighter identification analysis, clearer "
+                                "justification of assumptions, and more precise use of the underlying framework. "
+                                "The current version is sensible, but it still leaves room for sharper explanation, "
+                                "better prioritization of key points, and more disciplined use of evidence."
+                            ),
+                        },
+                    ],
+                },
+                "covered_parts": ["Part 1", "Part 2"],
+                "strengths": ["clear explanation", "good structure"],
+                "weaknesses": ["limited depth", "some missing precision"],
+            },
+            expected_max_mark=50.0,
+            parts=parts,
+            part_analyses=[
+                {"provisional_score": 16.0, "provisional_score_0_to_100": None},
+                {"provisional_score": 24.0, "provisional_score_0_to_100": None},
+            ],
+        )
+        self.assertEqual(result["total_mark"], 40.0)
+        self.assertIn("Part 1", result["overall_feedback"])
+        self.assertIn("Part 2", result["overall_feedback"])
 
     def test_rejects_feedback_only_final_synthesis_when_math_total_is_unavailable(self) -> None:
         with self.assertRaises(ValueError):
@@ -406,6 +469,48 @@ class SubmissionStructureTests(unittest.TestCase):
         self.assertEqual(unit_by_label["Part 4"].grading_mode, "analytical")
         self.assertEqual(unit_by_label["Part 3 Q4"].dependency_group, "part 3")
         self.assertIn("UK-style quality bands", unit_by_label["Part 4"].rubric_text)
+        self.assertIn("Task focus:", unit_by_label["Part 4"].rubric_text)
+
+    def test_rubric_generation_avoids_raw_task_prose_as_criterion(self) -> None:
+        context = prepare_marking_context(
+            rubric_text=(
+                "Part 1 (15 marks)\n"
+                "We start our analysis of the VAT on private schools with a broad overview of the costs and benefits of the policy using concepts we have learned in the course.\n"
+                "out of 15\n"
+            ),
+            brief_text="",
+            marking_scheme_text="",
+            graded_sample_text="",
+            other_context_text="",
+        )
+        assessment_map = build_assessment_map(context)
+        rubric_text = assessment_map.units[0].rubric_text
+        self.assertNotIn("We start our analysis", rubric_text)
+        self.assertIn("Evaluate whether the response directly addresses", rubric_text)
+
+    def test_builds_rubric_matrix_markdown(self) -> None:
+        context = prepare_marking_context(
+            rubric_text=(
+                "Part 1 (15 marks)\n"
+                "Discuss carefully, in your own words, whether the policy is a good idea.\n"
+                "Part 2 (5 marks)\n"
+                "Write down the regression equation.\n"
+                "out of 20\n"
+            ),
+            brief_text="",
+            marking_scheme_text="",
+            graded_sample_text="",
+            other_context_text="",
+        )
+        rubric_md = build_rubric_matrix_markdown(context, assessment_name="EC3040")
+        self.assertIn("# EC3040 Rubric Matrix", rubric_md)
+        self.assertIn("## Part 1", rubric_md)
+        self.assertIn("#### Criteria Sentences", rubric_md)
+        self.assertIn("Classification question:", rubric_md)
+        self.assertIn("Ranking rule:", rubric_md)
+        self.assertIn("| Band | Descriptor | Within-band placement |", rubric_md)
+        self.assertIn("First", rubric_md)
+        self.assertIn("Excellent", rubric_md)
 
     def test_builds_rubric_verification_messages(self) -> None:
         context = prepare_marking_context(
@@ -426,6 +531,29 @@ class SubmissionStructureTests(unittest.TestCase):
         self.assertIn('"rubric_text"', messages[0]["content"])
         self.assertIn("UK classification language", messages[1]["content"])
         self.assertIn("Part 4", messages[1]["content"])
+
+    def test_part_messages_use_local_support_not_full_context_dump(self) -> None:
+        context = prepare_marking_context(
+            rubric_text="Part 1 (15 marks)\nDiscuss whether the policy is a good idea.\nout of 15",
+            brief_text="Use the IFS report and lecture material.",
+            marking_scheme_text="Part 1 is worth 15 marks.",
+            graded_sample_text="This should not be copied into the part prompt.",
+            other_context_text="Additional support text.",
+        )
+        part = SubmissionPart(
+            label="Part 1",
+            focus_hint="Evaluate the policy.",
+            section_text="Student section text.",
+            max_mark=15.0,
+            marking_guidance="Evaluate whether the response directly addresses the required evaluative discussion.",
+        )
+        messages = build_part_messages(part, context, "student.docx")
+        user = messages[1]["content"]
+        self.assertIn("STRUCTURE AND MARKS HINTS:", user)
+        self.assertIn("LOCAL ASSIGNMENT BRIEF SUPPORT:", user)
+        self.assertIn("RELEVANT MARKING-SCHEME EXCERPT:", user)
+        self.assertNotIn("RUBRIC:\n", user)
+        self.assertNotIn("EXAMPLE GRADED SCRIPT", user)
 
     def test_normalizes_verified_rubric(self) -> None:
         unit = AssessmentUnit(label="Part 2 Q1", max_mark=5.0, grading_mode="deterministic")
@@ -472,6 +600,39 @@ class SubmissionStructureTests(unittest.TestCase):
         self.assertEqual(verified.units[0].rubric_issues, ("Added missing band language.",))
         self.assertIn("First, 2:1, 2:2", verified.units[0].rubric_text)
         self.assertEqual(mock_call.call_count, 1)
+
+    @patch("marking_pipeline.core._call_ollama_json")
+    def test_part_analysis_retries_when_lists_are_too_short(self, mock_call: Mock) -> None:
+        context = prepare_marking_context("Maximum mark: 20", "", "", "", "")
+        part = SubmissionPart(label="Question 1", section_text="Question 1\nStudent answer text", max_mark=20.0)
+        mock_call.side_effect = [
+            {
+                "section_label": "Question 1",
+                "provisional_score": 10,
+                "strengths": ["one"],
+                "weaknesses": ["weak one", "weak two"],
+                "evidence": ["line 1"],
+                "coverage_comment": "Covers the section.",
+            },
+            {
+                "section_label": "Question 1",
+                "provisional_score": 10,
+                "strengths": ["strong one", "strong two"],
+                "weaknesses": ["weak one", "weak two"],
+                "evidence": ["line 1"],
+                "coverage_comment": "Covers the section.",
+            },
+        ]
+
+        result = _run_part_analysis_with_retry(
+            part=part,
+            context=context,
+            filename="student1.pdf",
+            model_name="llama3.1:8b",
+            ollama_url="http://localhost:11434/api/chat",
+        )
+        self.assertEqual(result["provisional_score"], 10.0)
+        self.assertEqual(mock_call.call_count, 2)
 
     @patch("marking_pipeline.core._call_ollama_json")
     def test_rubric_verifier_fails_soft_and_keeps_original_rubric(self, mock_call: Mock) -> None:

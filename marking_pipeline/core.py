@@ -257,7 +257,7 @@ def build_part_messages(
     context: MarkingContext,
     filename: str,
 ) -> list[dict[str, str]]:
-    context_text = _build_context_text(context)
+    support_block = _build_part_support_text(context, part)
     max_mark_rule = ""
     score_key = '- "provisional_score": number\n'
     score_rule = ""
@@ -295,9 +295,9 @@ def build_part_messages(
     )
     user = (
         "You are assessing one section of a student's script.\n\n"
-        f"{context_text}\n\n"
         f"STUDENT FILE NAME: {filename}\n"
         f"SECTION LABEL: {part.label}\n\n"
+        f"{support_block}"
         f"{max_mark_rule}"
         f"{guidance_block}"
         f"SECTION FOCUS: {part.focus_hint or 'Assess the content that best matches this section label.'}\n\n"
@@ -306,6 +306,9 @@ def build_part_messages(
         "Return only one JSON object with exactly these keys:\n"
         '- "section_label": string\n'
         f"{score_key}"
+        '- "grade_band": string\n'
+        '- "within_band_position": string\n'
+        '- "band_confidence_0_to_100": number\n'
         '- "strengths": array of strings\n'
         '- "weaknesses": array of strings\n'
         '- "evidence": array of strings\n'
@@ -315,7 +318,8 @@ def build_part_messages(
         "2. strengths must contain at least 2 concrete items.\n"
         "3. weaknesses must contain at least 2 concrete items.\n"
         "4. evidence must contain concrete references to the section content.\n"
-        "5. Do not include markdown fences or any text outside the JSON object."
+        "5. coverage_comment must state the classification judgement for this section and why the mark sits where it does within the bracket.\n"
+        "6. Do not include markdown fences or any text outside the JSON object."
         f"{rubric_use_rule_text}"
     )
     return [{"role": "system", "content": system}, {"role": "user", "content": user}]
@@ -661,12 +665,15 @@ def call_ollama_comparative_first(
 
     part_analyses = []
     for part in parts:
-        analysis = _call_ollama_json(
-            model_name=model_name,
-            messages=build_part_messages(part, context, filename),
-            ollama_url=ollama_url,
+        part_analyses.append(
+            _run_part_analysis_with_retry(
+                part=part,
+                context=context,
+                filename=filename,
+                model_name=model_name,
+                ollama_url=ollama_url,
+            )
         )
-        part_analyses.append(normalize_part_analysis(analysis, expected_label=part.label))
 
     if len(part_analyses) > 1:
         part_analyses = moderate_linked_part_analyses(
@@ -678,6 +685,14 @@ def call_ollama_comparative_first(
             assessment_map=assessment_map,
             model_name=model_name,
             ollama_url=ollama_url,
+        )
+
+    if part_analyses:
+        return build_local_final_result(
+            context=context,
+            diagnostics=diagnostics,
+            parts=parts,
+            part_analyses=part_analyses,
         )
 
     synthesis_messages = build_synthesis_messages(script_text, parts, part_analyses, context, filename)
@@ -1091,6 +1106,33 @@ def build_assessment_map(context: MarkingContext) -> AssessmentMap:
     )
 
 
+def build_rubric_matrix_markdown(context: MarkingContext, assessment_name: str = "Assessment") -> str:
+    assessment_map = build_assessment_map(context)
+    lines = [
+        f"# {assessment_name} Rubric Matrix",
+        "",
+        f"Overall maximum mark: {_format_number(context.max_mark)}",
+        "",
+        "## Policy",
+        "",
+        "- This rubric is a classification matrix, not a transcript of the marking scheme.",
+        "- Classification happens at part or subpart level first; the final mark is deterministic arithmetic from those unit scores.",
+        "- Analytical units use UK-style bands. Deterministic units use evidence bands tied to correctness and method.",
+        "- Within-band placement must be justified by concrete evidence from the script, not by generic prose.",
+        "",
+    ]
+    grouped_units: dict[str, list[AssessmentUnit]] = {}
+    for unit in assessment_map.units:
+        grouped_units.setdefault(unit.parent_label or unit.label, []).append(unit)
+
+    for group_label, units in grouped_units.items():
+        lines.extend([f"## {group_label}", ""])
+        for unit in units:
+            lines.extend(_render_unit_rubric_matrix(unit))
+            lines.append("")
+    return "\n".join(lines).strip() + "\n"
+
+
 def build_rubric_verification_messages(unit: AssessmentUnit, context: MarkingContext) -> list[dict[str, str]]:
     max_mark_text = _format_number(unit.max_mark) if unit.max_mark is not None else _format_number(context.max_mark)
     structure_context = extract_structure_guidance(context)
@@ -1256,35 +1298,198 @@ def build_unit_rubric_text(
     grading_mode: str,
     marking_guidance: str,
 ) -> str:
+    unit = AssessmentUnit(
+        label=label,
+        max_mark=max_mark,
+        grading_mode=grading_mode,
+        marking_guidance=marking_guidance,
+    )
     if grading_mode == "analytical":
-        return build_analytical_rubric_text(label, max_mark, marking_guidance)
-    return build_deterministic_rubric_text(label, max_mark, marking_guidance)
+        return build_analytical_rubric_text(unit)
+    return build_deterministic_rubric_text(unit)
 
 
-def build_deterministic_rubric_text(label: str, max_mark: float | None, marking_guidance: str) -> str:
-    max_text = _format_number(max_mark) if max_mark is not None else "the available marks"
-    return (
-        f"{label}: award marks across the full 0 to {max_text} range.\n"
-        "Prioritize correctness, completeness, algebraic precision, method, and interpretation.\n"
-        "Give partial credit for valid setup, intermediate steps, or partly correct empirical specification.\n"
-        "Penalize missing steps, incorrect derivations, unsupported claims, and vague or incomplete answers.\n"
-        f"Marking guidance:\n{marking_guidance}".strip()
-    )
+def build_deterministic_rubric_text(unit: AssessmentUnit) -> str:
+    max_text = _format_number(unit.max_mark) if unit.max_mark is not None else "the available marks"
+    criteria = _extract_classification_criteria(unit)
+    return "\n".join(
+        [
+            f"Unit: {unit.label}",
+            f"Task focus: {_build_task_focus(unit)}.",
+            f"Available marks: 0 to {max_text}.",
+            "Use this rubric to classify and score the attempt:",
+            *[f"- {criterion}" for criterion in criteria],
+            "- Award explicit partial credit for correct setup, valid intermediate steps, and correct interpretation even when the final answer is incomplete.",
+            "- Place work lower when key steps are missing, algebra is wrong, the method is unjustified, or the interpretation does not follow from the working.",
+            "- Rank attempts within the same band by accuracy, completeness of working, and clarity of interpretation.",
+        ]
+    ).strip()
 
 
-def build_analytical_rubric_text(label: str, max_mark: float | None, marking_guidance: str) -> str:
-    max_text = _format_number(max_mark) if max_mark is not None else "the available marks"
-    return (
-        f"{label}: use holistic but evidenced judgement across 0 to {max_text}.\n"
-        "Use UK-style quality bands in wording: First, 2:1, 2:2, Third/Pass, Fail, Missing/unfinished.\n"
-        "Reserve top-band marks for precise, well-supported, and genuinely insightful answers.\n"
-        "Treat missing or unfinished attempts as 0 to 20 percent of the unit's range unless the script clearly earns more.\n"
-        "Use the full mark range when justified; do not compress marks into the middle without evidence.\n"
-        f"Marking guidance:\n{marking_guidance}".strip()
-    )
+def build_analytical_rubric_text(unit: AssessmentUnit) -> str:
+    max_text = _format_number(unit.max_mark) if unit.max_mark is not None else "the available marks"
+    criteria = _extract_classification_criteria(unit)
+    return "\n".join(
+        [
+            f"Unit: {unit.label}",
+            f"Task focus: {_build_task_focus(unit)}.",
+            f"Available marks: 0 to {max_text}.",
+            "Use UK-style quality bands: First, 2:1, 2:2, Third/Pass, Fail, Missing/unfinished.",
+            "Use this rubric to classify and score the response:",
+            *[f"- {criterion}" for criterion in criteria],
+            "- Place work higher when the response is more precise, better supported, more relevant to the task, and more analytically convincing.",
+            "- Place work lower when the response is vague, generic, descriptive, unsupported, or only partially relevant to the task.",
+            "- Use the top band only for genuinely strong, well-supported work; do not compress all adequate answers into the middle of the scale.",
+        ]
+    ).strip()
 
 
-def normalize_part_analysis(data: dict[str, Any], expected_label: str) -> dict[str, Any]:
+def _render_unit_rubric_matrix(unit: AssessmentUnit) -> list[str]:
+    max_text = _format_number(unit.max_mark) if unit.max_mark is not None else "variable"
+    guidance_summary = _summarize_guidance_for_matrix(unit.marking_guidance)
+    criteria_sentences = _extract_classification_criteria(unit)
+    lines = [
+        f"### {unit.label}",
+        "",
+        f"- Max mark: {max_text}",
+        f"- Mode: {unit.grading_mode}",
+        f"- Dependency group: {unit.dependency_group or 'independent'}",
+        f"- Core criterion: {guidance_summary}",
+        f"- Classification question: {_build_classification_question(unit)}",
+        f"- Ranking rule: {_build_ranking_rule(unit)}",
+        "",
+        "#### Criteria Sentences",
+        "",
+    ]
+    for sentence in criteria_sentences:
+        lines.append(f"- {sentence}")
+    lines.extend([
+        "",
+        "| Band | Descriptor | Within-band placement |",
+        "| --- | --- | --- |",
+    ])
+    for band, descriptor, anchor in _band_rows_for_unit(unit):
+        lines.append(f"| {band} | {descriptor} | {anchor} |")
+    return lines
+
+
+def _band_rows_for_unit(unit: AssessmentUnit) -> list[tuple[str, str, str]]:
+    criterion = _build_task_focus(unit)
+    if unit.grading_mode == "analytical":
+        return [
+            ("Missing/unfinished", f"Little or no usable response on {criterion}.", "Low: fragmentary or absent. Mid: partial attempt with minimal relevance. High: unfinished but shows some relevant substance."),
+            ("Fail", f"Material is relevant in places but weak, unsupported, or substantially underdeveloped on {criterion}.", "Low: largely unsupported. Mid: some relevant points. High: close to pass but still too thin or inaccurate."),
+            ("Third/Pass", f"Adequate response on {criterion} with basic relevance and limited development.", "Low: mostly descriptive. Mid: some explanation. High: coherent pass with clearer support."),
+            ("2:2", f"Reasonably competent response on {criterion} with some support, but uneven precision or depth.", "Low: competent but patchy. Mid: solid lower-second standard. High: close to 2:1 but still uneven."),
+            ("2:1", f"Strong response on {criterion} with clear support, relevant explanation, and useful appraisal.", "Low: strong core but some gaps. Mid: convincing upper-second standard. High: close to First with only limited weaknesses."),
+            ("First", f"Excellent response on {criterion} that is precise, well-supported, and insightfully appraised.", "Low: clear First. Mid: strong First. High: rare exceptional answer with sustained precision and insight."),
+        ]
+    return [
+        ("Missing", f"No usable attempt on {criterion}.", "Low: absent. Mid: fragmentary. High: minimal but relevant setup."),
+        ("Weak", f"Response on {criterion} contains major errors or lacks the core method.", "Low: incorrect or missing method. Mid: some relevant setup. High: close to adequate but still materially wrong."),
+        ("Adequate", f"Basic handling of {criterion} with some correct setup or partial method credit.", "Low: limited correct work. Mid: fair partial-credit answer. High: almost secure but with important gaps."),
+        ("Secure", f"Mostly correct work on {criterion} with reasonable method and interpretation.", "Low: secure but patchy. Mid: reliable and mostly complete. High: close to strong with only minor issues."),
+        ("Strong", f"Clear and largely correct handling of {criterion}, including accurate working and sensible interpretation where relevant.", "Low: strong but slightly uneven. Mid: consistently strong. High: nearly excellent."),
+        ("Excellent", f"Full and accurate handling of {criterion} with precise method, complete reasoning, and convincing interpretation.", "Low: fully correct. Mid: fully correct and precise. High: exceptional clarity and completeness."),
+    ]
+
+
+def _summarize_guidance_for_matrix(marking_guidance: str) -> str:
+    text = " ".join(marking_guidance.replace("\n", " ").split()).strip()
+    if not text:
+        return "Assess the unit against the stated task."
+    match = re.split(r"(?<=[.!?])\s+", text, maxsplit=1)
+    summary = match[0].strip()
+    return summary[:220].rstrip()
+
+
+def _extract_classification_criteria(unit: AssessmentUnit) -> list[str]:
+    if unit.grading_mode == "analytical":
+        return _build_analytical_criteria(unit)
+    return _build_deterministic_criteria(unit)
+
+
+def _default_classification_criteria(unit: AssessmentUnit) -> list[str]:
+    if unit.grading_mode == "analytical":
+        return [
+            "Judge the quality of the argument, not just the amount written.",
+            "Rank responses higher when they are more precise, better evidenced, and more analytically convincing.",
+            "Use lower placement when the answer is descriptive, underdeveloped, unsupported, or only partially relevant.",
+        ]
+    return [
+        "Judge the accuracy of the method, algebra, and final result.",
+        "Rank responses higher when they show more complete working, fewer errors, and stronger interpretation.",
+        "Use lower placement when important steps are missing or the reasoning is materially incorrect.",
+    ]
+
+
+def _build_analytical_criteria(unit: AssessmentUnit) -> list[str]:
+    text = unit.marking_guidance.lower()
+    focus = _build_task_focus(unit)
+    criteria = [
+        f"Evaluate whether the response directly addresses {focus}.",
+        "Evaluate whether the claims are accurate, relevant, and clearly explained rather than generic or impressionistic.",
+        "Evaluate whether the answer uses supporting evidence, references, or course concepts where the task requires them.",
+        "Evaluate whether the response shows appraisal, qualification, or correction rather than simple description.",
+    ]
+    if any(term in text for term in ("quote", "page", "slide", "reference", "evidence", "report")):
+        criteria[2] = "Evaluate whether the answer uses specific supporting evidence, references, page numbers, or cited material where required."
+    if any(term in text for term in ("rewrite", "own tone", "own words", "edit the output", "correct any mistakes")):
+        criteria.append("Evaluate whether the response corrects mistakes and rewrites the material clearly in the student's own justified form.")
+    return criteria[:5]
+
+
+def _build_deterministic_criteria(unit: AssessmentUnit) -> list[str]:
+    text = unit.marking_guidance.lower()
+    focus = _build_task_focus(unit)
+    criteria = [
+        f"Evaluate whether the attempt sets up and answers {focus} correctly.",
+        "Evaluate whether the working is complete enough to justify the result, not just whether a final answer is stated.",
+        "Evaluate whether the algebra, notation, equation choice, or derivation steps are accurate.",
+        "Evaluate whether any explanation or interpretation follows correctly from the method and result.",
+    ]
+    if any(term in text for term in ("measure", "variable", "data source", "regression", "equation")):
+        criteria.append("Evaluate whether variables, measurement choices, or formal specifications are clearly and correctly defined.")
+    return criteria[:5]
+
+
+def _build_classification_question(unit: AssessmentUnit) -> str:
+    if unit.grading_mode == "analytical":
+        return f"Which quality band best fits the student's response to {unit.label}, and where does it sit inside that band?"
+    return f"Which correctness band best fits the student's attempt on {unit.label}, and where does it sit inside that band?"
+
+
+def _build_ranking_rule(unit: AssessmentUnit) -> str:
+    if unit.grading_mode == "analytical":
+        return "Group scripts by quality band first, then rank them within the band by precision, support, relevance, and analytical depth."
+    return "Group attempts by correctness band first, then rank them within the band by method accuracy, completeness of working, and interpretation."
+
+
+def _build_task_focus(unit: AssessmentUnit) -> str:
+    text = unit.marking_guidance.lower()
+    if unit.grading_mode == "analytical":
+        if "summary" in text and ("cost" in text or "benefit" in text):
+            return "the required policy summary and evaluation of costs and benefits"
+        if any(term in text for term in ("comment", "evaluate", "discuss", "good idea")):
+            return "the required evaluative discussion"
+        if any(term in text for term in ("rewrite", "own tone", "own words")):
+            return "the required corrected and rewritten response"
+        return "the required analytical discussion"
+    if any(term in text for term in ("equation", "regression")):
+        return "the required equation or formal specification"
+    if any(term in text for term in ("derive", "condition")):
+        return "the required derivation and resulting conditions"
+    if any(term in text for term in ("measure", "variable", "data source")):
+        return "the required measurement or variable definition"
+    if any(term in text for term in ("prediction", "list")):
+        return "the requested predictions or listed implications"
+    if any(term in text for term in ("explain", "parameter", "intuition", "interpret")):
+        return "the required explanation and interpretation"
+    return "the required analytical step"
+
+
+def normalize_part_analysis(data: dict[str, Any], part: SubmissionPart) -> dict[str, Any]:
+    expected_label = part.label
     score = data.get("provisional_score")
     score_field = "provisional_score"
     if score is None:
@@ -1305,15 +1510,68 @@ def normalize_part_analysis(data: dict[str, Any], expected_label: str) -> dict[s
     if not isinstance(coverage_comment, str) or not coverage_comment.strip():
         raise ValueError(f"Model did not return a coverage_comment for {expected_label}: {data}")
 
+    if score_field == "provisional_score" and part.max_mark is not None and part.max_mark > 0:
+        score_pct = (normalized_score / float(part.max_mark)) * 100.0
+    else:
+        score_pct = normalized_score
+    grade_band = _normalize_grade_band(
+        value=data.get("grade_band"),
+        score_pct=score_pct,
+        marking_guidance=part.marking_guidance,
+    )
+    within_band_position = _normalize_within_band_position(
+        value=data.get("within_band_position"),
+        score_pct=score_pct,
+        grade_band=grade_band,
+        marking_guidance=part.marking_guidance,
+    )
+    band_confidence = data.get("band_confidence_0_to_100")
+    if isinstance(band_confidence, bool) or not isinstance(band_confidence, (int, float)):
+        band_confidence_value = _default_band_confidence(grade_band, marking_guidance=part.marking_guidance)
+    else:
+        band_confidence_value = round(float(band_confidence), 2)
+        if band_confidence_value < 0 or band_confidence_value > 100:
+            band_confidence_value = _default_band_confidence(grade_band, marking_guidance=part.marking_guidance)
+
     return {
         "section_label": expected_label,
         "provisional_score_0_to_100": round(normalized_score, 2) if score_field == "provisional_score_0_to_100" else None,
         "provisional_score": round(normalized_score, 2) if score_field == "provisional_score" else None,
+        "grade_band": grade_band,
+        "within_band_position": within_band_position,
+        "band_confidence_0_to_100": band_confidence_value,
         "strengths": strengths,
         "weaknesses": weaknesses,
         "evidence": evidence,
         "coverage_comment": coverage_comment.strip(),
     }
+
+
+def _run_part_analysis_with_retry(
+    part: SubmissionPart,
+    context: MarkingContext,
+    filename: str,
+    model_name: str,
+    ollama_url: str,
+) -> dict[str, Any]:
+    messages = build_part_messages(part, context, filename)
+    last_error: Exception | None = None
+    for attempt in range(2):
+        analysis = _call_ollama_json(
+            model_name=model_name,
+            messages=messages,
+            ollama_url=ollama_url,
+        )
+        try:
+            return normalize_part_analysis(analysis, part=part)
+        except ValueError as exc:
+            last_error = exc
+            if attempt == 1 or not _should_retry_part_analysis(exc):
+                raise
+            messages = _build_part_analysis_retry_messages(messages, part, exc)
+    if last_error is not None:
+        raise last_error
+    raise ValueError(f"Part analysis failed without a captured error for {part.label}.")
 
 
 def moderate_part_analyses_across_submission(
@@ -1460,7 +1718,7 @@ def normalize_marking_result(
     parts: list[SubmissionPart] | None = None,
     part_analyses: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
-    feedback = data.get("overall_feedback") or data.get("feedback")
+    feedback = _normalize_feedback_text(data.get("overall_feedback") or data.get("feedback"))
     if not isinstance(feedback, str) or not feedback.strip():
         raise ValueError(f"Model did not return feedback text: {data}")
 
@@ -1573,6 +1831,30 @@ def normalize_marking_result(
     }
 
 
+def build_local_final_result(
+    context: MarkingContext,
+    diagnostics: SubmissionDiagnostics,
+    parts: list[SubmissionPart],
+    part_analyses: list[dict[str, Any]],
+) -> dict[str, Any]:
+    feedback = _render_feedback_from_part_analyses(parts, part_analyses, context.max_mark)
+    strengths = _aggregate_part_bullets(part_analyses, field="strengths")
+    weaknesses = _aggregate_part_bullets(part_analyses, field="weaknesses")
+    data = {
+        "overall_feedback": feedback,
+        "covered_parts": [part.label for part in parts],
+        "strengths": strengths[: max(2, len(strengths))],
+        "weaknesses": weaknesses[: max(2, len(weaknesses))],
+    }
+    return normalize_marking_result(
+        data,
+        expected_max_mark=context.max_mark,
+        diagnostics=diagnostics,
+        parts=parts,
+        part_analyses=part_analyses,
+    )
+
+
 def compute_total_mark_from_part_scores(
     expected_max_mark: float,
     parts: list[SubmissionPart],
@@ -1614,6 +1896,56 @@ def compute_total_mark_from_part_scores(
         summed_total = (summed_total * expected_max_mark) / summed_max
     summed_total = round(summed_total, 2)
     return min(expected_max_mark, max(0.0, summed_total))
+
+
+def _aggregate_part_bullets(part_analyses: list[dict[str, Any]], field: str) -> list[str]:
+    items: list[str] = []
+    seen: set[str] = set()
+    for analysis in part_analyses:
+        for raw in analysis.get(field, []):
+            text = str(raw).strip()
+            key = text.lower()
+            if not text or key in seen:
+                continue
+            seen.add(key)
+            items.append(text)
+            if len(items) >= 6:
+                return items
+    return items
+
+
+def _render_feedback_from_part_analyses(
+    parts: list[SubmissionPart],
+    part_analyses: list[dict[str, Any]],
+    expected_max_mark: float,
+) -> str:
+    total = compute_total_mark_from_part_scores(expected_max_mark, parts, part_analyses)
+    total_text = _format_number(total if total is not None else expected_max_mark)
+    intro = (
+        f"This script is classified from part-level evidence rather than a separate final-language pass. "
+        f"The deterministic overall mark is {total_text} out of {_format_number(expected_max_mark)}, computed as the sum of the part scores."
+    )
+    section_lines: list[str] = []
+    for part, analysis in zip(parts, part_analyses):
+        section_score = analysis.get("provisional_score")
+        if section_score is None and analysis.get("provisional_score_0_to_100") is not None and part.max_mark is not None:
+            section_score = round((float(analysis["provisional_score_0_to_100"]) * float(part.max_mark)) / 100.0, 2)
+        score_text = _format_number(float(section_score)) if section_score is not None else "unscored"
+        max_text = _format_number(float(part.max_mark)) if part.max_mark is not None else "100"
+        band = str(analysis.get("grade_band", "classified")).strip()
+        position = str(analysis.get("within_band_position", "mid")).strip()
+        coverage = str(analysis.get("coverage_comment", "")).strip()
+        top_strength = ", ".join(str(item).strip() for item in analysis.get("strengths", [])[:2] if str(item).strip())
+        top_weakness = ", ".join(str(item).strip() for item in analysis.get("weaknesses", [])[:2] if str(item).strip())
+        section_lines.append(
+            f"{part.label} scored {score_text}/{max_text} and was placed in the {band} band at the {position} end of that bracket. "
+            f"{coverage} Stronger features here include {top_strength or 'clear relevant material'}, while the mark is held back by {top_weakness or 'remaining weaknesses in precision and support'}."
+        )
+    outro = (
+        "The feedback therefore follows the classified rubric language for each part, rather than trying to invent a fresh overall judgement. "
+        "Where a section sits inside its bracket depends on the evidence quality, completeness, precision, and support actually visible in that section."
+    )
+    return " ".join([intro, *section_lines, outro]).strip()
 
 
 def calibrate_marks_across_students(
@@ -1950,6 +2282,13 @@ def _format_number(value: float) -> str:
     return str(cleaned)
 
 
+def _trim_support_text(text: str, max_chars: int = 1200) -> str:
+    normalized = " ".join(text.split()).strip()
+    if len(normalized) <= max_chars:
+        return normalized
+    return normalized[: max_chars - 3].rstrip() + "..."
+
+
 def _build_context_text(context: MarkingContext) -> str:
     context_parts = []
     if context.rubric_text:
@@ -1966,6 +2305,22 @@ def _build_context_text(context: MarkingContext) -> str:
     if context.other_context_text:
         context_parts.append(f"OTHER SUPPORTING DOCUMENTS:\n{context.other_context_text}")
     return "\n\n".join(context_parts).strip()
+
+
+def _build_part_support_text(context: MarkingContext, part: SubmissionPart) -> str:
+    support_parts: list[str] = []
+    structure_guidance = extract_structure_guidance(context)
+    if structure_guidance:
+        support_parts.append(f"STRUCTURE AND MARKS HINTS:\n{structure_guidance}")
+    if context.brief_text.strip():
+        support_parts.append(f"LOCAL ASSIGNMENT BRIEF SUPPORT:\n{_trim_support_text(context.brief_text)}")
+    if context.marking_scheme_text.strip():
+        support_parts.append(f"LOCAL MARKING SCHEME SUPPORT:\n{_trim_support_text(context.marking_scheme_text)}")
+    if context.other_context_text.strip():
+        support_parts.append(f"LOCAL OTHER SUPPORT:\n{_trim_support_text(context.other_context_text)}")
+    if not support_parts and part.marking_guidance.strip():
+        support_parts.append("Use only the section rubric and the section text.")
+    return ("\n\n".join(support_parts) + "\n\n") if support_parts else ""
 
 
 def _call_ollama_json(
@@ -2031,6 +2386,128 @@ def _should_retry_final_result(exc: ValueError) -> bool:
     return any(pattern in message for pattern in retryable_patterns)
 
 
+def _should_retry_part_analysis(exc: ValueError) -> bool:
+    message = str(exc)
+    retryable_patterns = (
+        "too few items for strengths",
+        "too few items for weaknesses",
+        "too few items for evidence",
+        "did not return a coverage_comment",
+    )
+    return any(pattern in message for pattern in retryable_patterns)
+
+
+def _normalize_grade_band(value: Any, score_pct: float, marking_guidance: str) -> str:
+    text = str(value).strip().lower()
+    analytical = any(band in marking_guidance.lower() for band in ("first", "2:1", "2:2", "third/pass", "missing/unfinished", "fail"))
+    if analytical:
+        mapping = {
+            "first": "First",
+            "1st": "First",
+            "2:1": "2:1",
+            "upper second": "2:1",
+            "2:2": "2:2",
+            "lower second": "2:2",
+            "third": "Third/Pass",
+            "pass": "Third/Pass",
+            "third/pass": "Third/Pass",
+            "fail": "Fail",
+            "missing": "Missing/unfinished",
+            "missing/unfinished": "Missing/unfinished",
+            "unfinished": "Missing/unfinished",
+        }
+        if text in mapping:
+            return mapping[text]
+        if score_pct >= 70:
+            return "First"
+        if score_pct >= 60:
+            return "2:1"
+        if score_pct >= 50:
+            return "2:2"
+        if score_pct >= 40:
+            return "Third/Pass"
+        if score_pct <= 20:
+            return "Missing/unfinished"
+        return "Fail"
+
+    mapping = {
+        "excellent": "Excellent",
+        "strong": "Strong",
+        "secure": "Secure",
+        "adequate": "Adequate",
+        "developing": "Developing",
+        "weak": "Weak",
+        "missing": "Missing",
+    }
+    if text in mapping:
+        return mapping[text]
+    if score_pct >= 85:
+        return "Excellent"
+    if score_pct >= 70:
+        return "Strong"
+    if score_pct >= 55:
+        return "Secure"
+    if score_pct >= 40:
+        return "Adequate"
+    if score_pct >= 25:
+        return "Developing"
+    if score_pct > 0:
+        return "Weak"
+    return "Missing"
+
+
+def _normalize_within_band_position(value: Any, score_pct: float, grade_band: str, marking_guidance: str) -> str:
+    text = str(value).strip().lower()
+    if text in {"low", "mid", "high"}:
+        return text
+    analytical = any(band in marking_guidance.lower() for band in ("first", "2:1", "2:2", "third/pass", "missing/unfinished", "fail"))
+    if analytical:
+        if grade_band == "First":
+            return _position_from_bounds(score_pct, 70.0, 100.0)
+        if grade_band == "2:1":
+            return _position_from_bounds(score_pct, 60.0, 69.99)
+        if grade_band == "2:2":
+            return _position_from_bounds(score_pct, 50.0, 59.99)
+        if grade_band == "Third/Pass":
+            return _position_from_bounds(score_pct, 40.0, 49.99)
+        if grade_band == "Fail":
+            return _position_from_bounds(score_pct, 20.01, 39.99)
+        return _position_from_bounds(score_pct, 0.0, 20.0)
+    if grade_band == "Excellent":
+        return _position_from_bounds(score_pct, 85.0, 100.0)
+    if grade_band == "Strong":
+        return _position_from_bounds(score_pct, 70.0, 84.99)
+    if grade_band == "Secure":
+        return _position_from_bounds(score_pct, 55.0, 69.99)
+    if grade_band == "Adequate":
+        return _position_from_bounds(score_pct, 40.0, 54.99)
+    if grade_band == "Developing":
+        return _position_from_bounds(score_pct, 25.0, 39.99)
+    if grade_band == "Weak":
+        return _position_from_bounds(score_pct, 0.01, 24.99)
+    return "low"
+
+
+def _position_from_bounds(score_pct: float, lower: float, upper: float) -> str:
+    if upper <= lower:
+        return "mid"
+    width = upper - lower
+    if score_pct < lower + (width / 3):
+        return "low"
+    if score_pct > upper - (width / 3):
+        return "high"
+    return "mid"
+
+
+def _default_band_confidence(grade_band: str, marking_guidance: str) -> float:
+    analytical = any(band in marking_guidance.lower() for band in ("first", "2:1", "2:2", "third/pass", "missing/unfinished", "fail"))
+    if analytical and grade_band in {"Fail", "Missing/unfinished"}:
+        return 78.0
+    if analytical:
+        return 72.0
+    return 75.0
+
+
 def _build_rubric_verification_retry_messages(
     messages: list[dict[str, str]],
     unit: AssessmentUnit,
@@ -2065,6 +2542,40 @@ def _build_final_result_retry_messages(messages: list[dict[str, str]], exc: Valu
             "Retry now and satisfy the validation rule. Return only the required JSON object."
         )
     return [*messages, {"role": "user", "content": retry_note}]
+
+
+def _build_part_analysis_retry_messages(
+    messages: list[dict[str, str]],
+    part: SubmissionPart,
+    exc: ValueError,
+) -> list[dict[str, str]]:
+    retry_note = (
+        f"Previous attempt for {part.label} failed validation: {exc}. "
+        "Retry now and return at least 2 concrete strengths, at least 2 concrete weaknesses, at least 1 concrete evidence item, "
+        "and a non-empty coverage_comment. Return only the required JSON object."
+    )
+    return [*messages, {"role": "user", "content": retry_note}]
+
+
+def _normalize_feedback_text(value: Any) -> str:
+    if isinstance(value, str):
+        return value.strip()
+    if not isinstance(value, dict):
+        return ""
+    content = value.get("content")
+    if not isinstance(content, list):
+        return ""
+    lines: list[str] = []
+    for item in content:
+        if not isinstance(item, dict):
+            continue
+        label = str(item.get("section_label", "")).strip()
+        analysis = str(item.get("analysis", "")).strip()
+        feedback = str(item.get("feedback", "")).strip()
+        parts = [piece for piece in (label, analysis, feedback) if piece]
+        if parts:
+            lines.append(": ".join(parts[:1]) + (f" - {' '.join(parts[1:])}" if len(parts) > 1 else ""))
+    return " ".join(lines).strip()
 
 
 def _normalize_string_list(value: Any, field_name: str, label: str, minimum: int) -> list[str]:

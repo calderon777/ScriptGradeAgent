@@ -14,6 +14,7 @@ from marking_pipeline import (
     build_document_based_marking_text,
     build_marking_context_with_optional_override,
     build_results_bundle,
+    build_rubric_matrix_markdown,
     build_verifier_report,
     call_ollama,
     combine_text_sections,
@@ -58,10 +59,17 @@ def render_consistency_report(report_text: str) -> None:
     st.code(report_text, language="markdown")
 
 
-def render_results_bundle_download(df: pd.DataFrame, report_text: str) -> None:
-    bundle_bytes, bundle_filename = build_results_bundle(df, report_text)
+def render_rubric_matrix(rubric_text: str) -> None:
+    if not rubric_text.strip():
+        return
+    st.subheader("Rubric Matrix")
+    st.code(rubric_text, language="markdown")
+
+
+def render_results_bundle_download(df: pd.DataFrame, report_text: str, rubric_text: str = "") -> None:
+    bundle_bytes, bundle_filename = build_results_bundle(df, report_text, rubric_text=rubric_text)
     st.download_button(
-        label="Download marksheet and consistency report",
+        label="Download marksheet, consistency report, and rubric",
         data=bundle_bytes,
         file_name=bundle_filename,
         mime="application/zip",
@@ -88,6 +96,16 @@ def build_bundle_summary_rows(bundles: list[AssessmentBundle]) -> list[dict[str,
 def parse_keyword_setting(value: str, default_key: str) -> tuple[str, ...]:
     parsed = parse_keyword_patterns(value)
     return parsed or DEFAULT_CONTEXT_PATTERNS[default_key]
+
+
+def build_exported_rubric_text(contexts_by_assessment: dict[str, MarkingContext]) -> str:
+    sections: list[str] = []
+    for assessment_name, context in contexts_by_assessment.items():
+        rubric_text = build_rubric_matrix_markdown(context, assessment_name=assessment_name).strip()
+        if not rubric_text:
+            continue
+        sections.append(rubric_text)
+    return "\n\n".join(sections).strip()
 
 
 def choose_directory(initial_dir: str = "") -> str:
@@ -521,6 +539,7 @@ def main() -> None:
         rows: list[dict[str, object]] = []
         progress = st.progress(0)
         status = st.empty()
+        exported_rubric_text = ""
 
         if run_use_assessment_folders:
             if not run_assessment_bundles:
@@ -632,6 +651,7 @@ def main() -> None:
                     ).strip()
                 )
             consistency_report = "\n\n".join(report_sections) + "\n"
+            exported_rubric_text = build_exported_rubric_text(contexts_by_assessment)
         elif run_csv_file is not None:
             try:
                 effective_rubric_text = run_rubric_text
@@ -712,6 +732,7 @@ def main() -> None:
                 df = df_marks
             df = apply_cross_student_calibration(df, selected_models, {"All Submissions": marking_context})
             consistency_report = build_consistency_report(df, selected_models, marking_context.max_mark)
+            exported_rubric_text = marking_context.rubric_text
         else:
             if not run_script_files:
                 st.error("Upload at least one script or a CSV file.")
@@ -774,6 +795,7 @@ def main() -> None:
             df = pd.DataFrame(rows)
             df = apply_cross_student_calibration(df, selected_models, {"All Submissions": marking_context})
             consistency_report = build_consistency_report(df, selected_models, marking_context.max_mark)
+            exported_rubric_text = marking_context.rubric_text
 
         if df.empty:
             st.warning("No results to show.")
@@ -795,8 +817,9 @@ def main() -> None:
         sidebar_status.success("Completed")
         st.subheader("Results")
         st.dataframe(df, use_container_width=True)
-        render_results_bundle_download(df, consistency_report)
+        render_results_bundle_download(df, consistency_report, rubric_text=exported_rubric_text)
         render_consistency_report(consistency_report)
+        render_rubric_matrix(exported_rubric_text)
 
 
 if __name__ == "__main__":
