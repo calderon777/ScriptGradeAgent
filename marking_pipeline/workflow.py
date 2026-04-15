@@ -136,6 +136,7 @@ def apply_model_result(row: dict[str, object], label: str, result: dict[str, obj
         row[f"{label}_math_total_mark"] = None
         row[f"{label}_ai_math_mark_delta"] = None
         row[f"{label}_latency_seconds_total"] = None
+        row[f"{label}_latency_seconds_assessment_prepare"] = None
         row[f"{label}_latency_seconds_rubric_verify"] = None
         row[f"{label}_latency_seconds_structure_detect"] = None
         row[f"{label}_latency_seconds_part_refine"] = None
@@ -159,6 +160,7 @@ def apply_model_result(row: dict[str, object], label: str, result: dict[str, obj
     row[f"{label}_math_total_mark"] = result.get("math_total_mark")
     row[f"{label}_ai_math_mark_delta"] = result.get("ai_math_mark_delta")
     row[f"{label}_latency_seconds_total"] = result.get("latency_seconds_total")
+    row[f"{label}_latency_seconds_assessment_prepare"] = result.get("latency_seconds_assessment_prepare")
     row[f"{label}_latency_seconds_rubric_verify"] = result.get("latency_seconds_rubric_verify")
     row[f"{label}_latency_seconds_structure_detect"] = result.get("latency_seconds_structure_detect")
     row[f"{label}_latency_seconds_part_refine"] = result.get("latency_seconds_part_refine")

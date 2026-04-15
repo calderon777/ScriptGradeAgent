@@ -55,6 +55,7 @@ def build_consistency_report(df: pd.DataFrame, selected_models: list[tuple[str, 
         math_total_col = f"{label}_math_total_mark"
         delta_col = f"{label}_ai_math_mark_delta"
         latency_total_col = f"{label}_latency_seconds_total"
+        latency_prepare_col = f"{label}_latency_seconds_assessment_prepare"
         latency_verify_col = f"{label}_latency_seconds_rubric_verify"
         latency_structure_col = f"{label}_latency_seconds_structure_detect"
         latency_refine_col = f"{label}_latency_seconds_part_refine"
@@ -103,7 +104,7 @@ def build_consistency_report(df: pd.DataFrame, selected_models: list[tuple[str, 
             if not part_latencies.empty:
                 lines.append(f"Part-analysis avg per part median (s): {part_latencies.median():.2f}")
         stage_columns = [
-            ("Rubric verify", latency_verify_col),
+            ("Assessment prepare", latency_prepare_col if latency_prepare_col in df.columns else latency_verify_col),
             ("Structure detect", latency_structure_col),
             ("Part refine", latency_refine_col),
             ("Part analysis", latency_part_col),

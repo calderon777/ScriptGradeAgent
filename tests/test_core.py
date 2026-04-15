@@ -9,19 +9,26 @@ from marking_pipeline.core import (
     build_missing_part_analysis,
     _run_part_analysis_with_retry,
     AssessmentMap,
+    PreparedAssessmentMap,
     AssessmentUnit,
+    build_submission_texts_from_upload,
     build_marking_context_from_bundle,
     build_assessment_map,
+    build_assessment_map_cache_key,
     build_part_messages,
+    cleanup_pymupdf4llm_text,
+    _docx_heading_marker,
     build_rubric_matrix_markdown,
     build_rubric_verification_messages,
     build_single_assessment_bundle,
     build_submission_diagnostics,
+    clear_prepared_assessment_map_cache,
     extract_expected_parts_from_context,
     extract_expected_subparts_from_context,
     extract_structure_guidance,
     calibrate_marks_across_students,
     call_ollama,
+    choose_docx_scoring_text,
     compute_total_mark_from_part_scores,
     discover_assessment_bundles,
     infer_max_mark_from_texts,
@@ -32,6 +39,7 @@ from marking_pipeline.core import (
     normalize_moderated_part_scores,
     normalize_verification_result,
     parse_json_object,
+    prepare_assessment_map,
     prepare_marking_context,
     reconcile_detected_parts,
     regrade_marking_result,
@@ -544,7 +552,24 @@ class SubmissionStructureTests(unittest.TestCase):
         self.assertIn("UK classification language", messages[1]["content"])
         self.assertIn("Part 4", messages[1]["content"])
 
-    def test_part_messages_use_local_support_not_full_context_dump(self) -> None:
+    def test_cleanup_pymupdf4llm_text_removes_placeholders_and_page_noise(self) -> None:
+        raw = (
+            "## Part 2\n"
+            "2\n"
+            "**Question 1**\n"
+            "==> picture [120 x 30] intentionally omitted <==\n"
+            "| a | b |\n"
+            "<br>U = x + y\n"
+        )
+        cleaned = cleanup_pymupdf4llm_text(raw)
+        self.assertIn("Part 2", cleaned)
+        self.assertIn("Question 1", cleaned)
+        self.assertIn("a b", cleaned)
+        self.assertIn("U = x + y", cleaned)
+        self.assertNotIn("picture [120 x 30]", cleaned)
+        self.assertNotIn("\n2\n", f"\n{cleaned}\n")
+
+    def test_part_messages_use_compact_section_payload(self) -> None:
         context = prepare_marking_context(
             rubric_text="Part 1 (15 marks)\nDiscuss whether the policy is a good idea.\nout of 15",
             brief_text="Use the IFS report and lecture material.",
@@ -561,9 +586,13 @@ class SubmissionStructureTests(unittest.TestCase):
         )
         messages = build_part_messages(part, context, "student.docx")
         user = messages[1]["content"]
-        self.assertIn("STRUCTURE AND MARKS HINTS:", user)
-        self.assertIn("LOCAL ASSIGNMENT BRIEF SUPPORT:", user)
-        self.assertIn("RELEVANT MARKING-SCHEME EXCERPT:", user)
+        self.assertIn("SECTION TASK: Evaluate the policy.", user)
+        self.assertIn("SCORING CRITERIA:", user)
+        self.assertIn("Evaluate whether the response directly addresses the required evaluative discussion.", user)
+        self.assertIn("Use the full score range from 0 to 15.", user)
+        self.assertNotIn("STRUCTURE AND MARKS HINTS:", user)
+        self.assertNotIn("LOCAL ASSIGNMENT BRIEF SUPPORT:", user)
+        self.assertNotIn("RELEVANT MARKING-SCHEME EXCERPT:", user)
         self.assertNotIn("RUBRIC:\n", user)
         self.assertNotIn("EXAMPLE GRADED SCRIPT", user)
 
@@ -674,6 +703,202 @@ class SubmissionStructureTests(unittest.TestCase):
         self.assertEqual(verified.units[0].rubric_confidence_0_to_100, 0.0)
         self.assertIn("rubric_verifier_failed:", verified.units[0].rubric_issues[0])
         self.assertEqual(mock_call.call_count, 2)
+
+    def test_build_assessment_map_cache_key_ignores_script_text(self) -> None:
+        context = prepare_marking_context(
+            rubric_text="Part 1 (15 marks)\nDiscuss the policy.\nout of 15",
+            brief_text="Brief A",
+            marking_scheme_text="",
+            graded_sample_text="",
+            other_context_text="",
+        )
+        key_one = build_assessment_map_cache_key(context, verifier_model_name="gemma3:4b")
+        key_two = build_assessment_map_cache_key(context, verifier_model_name="gemma3:4b")
+        self.assertEqual(key_one, key_two)
+
+    def test_prepare_assessment_map_cache_hits_for_same_assessment(self) -> None:
+        clear_prepared_assessment_map_cache()
+        self.addCleanup(clear_prepared_assessment_map_cache)
+        context = prepare_marking_context(
+            rubric_text="Part 1 (15 marks)\nDiscuss the policy.\nout of 15",
+            brief_text="",
+            marking_scheme_text="",
+            graded_sample_text="",
+            other_context_text="",
+        )
+
+        with patch("marking_pipeline.core.build_assessment_map") as mock_build:
+            mock_build.return_value = AssessmentMap(
+                units=(AssessmentUnit(label="Part 1", max_mark=15.0, grading_mode="analytical"),),
+                overall_max_mark=15.0,
+                scale_confidence_0_to_100=95.0,
+            )
+            first = prepare_assessment_map(context)
+            second = prepare_assessment_map(context)
+
+        self.assertIs(first, second)
+        self.assertEqual(mock_build.call_count, 1)
+
+    def test_prepare_assessment_map_invalidates_when_documents_change(self) -> None:
+        clear_prepared_assessment_map_cache()
+        self.addCleanup(clear_prepared_assessment_map_cache)
+        context_one = prepare_marking_context(
+            rubric_text="Part 1 (15 marks)\nDiscuss the policy.\nout of 15",
+            brief_text="",
+            marking_scheme_text="",
+            graded_sample_text="",
+            other_context_text="",
+        )
+        context_two = prepare_marking_context(
+            rubric_text="Part 1 (15 marks)\nDiscuss the policy in more depth.\nout of 15",
+            brief_text="",
+            marking_scheme_text="",
+            graded_sample_text="",
+            other_context_text="",
+        )
+
+        first = prepare_assessment_map(context_one)
+        second = prepare_assessment_map(context_two)
+
+        self.assertNotEqual(first.cache_key, second.cache_key)
+
+    @patch("marking_pipeline.core.verify_assessment_rubrics")
+    def test_prepare_assessment_map_verifies_once_per_assessment(self, mock_verify: Mock) -> None:
+        clear_prepared_assessment_map_cache()
+        self.addCleanup(clear_prepared_assessment_map_cache)
+        context = prepare_marking_context(
+            rubric_text="Part 1 (15 marks)\nDiscuss the policy.\nout of 15",
+            brief_text="",
+            marking_scheme_text="",
+            graded_sample_text="",
+            other_context_text="",
+        )
+        built = build_assessment_map(context)
+        mock_verify.return_value = built
+
+        prepare_assessment_map(context, verifier_model_name="gemma3:4b")
+        prepare_assessment_map(context, verifier_model_name="gemma3:4b")
+
+        self.assertEqual(mock_verify.call_count, 1)
+
+    @patch("marking_pipeline.core.verify_assessment_rubrics")
+    def test_prepare_assessment_map_verifier_refinement_stops_within_bounds(self, mock_verify: Mock) -> None:
+        clear_prepared_assessment_map_cache()
+        self.addCleanup(clear_prepared_assessment_map_cache)
+        context = prepare_marking_context(
+            rubric_text="Part 1 (15 marks)\nDiscuss the policy.\nout of 15",
+            brief_text="",
+            marking_scheme_text="",
+            graded_sample_text="",
+            other_context_text="",
+        )
+        low_confidence_map = AssessmentMap(
+            units=(
+                AssessmentUnit(
+                    label="Part 1",
+                    max_mark=15.0,
+                    grading_mode="analytical",
+                    rubric_text="Use UK bands.",
+                    rubric_confidence_0_to_100=55.0,
+                    rubric_issues=("Need clearer band separation.",),
+                ),
+            ),
+            overall_max_mark=15.0,
+            scale_confidence_0_to_100=95.0,
+        )
+        mock_verify.return_value = low_confidence_map
+
+        prepared = prepare_assessment_map(context, verifier_model_name="gemma3:4b")
+
+        self.assertEqual(mock_verify.call_count, 3)
+        self.assertEqual(prepared.verifier_attempt_count, 3)
+        self.assertEqual(prepared.prepared_units[0].verifier_attempt_count, 3)
+
+    @patch("marking_pipeline.core.verify_assessment_rubrics")
+    def test_prepare_assessment_map_acceptable_verifier_output_exits_early(self, mock_verify: Mock) -> None:
+        clear_prepared_assessment_map_cache()
+        self.addCleanup(clear_prepared_assessment_map_cache)
+        context = prepare_marking_context(
+            rubric_text="Part 1 (15 marks)\nDiscuss the policy.\nout of 15",
+            brief_text="",
+            marking_scheme_text="",
+            graded_sample_text="",
+            other_context_text="",
+        )
+        acceptable_map = AssessmentMap(
+            units=(
+                AssessmentUnit(
+                    label="Part 1",
+                    max_mark=15.0,
+                    grading_mode="analytical",
+                    rubric_text="Use UK bands with explicit distinction between 2:1 and First.",
+                    rubric_confidence_0_to_100=89.0,
+                    rubric_issues=(),
+                ),
+            ),
+            overall_max_mark=15.0,
+            scale_confidence_0_to_100=95.0,
+        )
+        mock_verify.return_value = acceptable_map
+
+        prepared = prepare_assessment_map(context, verifier_model_name="gemma3:4b")
+
+        self.assertEqual(mock_verify.call_count, 1)
+        self.assertEqual(prepared.verifier_attempt_count, 1)
+        self.assertEqual(prepared.preparation_confidence_0_to_100, 89.0)
+
+    @patch("marking_pipeline.core.verify_assessment_rubrics")
+    def test_prepare_assessment_map_contains_compact_criteria_and_verifier_metadata(self, mock_verify: Mock) -> None:
+        clear_prepared_assessment_map_cache()
+        self.addCleanup(clear_prepared_assessment_map_cache)
+        context = prepare_marking_context(
+            rubric_text="Part 1 (15 marks)\nDiscuss whether the policy is a good idea.\nout of 15",
+            brief_text="",
+            marking_scheme_text="",
+            graded_sample_text="",
+            other_context_text="",
+        )
+        first_attempt = AssessmentMap(
+            units=(
+                AssessmentUnit(
+                    label="Part 1",
+                    max_mark=15.0,
+                    grading_mode="analytical",
+                    rubric_text="Use UK bands.",
+                    rubric_confidence_0_to_100=62.0,
+                    rubric_issues=("Too generic.",),
+                ),
+            ),
+            overall_max_mark=15.0,
+            scale_confidence_0_to_100=95.0,
+        )
+        second_attempt = AssessmentMap(
+            units=(
+                AssessmentUnit(
+                    label="Part 1",
+                    max_mark=15.0,
+                    grading_mode="analytical",
+                    marking_guidance="Discuss whether the policy is a good idea.",
+                    rubric_text="Use UK bands with clearer evidence thresholds.",
+                    rubric_confidence_0_to_100=84.0,
+                    rubric_issues=("Retained limited source specificity.",),
+                ),
+            ),
+            overall_max_mark=15.0,
+            scale_confidence_0_to_100=95.0,
+        )
+        mock_verify.side_effect = [first_attempt, second_attempt]
+
+        prepared = prepare_assessment_map(context, verifier_model_name="gemma3:4b")
+        prepared_unit = prepared.prepared_units[0]
+
+        self.assertEqual(mock_verify.call_count, 2)
+        self.assertTrue(prepared_unit.compact_criteria)
+        self.assertEqual(prepared_unit.verifier_confidence_0_to_100, 84.0)
+        self.assertEqual(prepared_unit.verifier_issues, ("Retained limited source specificity.",))
+        self.assertEqual(prepared_unit.verifier_attempt_count, 2)
+        self.assertEqual(len(prepared_unit.verifier_accepted_refinements), 1)
+        self.assertEqual(prepared_unit.verifier_rejected_refinements, ())
 
     def test_refines_segmented_parts_to_subparts(self) -> None:
         context = prepare_marking_context(
@@ -933,6 +1158,84 @@ class CacheTests(unittest.TestCase):
         def getvalue(self) -> bytes:
             return self._content
 
+    def test_build_submission_texts_from_upload_uses_docx_hybrid_extractors(self) -> None:
+        upload = self.FakeUpload(
+            "student.docx",
+            b"fake-docx",
+        )
+        with (
+            patch("marking_pipeline.core.extract_docx_scoring_text", return_value="scoring text") as mock_scoring,
+            patch("marking_pipeline.core.extract_docx_structure_text", return_value="structure text") as mock_structure,
+        ):
+            script_text, structure_text = build_submission_texts_from_upload(upload)
+
+        self.assertEqual(script_text, "scoring text")
+        self.assertEqual(structure_text, "structure text")
+        mock_scoring.assert_called_once_with(b"fake-docx")
+        mock_structure.assert_called_once_with(b"fake-docx")
+
+    def test_choose_docx_scoring_text_prefers_docx2python_when_latex_is_preserved(self) -> None:
+        chosen = choose_docx_scoring_text(
+            "Part 2\n<latex>x = y + z</latex>\n<latex>tau</latex>",
+            "Part 2\nx y z",
+        )
+        self.assertIn("<latex>", chosen)
+
+    def test_choose_docx_scoring_text_falls_back_when_docx2python_only_emits_media_placeholders(self) -> None:
+        chosen = choose_docx_scoring_text(
+            "Part 2\n----media/image1.png----\n----media/image2.png----",
+            "Part 2\nx = y + z",
+        )
+        self.assertEqual(chosen, "Part 2\nx = y + z")
+
+    def test_docx_heading_marker_flags_short_bold_part_heading(self) -> None:
+        class FakeFont:
+            def __init__(self, size: float | None) -> None:
+                self.size = None if size is None else type("Size", (), {"pt": size})()
+
+        class FakeRun:
+            def __init__(self, text: str, bold: bool = False, size: float | None = None) -> None:
+                self.text = text
+                self.bold = bold
+                self.font = FakeFont(size)
+
+        paragraph = type(
+            "Paragraph",
+            (),
+            {
+                "text": "Part 2 (40 Marks)",
+                "runs": [FakeRun("Part 2 (40 Marks)", bold=True, size=16)],
+                "style": type("Style", (), {"name": "Normal"})(),
+            },
+        )()
+        self.assertEqual(_docx_heading_marker(paragraph), "[HEADING] ")
+
+    def test_docx_heading_marker_ignores_long_body_paragraph(self) -> None:
+        class FakeFont:
+            def __init__(self, size: float | None) -> None:
+                self.size = None if size is None else type("Size", (), {"pt": size})()
+
+        class FakeRun:
+            def __init__(self, text: str, bold: bool = False, size: float | None = None) -> None:
+                self.text = text
+                self.bold = bold
+                self.font = FakeFont(size)
+
+        paragraph = type(
+            "Paragraph",
+            (),
+            {
+                "text": "This is a long explanatory paragraph that happens to contain a bold phrase but should still be treated as ordinary body prose for structure detection.",
+                "runs": [
+                    FakeRun("This is a long explanatory paragraph ", bold=False, size=11),
+                    FakeRun("that happens to contain a bold phrase", bold=True, size=11),
+                    FakeRun(" but should still be treated as ordinary body prose for structure detection.", bold=False, size=11),
+                ],
+                "style": type("Style", (), {"name": "Normal"})(),
+            },
+        )()
+        self.assertEqual(_docx_heading_marker(paragraph), "")
+
     def make_temp_dir(self) -> Path:
         path = Path("tests") / f".tmp_{uuid4().hex}"
         path.mkdir(parents=True, exist_ok=False)
@@ -1031,6 +1334,101 @@ class CallOllamaTests(unittest.TestCase):
         context = prepare_marking_context("Maximum mark: 20", "", "", "", "")
         with self.assertRaises(ValueError):
             call_ollama("", context, "student1.pdf", "llama3.1:8b")
+
+    @patch("marking_pipeline.core.prepare_assessment_map")
+    @patch("marking_pipeline.core.requests.post")
+    def test_call_ollama_uses_injected_prepared_map(self, mock_post: Mock, mock_prepare_assessment_map: Mock) -> None:
+        context = prepare_marking_context("Question 1 (10 marks)\nQuestion 2 (10 marks)\nMaximum mark: 20", "", "", "", "")
+        prepared_map = PreparedAssessmentMap(
+            cache_key="prepared",
+            original_map=build_assessment_map(context),
+            prepared_map=build_assessment_map(context),
+        )
+        mock_prepare_assessment_map.side_effect = AssertionError("prepare_assessment_map should not be called")
+
+        structure = Mock()
+        structure.json.return_value = {
+            "message": {
+                "content": '{"sections": [{"label": "Question 1", "focus_hint": "First answer", "anchor_text": "Question 1"}, {"label": "Question 2", "focus_hint": "Second answer", "anchor_text": "Question 2"}]}'
+            }
+        }
+        structure.raise_for_status.return_value = None
+        part_one = Mock()
+        part_one.json.return_value = {
+            "message": {
+                "content": '{"section_label": "Question 1", "provisional_score": 8, "strengths": ["good explanation", "relevant evidence"], "weaknesses": ["limited depth", "minor omission"], "evidence": ["mentions VAT incidence"], "coverage_comment": "Covers Question 1 clearly."}'
+            }
+        }
+        part_one.raise_for_status.return_value = None
+        part_two = Mock()
+        part_two.json.return_value = {
+            "message": {
+                "content": '{"section_label": "Question 2", "provisional_score": 8, "strengths": ["clear reasoning", "good structure"], "weaknesses": ["small omission", "limited precision"], "evidence": ["mentions elasticity"], "coverage_comment": "Covers Question 2 clearly."}'
+            }
+        }
+        part_two.raise_for_status.return_value = None
+        mock_post.side_effect = [structure, part_one, part_two]
+
+        result = call_ollama(
+            "Question 1\nStudent answer text\nQuestion 2\nMore answer text",
+            context,
+            "student1.pdf",
+            "llama3.1:8b",
+            prepared_assessment_map=prepared_map,
+        )
+
+        self.assertEqual(result["total_mark"], 16)
+
+    @patch("marking_pipeline.core.build_local_final_result")
+    @patch("marking_pipeline.core.build_submission_diagnostics")
+    @patch("marking_pipeline.core.apply_assessment_map_to_submission_parts")
+    @patch("marking_pipeline.core.refine_submission_granularity")
+    @patch("marking_pipeline.core.segment_submission_parts")
+    @patch("marking_pipeline.core.detect_submission_parts")
+    def test_call_ollama_uses_structure_script_text_for_detection(
+        self,
+        mock_detect_submission_parts: Mock,
+        mock_segment_submission_parts: Mock,
+        mock_refine_submission_granularity: Mock,
+        mock_apply_assessment_map_to_submission_parts: Mock,
+        mock_build_submission_diagnostics: Mock,
+        mock_build_local_final_result: Mock,
+    ) -> None:
+        context = prepare_marking_context("Question 1 (10 marks)\nQuestion 2 (10 marks)\nMaximum mark: 20", "", "", "", "")
+        prepared_map = PreparedAssessmentMap(
+            cache_key="prepared",
+            original_map=build_assessment_map(context),
+            prepared_map=build_assessment_map(context),
+        )
+        detected_parts = [SubmissionPart(label="Whole Submission", focus_hint="Full submission")]
+        segmented_parts = [SubmissionPart(label="Whole Submission", section_text="current scoring text", max_mark=20.0)]
+        mock_detect_submission_parts.return_value = detected_parts
+        mock_segment_submission_parts.return_value = segmented_parts
+        mock_refine_submission_granularity.return_value = segmented_parts
+        mock_apply_assessment_map_to_submission_parts.return_value = segmented_parts
+        mock_build_submission_diagnostics.return_value = build_submission_diagnostics("current scoring text", segmented_parts)
+        mock_build_local_final_result.return_value = {
+            "total_mark": 12.0,
+            "max_mark": 20.0,
+            "overall_feedback": LONG_FEEDBACK,
+            "strengths": ["clear explanation", "good structure"],
+            "weaknesses": ["limited depth", "missing precision"],
+            "covered_parts": ["Whole Submission"],
+            "validation_notes": [],
+        }
+
+        result = call_ollama(
+            "current scoring text",
+            context,
+            "student1.pdf",
+            "qwen2:7b",
+            structure_script_text="alternate structure text",
+            prepared_assessment_map=prepared_map,
+        )
+
+        self.assertEqual(result["total_mark"], 12.0)
+        self.assertEqual(mock_detect_submission_parts.call_args.args[0], "alternate structure text")
+        self.assertEqual(mock_segment_submission_parts.call_args.args[0], "current scoring text")
 
 
 if __name__ == "__main__":

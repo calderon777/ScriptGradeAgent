@@ -1,16 +1,27 @@
 import io
+import hashlib
 import json
 import re
 import time
 import zipfile
+from collections import defaultdict
 from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any
 from xml.etree import ElementTree as ET
 
 import pdfplumber
+import pymupdf
 import requests
 from docx import Document
+try:
+    from docx2python import docx2python
+except ImportError:  # pragma: no cover - optional dependency
+    docx2python = None
+try:
+    import pymupdf4llm
+except ImportError:  # pragma: no cover - optional dependency
+    pymupdf4llm = None
 
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
@@ -87,6 +98,36 @@ class AssessmentMap:
     scale_confidence_0_to_100: float
 
 
+@dataclass(frozen=True)
+class PreparedAssessmentMap:
+    cache_key: str
+    original_map: AssessmentMap
+    prepared_map: AssessmentMap
+    prepared_units: tuple["PreparedAssessmentUnit", ...] = ()
+    verifier_model_name: str | None = None
+    verification_applied: bool = False
+    verifier_attempt_count: int = 0
+    preparation_issues: tuple[str, ...] = ()
+    preparation_confidence_0_to_100: float | None = None
+    preparation_latency_seconds: float = 0.0
+
+
+@dataclass(frozen=True)
+class PreparedAssessmentUnit:
+    label: str
+    compact_criteria: tuple[str, ...] = ()
+    verifier_confidence_0_to_100: float | None = None
+    verifier_issues: tuple[str, ...] = ()
+    verifier_attempt_count: int = 0
+    verifier_accepted_refinements: tuple[str, ...] = ()
+    verifier_rejected_refinements: tuple[str, ...] = ()
+
+
+_PREPARED_ASSESSMENT_CACHE: dict[str, PreparedAssessmentMap] = {}
+MAX_PREPARED_MAP_VERIFIER_ATTEMPTS = 3
+MIN_ACCEPTABLE_PREPARATION_CONFIDENCE = 75.0
+
+
 def decode_text_bytes(raw: bytes) -> str:
     for encoding in ("utf-8-sig", "utf-8", "utf-16", "cp1252", "latin-1"):
         try:
@@ -115,6 +156,74 @@ def extract_text_from_docx(file_obj: Any) -> str:
     return "\n".join(paragraph.text for paragraph in doc.paragraphs).strip()
 
 
+def extract_docx_structure_text(raw: bytes) -> str:
+    doc = Document(io.BytesIO(raw))
+    parts: list[str] = []
+    for paragraph in doc.paragraphs:
+        text = paragraph.text.strip()
+        if text:
+            parts.append(f"{_docx_heading_marker(paragraph)}{text}")
+    for table in doc.tables:
+        for row in table.rows:
+            cells = [cell.text.strip() for cell in row.cells if cell.text.strip()]
+            if cells:
+                parts.append(" | ".join(cells))
+    return "\n".join(parts).strip()
+
+
+def _docx_heading_marker(paragraph: Any) -> str:
+    text = paragraph.text.strip()
+    if not text:
+        return ""
+    normalized = re.sub(r"\s+", " ", text)
+    if len(normalized) > 140:
+        return ""
+    text_runs = [run for run in paragraph.runs if run.text.strip()]
+    if not text_runs:
+        return ""
+    bold_runs = sum(1 for run in text_runs if bool(run.bold))
+    size_values = [run.font.size.pt for run in text_runs if run.font.size is not None]
+    max_size = max(size_values) if size_values else None
+    style_name = (getattr(getattr(paragraph, "style", None), "name", "") or "").lower()
+    heading_like_text = bool(re.match(r"^(part|question|section|appendix)\b", normalized, re.IGNORECASE))
+    compact_question_like = bool(re.match(r"^(q(?:uestion)?\s*\d+[a-z]?|[ivxlcdm]+[\.\)]|(?:\d+|[A-Z])[\.\)])\b", normalized, re.IGNORECASE))
+    title_case_like = bool(re.match(r"^[A-Z][A-Za-z0-9 ,:/&()'\"-]{0,90}$", normalized))
+    all_caps_like = normalized.isupper() and len(normalized.split()) <= 12
+    heading_signal = (
+        heading_like_text
+        or "heading" in style_name
+        or (compact_question_like and len(normalized.split()) <= 12)
+        or (title_case_like and (bold_runs == len(text_runs) or max_size is not None and max_size >= 13))
+        or all_caps_like
+        or (bold_runs == len(text_runs) and len(normalized.split()) <= 16)
+        or (max_size is not None and max_size >= 14 and len(normalized.split()) <= 20)
+    )
+    return "[HEADING] " if heading_signal else ""
+
+
+def choose_docx_scoring_text(primary_text: str, fallback_text: str) -> str:
+    primary = primary_text.strip()
+    fallback = fallback_text.strip()
+    if not primary:
+        return fallback
+    latex_hits = primary.count("<latex>")
+    media_hits = primary.count("----media/")
+    if latex_hits > 0 and media_hits <= max(2, latex_hits // 8):
+        return primary
+    if media_hits > 0 and latex_hits == 0:
+        return fallback or primary
+    return primary or fallback
+
+
+def extract_docx_scoring_text(raw: bytes) -> str:
+    fallback_text = extract_text_from_docx(io.BytesIO(raw))
+    if docx2python is None:
+        return fallback_text
+    with docx2python(io.BytesIO(raw)) as result:
+        text = (result.text or "").strip()
+    return choose_docx_scoring_text(text, fallback_text)
+
+
 def read_file_bytes(name: str, raw: bytes) -> str:
     lowered = name.lower()
     if lowered.endswith(".txt"):
@@ -135,6 +244,72 @@ def read_uploaded_files_text(uploaded_files: list[Any] | None) -> str:
 
 def read_path_text(path: Path) -> str:
     return read_file_bytes(path.name, path.read_bytes())
+
+
+def cleanup_pymupdf4llm_text(text: str) -> str:
+    cleaned_lines: list[str] = []
+    for line in text.replace("\f", "\n").splitlines():
+        stripped = line.strip()
+        if not stripped:
+            cleaned_lines.append("")
+            continue
+        if "picture [" in stripped and "intentionally omitted" in stripped:
+            continue
+        if stripped.isdigit():
+            continue
+        stripped = re.sub(r"^#{1,6}\s*", "", stripped)
+        stripped = stripped.replace("**", "").replace("__", "")
+        stripped = stripped.replace("`", "")
+        stripped = stripped.replace("<br>", " ")
+        if "|" in stripped and stripped.count("|") >= 2:
+            cells = [cell.strip() for cell in stripped.split("|") if cell.strip()]
+            stripped = " ".join(cells)
+        stripped = re.sub(r"\s+", " ", stripped).strip()
+        cleaned_lines.append(stripped)
+
+    cleaned = "\n".join(cleaned_lines)
+    cleaned = re.sub(r"\n{3,}", "\n\n", cleaned)
+    return cleaned.strip()
+
+
+def extract_pdf_structure_text(raw: bytes) -> str:
+    if pymupdf4llm is None:
+        return ""
+    doc = pymupdf.open(stream=raw, filetype="pdf")
+    try:
+        extracted = pymupdf4llm.to_markdown(doc, header=False, footer=False)
+    finally:
+        doc.close()
+    return cleanup_pymupdf4llm_text(extracted)
+
+
+def build_submission_texts_from_path(path: Path) -> tuple[str, str | None]:
+    if path.suffix.lower() == ".docx":
+        raw = path.read_bytes()
+        script_text = extract_docx_scoring_text(raw)
+        structure_text = extract_docx_structure_text(raw) or None
+        return script_text, structure_text
+
+    script_text = read_path_text(path)
+    structure_text: str | None = None
+    if path.suffix.lower() == ".pdf":
+        structure_text = extract_pdf_structure_text(path.read_bytes()) or None
+    return script_text, structure_text
+
+
+def build_submission_texts_from_upload(uploaded_file: Any) -> tuple[str, str | None]:
+    raw = uploaded_file.getvalue()
+    lowered = uploaded_file.name.lower()
+    if lowered.endswith(".docx"):
+        script_text = extract_docx_scoring_text(raw)
+        structure_text = extract_docx_structure_text(raw) or None
+        return script_text, structure_text
+
+    script_text = read_file_bytes(uploaded_file.name, raw)
+    structure_text: str | None = None
+    if lowered.endswith(".pdf"):
+        structure_text = extract_pdf_structure_text(raw) or None
+    return script_text, structure_text
 
 
 def read_paths_text(paths: list[Path] | tuple[Path, ...]) -> str:
@@ -258,50 +433,34 @@ def build_part_messages(
     context: MarkingContext,
     filename: str,
 ) -> list[dict[str, str]]:
-    support_block = _build_part_support_text(context, part)
-    max_mark_rule = ""
+    max_mark_text = _format_number(part.max_mark) if part.max_mark is not None else "100"
     score_key = '- "provisional_score": number\n'
-    score_rule = ""
-    if part.max_mark is not None:
-        max_mark_text = _format_number(part.max_mark)
-        max_mark_rule = f"SECTION MAX MARK: {max_mark_text}\n\n"
-        score_rule = f"1. provisional_score must be between 0 and {max_mark_text}.\n"
-    else:
+    score_rule = f"1. provisional_score must be between 0 and {max_mark_text}.\n"
+    if part.max_mark is None:
         score_key = '- "provisional_score_0_to_100": number\n'
         score_rule = "1. provisional_score_0_to_100 must be between 0 and 100.\n"
-    guidance_block = ""
-    if part.marking_guidance.strip():
-        guidance_block = f"RELEVANT MARKING-SCHEME EXCERPT:\n{part.marking_guidance.strip()}\n\n"
-    rubric_use_rules: list[str] = []
-    guidance_text = part.marking_guidance.lower()
-    if part.marking_guidance.strip():
-        rubric_use_rules.append("Use the marking-scheme excerpt as the primary scoring rubric for this section.")
-    if any(band in guidance_text for band in ("first", "2:1", "2:2", "third/pass", "missing/unfinished", "fail")):
-        rubric_use_rules.append(
-            "For analytical sections, first decide the quality bracket from the rubric wording, then place the score within that bracket using the strength of evidence in this section."
-        )
-    if any(term in guidance_text for term in ("partial credit", "algebra", "equation", "deriv", "method", "interpretation")):
-        rubric_use_rules.append(
-            "For deterministic sections, use the rubric wording to award explicit partial credit for correct setup, method, algebra, equations, and interpretation."
-        )
-    rubric_use_rule_text = ""
-    if rubric_use_rules:
-        rubric_use_rule_text = "\n" + "\n".join(
-            f"{index}. {rule}" for index, rule in enumerate(rubric_use_rules, start=6)
-        )
+    task_text = _build_part_task_text(part)
+    criteria = _extract_prompt_criteria(part.marking_guidance)
+    if not criteria:
+        criteria = _default_prompt_criteria(task_text)
+    scoring_rules = _extract_prompt_scoring_rules(part.marking_guidance, part.max_mark)
+    criteria_block = "\n".join(f"- {criterion}" for criterion in criteria)
+    scoring_rule_lines = [score_rule.rstrip(), "2. Base the score only on this section text and the section-specific criteria."]
+    for index, rule in enumerate(scoring_rules, start=3):
+        scoring_rule_lines.append(f"{index}. {rule}")
     system = (
         "You are a careful university examiner working in stages. "
         "Assess only the supplied section of the student's submission. "
-        "Use only the supplied marking documents and the section text."
+        "Use only the section task, the section-specific scoring criteria, and the section text."
     )
     user = (
         "You are assessing one section of a student's script.\n\n"
         f"STUDENT FILE NAME: {filename}\n"
-        f"SECTION LABEL: {part.label}\n\n"
-        f"{support_block}"
-        f"{max_mark_rule}"
-        f"{guidance_block}"
-        f"SECTION FOCUS: {part.focus_hint or 'Assess the content that best matches this section label.'}\n\n"
+        f"SECTION LABEL: {part.label}\n"
+        f"SECTION MAX MARK: {max_mark_text}\n"
+        f"SECTION TASK: {task_text}\n\n"
+        "SCORING CRITERIA:\n"
+        f"{criteria_block}\n\n"
         "SECTION TEXT:\n"
         f"\"\"\"{part.section_text or part.focus_hint or part.label}\"\"\"\n\n"
         "Return only one JSON object with exactly these keys:\n"
@@ -315,15 +474,112 @@ def build_part_messages(
         '- "evidence": array of strings\n'
         '- "coverage_comment": string\n\n'
         "Rules:\n"
-        f"{score_rule}"
-        "2. strengths must contain at least 2 concrete items.\n"
-        "3. weaknesses must contain at least 2 concrete items.\n"
-        "4. evidence must contain concrete references to the section content.\n"
-        "5. coverage_comment must state the classification judgement for this section and why the mark sits where it does within the bracket.\n"
-        "6. Do not include markdown fences or any text outside the JSON object."
-        f"{rubric_use_rule_text}"
+        + "\n".join(scoring_rule_lines)
+        + "\n"
+        + "6. strengths must contain at least 2 concrete items.\n"
+        + "7. weaknesses must contain at least 2 concrete items.\n"
+        + "8. evidence must contain concrete references to the section content.\n"
+        + "9. coverage_comment must state the classification judgement for this section and why the mark sits where it does within the bracket.\n"
+        + "10. Do not include markdown fences or any text outside the JSON object."
     )
     return [{"role": "system", "content": system}, {"role": "user", "content": user}]
+
+
+def _build_part_task_text(part: SubmissionPart) -> str:
+    focus = part.focus_hint.strip()
+    guidance_focus = _extract_task_focus_from_guidance(part.marking_guidance)
+    if focus:
+        return focus
+    if guidance_focus:
+        return guidance_focus
+    return "Assess the content that best matches this section label."
+
+
+def _extract_task_focus_from_guidance(marking_guidance: str) -> str:
+    text = marking_guidance.strip()
+    if not text:
+        return ""
+    match = re.search(r"Task focus:\s*(.+)", text)
+    if match is not None:
+        return match.group(1).strip().rstrip(".")
+    for line in text.splitlines():
+        stripped = line.strip()
+        if not stripped:
+            continue
+        lowered = stripped.lower()
+        if lowered.startswith(("unit:", "available marks:", "compact scoring criteria:", "detailed rubric:")):
+            continue
+        if lowered.startswith("use this rubric") or lowered.startswith("use uk-style quality bands"):
+            continue
+        if stripped.startswith("- "):
+            continue
+        return stripped.rstrip(".")
+    return ""
+
+
+def _extract_prompt_criteria(marking_guidance: str) -> list[str]:
+    text = marking_guidance.strip()
+    if not text:
+        return []
+    criteria: list[str] = []
+    in_compact_block = False
+    for line in text.splitlines():
+        stripped = line.strip()
+        if not stripped:
+            if in_compact_block and criteria:
+                break
+            continue
+        lowered = stripped.lower()
+        if lowered == "compact scoring criteria:":
+            in_compact_block = True
+            continue
+        if lowered.startswith("detailed rubric:"):
+            if criteria:
+                break
+            in_compact_block = False
+            continue
+        if not stripped.startswith("- "):
+            continue
+        item = stripped[2:].strip()
+        if not item:
+            continue
+        if in_compact_block:
+            criteria.append(item)
+        elif lowered.startswith(("- place work", "- use the top band", "- award explicit partial credit", "- rank attempts")):
+            break
+        elif item.lower().startswith(("evaluate whether", "assess whether", "check whether", "identify whether")):
+            criteria.append(item)
+        if len(criteria) >= 5:
+            break
+    if criteria:
+        return criteria
+    if "\n" not in text and len(text.split()) <= 40:
+        return [text.rstrip(".") + "."]
+    return criteria
+
+
+def _default_prompt_criteria(task_text: str) -> list[str]:
+    return [
+        f"Evaluate whether the response directly addresses {task_text.lower()}.",
+        "Evaluate whether the reasoning is accurate, relevant, and sufficiently explained.",
+        "Evaluate whether the response is complete enough to justify the score awarded.",
+    ]
+
+
+def _extract_prompt_scoring_rules(marking_guidance: str, max_mark: float | None) -> list[str]:
+    rules: list[str] = []
+    guidance_text = marking_guidance.lower()
+    if max_mark is not None:
+        rules.append(f"Use the full score range from 0 to {_format_number(max_mark)}.")
+    if any(band in guidance_text for band in ("first", "2:1", "2:2", "third/pass", "missing/unfinished", "fail")):
+        rules.append("Choose the quality band first, then place the score within that band using the evidence in this section.")
+    if any(term in guidance_text for term in ("partial credit", "algebra", "equation", "deriv", "method", "interpretation")):
+        rules.append("Award partial credit for correct setup, intermediate reasoning, and interpretation even when the final answer is incomplete.")
+    if any(term in guidance_text for term in ("reference", "references", "page number", "page numbers", "quote", "quotes")):
+        rules.append("Reward accurate use of specific references or page numbers when the task asks for them.")
+    if any(term in guidance_text for term in ("rewrite", "own tone", "own words", "correct any mistakes", "edit the output")):
+        rules.append("Reward correction of mistakes and rewriting in the student's own justified form when the task asks for it.")
+    return rules
 
 
 def build_structure_messages(script_text: str, filename: str) -> list[dict[str, str]]:
@@ -623,6 +879,8 @@ def call_ollama(
     filename: str,
     model_name: str,
     rubric_verifier_model_name: str | None = None,
+    structure_script_text: str | None = None,
+    prepared_assessment_map: PreparedAssessmentMap | None = None,
     ollama_url: str = DEFAULT_OLLAMA_URL,
 ) -> dict[str, Any]:
     return call_ollama_comparative_first(
@@ -631,6 +889,8 @@ def call_ollama(
         filename=filename,
         model_name=model_name,
         rubric_verifier_model_name=rubric_verifier_model_name,
+        structure_script_text=structure_script_text,
+        prepared_assessment_map=prepared_assessment_map,
         ollama_url=ollama_url,
     )
 
@@ -641,11 +901,12 @@ def call_ollama_comparative_first(
     filename: str,
     model_name: str,
     rubric_verifier_model_name: str | None = None,
+    structure_script_text: str | None = None,
+    prepared_assessment_map: PreparedAssessmentMap | None = None,
     ollama_url: str = DEFAULT_OLLAMA_URL,
 ) -> dict[str, Any]:
-    total_started = time.perf_counter()
     timings: dict[str, float] = {
-        "rubric_verify": 0.0,
+        "assessment_prepare": 0.0,
         "structure_detect": 0.0,
         "part_refine": 0.0,
         "part_analysis": 0.0,
@@ -658,24 +919,29 @@ def call_ollama_comparative_first(
             "No text could be extracted from the submission. "
             "OCR is not implemented yet, so use a text-based PDF, DOCX, or CSV answer."
         )
+    use_alternate_structure_text = bool((structure_script_text or "").strip()) and bool(extract_expected_parts_from_context(context))
+    structure_input_text = (structure_script_text or "").strip() if use_alternate_structure_text else script_text
 
-    assessment_map = build_assessment_map(context)
-    if rubric_verifier_model_name:
+    if prepared_assessment_map is None:
         stage_started = time.perf_counter()
-        assessment_map = verify_assessment_rubrics(
-            assessment_map=assessment_map,
+        prepared_assessment_map = prepare_assessment_map(
             context=context,
             verifier_model_name=rubric_verifier_model_name,
             ollama_url=ollama_url,
         )
-        timings["rubric_verify"] = round(time.perf_counter() - stage_started, 2)
+        timings["assessment_prepare"] = round(time.perf_counter() - stage_started, 2)
+    else:
+        timings["assessment_prepare"] = round(prepared_assessment_map.preparation_latency_seconds, 2)
+    assessment_map = prepared_assessment_map.prepared_map
+    total_started = time.perf_counter()
     stage_started = time.perf_counter()
-    detected_parts = detect_submission_parts(script_text, filename, model_name, context=context, ollama_url=ollama_url)
+    detected_parts = detect_submission_parts(structure_input_text, filename, model_name, context=context, ollama_url=ollama_url)
     timings["structure_detect"] = round(time.perf_counter() - stage_started, 2)
     stage_started = time.perf_counter()
     parts = segment_submission_parts(script_text, detected_parts)
     parts = refine_submission_granularity(parts, context, filename, model_name, ollama_url=ollama_url)
     parts = apply_assessment_map_to_submission_parts(parts, assessment_map)
+    parts = apply_prepared_artifact_to_submission_parts(parts, prepared_assessment_map)
     timings["part_refine"] = round(time.perf_counter() - stage_started, 2)
     diagnostics = build_submission_diagnostics(script_text, parts)
 
@@ -1049,6 +1315,204 @@ def build_submission_diagnostics(script_text: str, parts: list[SubmissionPart] |
 
 def split_submission_into_parts(script_text: str) -> list[SubmissionPart]:
     return [SubmissionPart(label="Whole Submission", focus_hint="Assess the full script as one piece of work.")]
+
+
+def build_assessment_map_cache_key(
+    context: MarkingContext,
+    verifier_model_name: str | None = None,
+) -> str:
+    payload = {
+        "rubric_text": context.rubric_text,
+        "brief_text": context.brief_text,
+        "marking_scheme_text": context.marking_scheme_text,
+        "graded_sample_text": context.graded_sample_text,
+        "other_context_text": context.other_context_text,
+        "max_mark": context.max_mark,
+        "verifier_model_name": verifier_model_name or "",
+    }
+    serialized = json.dumps(payload, ensure_ascii=True, sort_keys=True)
+    return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
+
+
+def clear_prepared_assessment_map_cache() -> None:
+    _PREPARED_ASSESSMENT_CACHE.clear()
+
+
+def _is_verifier_failure_issue(issue: str) -> bool:
+    return issue.strip().startswith("rubric_verifier_failed:")
+
+
+def _collect_preparation_issues(assessment_map: AssessmentMap) -> tuple[str, ...]:
+    issues: list[str] = []
+    for unit in assessment_map.units:
+        issues.extend(issue for issue in unit.rubric_issues if issue.strip())
+    return tuple(issues)
+
+
+def _compute_preparation_confidence(assessment_map: AssessmentMap) -> float | None:
+    unit_confidences = [
+        unit.rubric_confidence_0_to_100
+        for unit in assessment_map.units
+        if unit.rubric_confidence_0_to_100 is not None
+    ]
+    if not unit_confidences:
+        return None
+    return round(sum(unit_confidences) / len(unit_confidences), 2)
+
+
+def _unit_refinement_score(unit: AssessmentUnit) -> float:
+    confidence = unit.rubric_confidence_0_to_100 if unit.rubric_confidence_0_to_100 is not None else 0.0
+    issue_penalty = float(len(unit.rubric_issues))
+    failure_penalty = 25.0 if any(_is_verifier_failure_issue(issue) for issue in unit.rubric_issues) else 0.0
+    return round(confidence - issue_penalty - failure_penalty, 2)
+
+
+def _summarize_unit_refinement(previous: AssessmentUnit, candidate: AssessmentUnit, attempt_number: int) -> str:
+    previous_confidence = previous.rubric_confidence_0_to_100 if previous.rubric_confidence_0_to_100 is not None else 0.0
+    candidate_confidence = candidate.rubric_confidence_0_to_100 if candidate.rubric_confidence_0_to_100 is not None else 0.0
+    previous_issue_count = len(previous.rubric_issues)
+    candidate_issue_count = len(candidate.rubric_issues)
+    changed_text = previous.rubric_text.strip() != candidate.rubric_text.strip()
+    text_change = "text_changed" if changed_text else "text_unchanged"
+    return (
+        f"attempt_{attempt_number}: confidence {previous_confidence:.2f}->{candidate_confidence:.2f}, "
+        f"issues {previous_issue_count}->{candidate_issue_count}, {text_change}"
+    )
+
+
+def _is_acceptable_prepared_map(assessment_map: AssessmentMap) -> bool:
+    confidences = [
+        unit.rubric_confidence_0_to_100
+        for unit in assessment_map.units
+        if unit.rubric_confidence_0_to_100 is not None
+    ]
+    if not confidences:
+        return True
+    if any(any(_is_verifier_failure_issue(issue) for issue in unit.rubric_issues) for unit in assessment_map.units):
+        return False
+    return min(confidences) >= MIN_ACCEPTABLE_PREPARATION_CONFIDENCE
+
+
+def _build_prepared_assessment_units(
+    assessment_map: AssessmentMap,
+    verifier_attempt_count: int,
+    accepted_refinements: dict[str, list[str]],
+    rejected_refinements: dict[str, list[str]],
+) -> tuple[PreparedAssessmentUnit, ...]:
+    prepared_units: list[PreparedAssessmentUnit] = []
+    for unit in assessment_map.units:
+        unit_key = _normalize_label_key(unit.label)
+        prepared_units.append(
+            PreparedAssessmentUnit(
+                label=unit.label,
+                compact_criteria=tuple(_extract_classification_criteria(unit)),
+                verifier_confidence_0_to_100=unit.rubric_confidence_0_to_100,
+                verifier_issues=tuple(issue for issue in unit.rubric_issues if issue.strip()),
+                verifier_attempt_count=verifier_attempt_count,
+                verifier_accepted_refinements=tuple(accepted_refinements.get(unit_key, [])),
+                verifier_rejected_refinements=tuple(rejected_refinements.get(unit_key, [])),
+            )
+        )
+    return tuple(prepared_units)
+
+
+def _merge_refined_assessment_maps(
+    current_map: AssessmentMap,
+    candidate_map: AssessmentMap,
+    attempt_number: int,
+    accepted_refinements: dict[str, list[str]],
+    rejected_refinements: dict[str, list[str]],
+) -> AssessmentMap:
+    merged_units: list[AssessmentUnit] = []
+    for current_unit, candidate_unit in zip(current_map.units, candidate_map.units):
+        unit_key = _normalize_label_key(current_unit.label)
+        changed = (
+            current_unit.rubric_text.strip() != candidate_unit.rubric_text.strip()
+            or current_unit.rubric_confidence_0_to_100 != candidate_unit.rubric_confidence_0_to_100
+            or current_unit.rubric_issues != candidate_unit.rubric_issues
+        )
+        if _unit_refinement_score(candidate_unit) > _unit_refinement_score(current_unit):
+            merged_units.append(candidate_unit)
+            if changed:
+                accepted_refinements[unit_key].append(
+                    _summarize_unit_refinement(current_unit, candidate_unit, attempt_number)
+                )
+            continue
+        merged_units.append(current_unit)
+        if changed:
+            rejected_refinements[unit_key].append(
+                _summarize_unit_refinement(current_unit, candidate_unit, attempt_number)
+            )
+    return replace(current_map, units=tuple(merged_units))
+
+
+def prepare_assessment_map(
+    context: MarkingContext,
+    verifier_model_name: str | None = None,
+    ollama_url: str = DEFAULT_OLLAMA_URL,
+) -> PreparedAssessmentMap:
+    cache_key = build_assessment_map_cache_key(
+        context=context,
+        verifier_model_name=verifier_model_name,
+    )
+    cached = _PREPARED_ASSESSMENT_CACHE.get(cache_key)
+    if cached is not None:
+        return cached
+
+    started = time.perf_counter()
+    original_map = build_assessment_map(context)
+    prepared_map = original_map
+    verification_applied = False
+    verifier_attempt_count = 0
+    accepted_refinements: dict[str, list[str]] = defaultdict(list)
+    rejected_refinements: dict[str, list[str]] = defaultdict(list)
+
+    if verifier_model_name:
+        verification_applied = True
+        prepared_map = original_map
+        for attempt_number in range(1, MAX_PREPARED_MAP_VERIFIER_ATTEMPTS + 1):
+            verifier_attempt_count = attempt_number
+            candidate_map = verify_assessment_rubrics(
+                assessment_map=prepared_map,
+                context=context,
+                verifier_model_name=verifier_model_name,
+                ollama_url=ollama_url,
+            )
+            if attempt_number == 1:
+                prepared_map = candidate_map
+            else:
+                prepared_map = _merge_refined_assessment_maps(
+                    current_map=prepared_map,
+                    candidate_map=candidate_map,
+                    attempt_number=attempt_number,
+                    accepted_refinements=accepted_refinements,
+                    rejected_refinements=rejected_refinements,
+                )
+            if _is_acceptable_prepared_map(prepared_map):
+                break
+    preparation_confidence = _compute_preparation_confidence(prepared_map)
+    preparation_issues = _collect_preparation_issues(prepared_map)
+    preparation_latency_seconds = round(time.perf_counter() - started, 2)
+
+    prepared = PreparedAssessmentMap(
+        cache_key=cache_key,
+        original_map=original_map,
+        prepared_map=prepared_map,
+        prepared_units=_build_prepared_assessment_units(
+            assessment_map=prepared_map,
+            verifier_attempt_count=verifier_attempt_count,
+            accepted_refinements=accepted_refinements,
+            rejected_refinements=rejected_refinements,
+        ),
+        verifier_model_name=verifier_model_name,
+        verification_applied=verification_applied,
+        verifier_attempt_count=verifier_attempt_count,
+        preparation_issues=preparation_issues,
+        preparation_confidence_0_to_100=preparation_confidence,
+        preparation_latency_seconds=preparation_latency_seconds,
+    )
+    _PREPARED_ASSESSMENT_CACHE[cache_key] = prepared
+    return prepared
 
 
 def build_assessment_map(context: MarkingContext) -> AssessmentMap:
@@ -1922,7 +2386,8 @@ def _attach_latency_metrics(
     total_seconds = round(time.perf_counter() - total_started, 2)
     part_count = max(len(parts), 1)
     result["latency_seconds_total"] = total_seconds
-    result["latency_seconds_rubric_verify"] = round(timings.get("rubric_verify", 0.0), 2)
+    result["latency_seconds_assessment_prepare"] = round(timings.get("assessment_prepare", 0.0), 2)
+    result["latency_seconds_rubric_verify"] = result["latency_seconds_assessment_prepare"]
     result["latency_seconds_structure_detect"] = round(timings.get("structure_detect", 0.0), 2)
     result["latency_seconds_part_refine"] = round(timings.get("part_refine", 0.0), 2)
     result["latency_seconds_part_analysis"] = round(timings.get("part_analysis", 0.0), 2)
@@ -1930,7 +2395,8 @@ def _attach_latency_metrics(
     result["latency_seconds_finalize"] = round(timings.get("finalize", 0.0), 2)
     result["latency_seconds_part_analysis_per_part_avg"] = round(result["latency_seconds_part_analysis"] / part_count, 2)
     validation_notes = list(result.get("validation_notes", []))
-    validation_notes.append(f"latency_total_seconds={total_seconds:.2f}")
+    validation_notes.append(f"latency_script_seconds={total_seconds:.2f}")
+    validation_notes.append(f"latency_assessment_prepare_seconds={result['latency_seconds_assessment_prepare']:.2f}")
     validation_notes.append(f"latency_part_analysis_seconds={result['latency_seconds_part_analysis']:.2f}")
     result["validation_notes"] = validation_notes
     return result
@@ -2309,6 +2775,39 @@ def apply_assessment_map_to_submission_parts(parts: list[SubmissionPart], assess
                 section_text=part.section_text,
                 max_mark=unit.max_mark if unit.max_mark is not None else part.max_mark,
                 marking_guidance=unit.rubric_text or unit.marking_guidance or part.marking_guidance,
+            )
+        )
+    return enriched
+
+
+def apply_prepared_artifact_to_submission_parts(
+    parts: list[SubmissionPart],
+    prepared_assessment_map: PreparedAssessmentMap,
+) -> list[SubmissionPart]:
+    prepared_unit_by_key = {
+        _normalize_label_key(unit.label): unit
+        for unit in prepared_assessment_map.prepared_units
+    }
+    enriched: list[SubmissionPart] = []
+    for part in parts:
+        prepared_unit = prepared_unit_by_key.get(_normalize_label_key(part.label))
+        if prepared_unit is None or not prepared_unit.compact_criteria:
+            enriched.append(part)
+            continue
+        compact_guidance = "\n".join(
+            ["Compact scoring criteria:", *[f"- {criterion}" for criterion in prepared_unit.compact_criteria]]
+        )
+        merged_guidance = compact_guidance
+        if part.marking_guidance.strip():
+            merged_guidance = f"{compact_guidance}\n\nDetailed rubric:\n{part.marking_guidance.strip()}"
+        enriched.append(
+            SubmissionPart(
+                label=part.label,
+                focus_hint=part.focus_hint,
+                anchor_text=part.anchor_text,
+                section_text=part.section_text,
+                max_mark=part.max_mark,
+                marking_guidance=merged_guidance,
             )
         )
     return enriched
