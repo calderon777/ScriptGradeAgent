@@ -1,0 +1,377 @@
+[
+  {
+    "backend": "current",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Ruhama Saqib_1494021_assignsubmission_file\\EC3040 Final Assessment.docx",
+    "word_count": 3483,
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 4,
+    "exact_match": true
+  },
+  {
+    "backend": "mammoth",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Ruhama Saqib_1494021_assignsubmission_file\\EC3040 Final Assessment.docx",
+    "word_count": 3483,
+    "detected_labels": [
+      "Whole Submission"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 0,
+    "exact_match": false
+  },
+  {
+    "backend": "current",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Aya Kalada_1493952_assignsubmission_file\\EC3040- EconSoc CW2 Final.docx",
+    "word_count": 3863,
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Whole Submission"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 3,
+    "exact_match": false
+  },
+  {
+    "backend": "mammoth",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Aya Kalada_1493952_assignsubmission_file\\EC3040- EconSoc CW2 Final.docx",
+    "word_count": 3863,
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 4,
+    "exact_match": true
+  },
+  {
+    "backend": "current",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\AIAH BAROOM_1494167_assignsubmission_file\\EC3040 Final.docx",
+    "word_count": 6622,
+    "detected_labels": [
+      "Introduction",
+      "Theoretical Model",
+      "Empirical Evidence",
+      "Proposed Model Changes"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 0,
+    "exact_match": false
+  },
+  {
+    "backend": "mammoth",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\AIAH BAROOM_1494167_assignsubmission_file\\EC3040 Final.docx",
+    "word_count": 6457,
+    "detected_labels": [
+      "Introduction",
+      "Equity-Efficiency Trade-off",
+      "Testable Predictions",
+      "Regression Framework"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 0,
+    "exact_match": false
+  },
+  {
+    "backend": "current",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Apisan Rasiah_1494186_assignsubmission_file\\Economics and Society individual coursework (2).docx",
+    "word_count": 2847,
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Q3"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 2,
+    "exact_match": false
+  },
+  {
+    "backend": "mammoth",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Apisan Rasiah_1494186_assignsubmission_file\\Economics and Society individual coursework (2).docx",
+    "word_count": 2823,
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Q1",
+      "Q2"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 2,
+    "exact_match": false
+  },
+  {
+    "backend": "current",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Emre Kaya_1494087_assignsubmission_file\\IFS2.docx",
+    "word_count": 4354,
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 4,
+    "exact_match": true
+  },
+  {
+    "backend": "mammoth",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Emre Kaya_1494087_assignsubmission_file\\IFS2.docx",
+    "word_count": 4350,
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3 (1)",
+      "Part 3 (2)",
+      "Part 4"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 3,
+    "exact_match": false
+  },
+  {
+    "backend": "current",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Alessandro Ungurean_1493966_assignsubmission_file\\EconSociety Final CW.docx",
+    "word_count": 4075,
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 4,
+    "exact_match": true
+  },
+  {
+    "backend": "mammoth",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Alessandro Ungurean_1493966_assignsubmission_file\\EconSociety Final CW.docx",
+    "word_count": 4051,
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 4,
+    "exact_match": true
+  },
+  {
+    "backend": "current",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Alae El Hafedi_1494143_assignsubmission_file\\EC3040 Economics and Society individual coursework.docx",
+    "word_count": 4015,
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 4,
+    "exact_match": true
+  },
+  {
+    "backend": "mammoth",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Alae El Hafedi_1494143_assignsubmission_file\\EC3040 Economics and Society individual coursework.docx",
+    "word_count": 3882,
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 4,
+    "exact_match": true
+  },
+  {
+    "backend": "current",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Abdirahman Hassan_1494034_assignsubmission_file\\EC3040 Individual Coursework.docx",
+    "word_count": 2924,
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 4,
+    "exact_match": true
+  },
+  {
+    "backend": "mammoth",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Abdirahman Hassan_1494034_assignsubmission_file\\EC3040 Individual Coursework.docx",
+    "word_count": 2924,
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 4,
+    "exact_match": true
+  },
+  {
+    "backend": "current",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Veerle Vos_1493983_assignsubmission_file\\final assignment.docx",
+    "word_count": 2915,
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 4,
+    "exact_match": true
+  },
+  {
+    "backend": "mammoth",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Veerle Vos_1493983_assignsubmission_file\\final assignment.docx",
+    "word_count": 2915,
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 4,
+    "exact_match": true
+  },
+  {
+    "backend": "current",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Mohammed Elsheikh_1494023_assignsubmission_file\\econ and soc.docx",
+    "word_count": 3477,
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 4,
+    "exact_match": true
+  },
+  {
+    "backend": "mammoth",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Mohammed Elsheikh_1494023_assignsubmission_file\\econ and soc.docx",
+    "word_count": 3395,
+    "detected_labels": [
+      "Part 1",
+      "Part 2"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 2,
+    "exact_match": false
+  }
+]

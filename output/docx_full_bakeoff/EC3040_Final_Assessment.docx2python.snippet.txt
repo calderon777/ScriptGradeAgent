@@ -1,0 +1,83 @@
+PART 2, QUESTION 1:
+
+
+
+The payoff for families <latex>𝑖 </latex>   (with <latex>𝑖𝜖𝐿,𝑀,𝐻</latex>), from choosing private school is  <latex>𝑢𝑖𝑝𝑟𝑖𝑣=𝑃𝑖+10𝐹𝑦−1+𝜏𝑡</latex>,                where    <latex>𝐹=𝑦𝑡 </latex>            is the total fees collected by private school. The term <latex>10𝐹𝑦=10𝑦𝑡𝑦</latex> captures per student benefits from total school resources with diminishing returns (the square root). When <latex>𝑦 </latex>rises, total fees <latex>𝐹 </latex>increase, but the benefit is spread across more students, reflecting congestion or limited scale economies in private schools. This connects to our topics where we talked about resource gaps and class sizes. (Lecture 9). 
+
+<latex>𝑃𝑖 </latex>    captures inherent valuations of private education across families, which is where inequality comes from in the model, since <latex>𝑃𝐿<𝑃𝑀<𝑃𝐻</latex>.
+
+This links to equity and inequality which we have discussed in Lecture 9, since higher income families derive more value from private schools and have more access to them, affecting social mobility. 
+
+  <latex>−1+𝜏𝑡</latex>               is the total private cost to the family. The tuition fee <latex>𝑡 </latex>  is increased by the VAT rate <latex>𝜏 </latex> . This term is essential for the main policy: VAT raises the private cost of education, which discourages enrolment <latex>𝑦 </latex>  and generated revenue <latex>𝑇=𝜏𝐹 </latex>            for the government, which feeds into the public-school payoff:  <latex>𝑢𝑝𝑢𝑏=𝑆𝑥+5×𝑇𝑥</latex>                          , showing the redistribution and potential equity gains from improved state funding. 
+
+
+
+PART 2, QUESTION 2: 
+
+Scenario 1
+
+With <latex>𝑦=2 </latex>,we have <latex>𝐹=2𝑡 </latex>and <latex>𝐹𝑦=2𝑡2</latex>.
+
+  <latex>𝑢𝑖𝑝𝑟𝑖𝑣=𝑃𝑖+102𝑡2−1+𝜏𝑡 =𝑃𝑖+5×2𝑡−1+𝜏𝑡</latex>
+
+
+
+ <latex>𝑈𝑝𝑢𝑏=𝑆𝑥+5 𝑇𝑥=𝑆+10𝜏𝑡 sin𝑐𝑒 𝑥=1, 𝑇=𝜏𝐹 = 2𝜏𝑡</latex>
+
+
+
+The Nash equilibrium requires: 
+
+
+
+1)	L doesn't deviate from public school: <latex>𝑈𝐿𝑝𝑢𝑏=𝑆+10𝜏𝑡 ≥𝑃𝐿+52𝑡−1+𝜏𝑡</latex>
+
+2)	M doesn't deviate from private to public school: <latex>𝑃𝑀+52𝑡−1+𝜏𝑡 ≥𝑆+5𝜏𝑡2</latex>
+
+3)	H doesn't deviate from private to public school: <latex>𝑃𝐻+52𝑡−1+𝜏𝑡≥𝑆+5𝜏𝑡2</latex>,                                          which automatically holds is 2) holds since <latex>𝑃𝐻≥𝑃𝑀</latex>
+
+
+
+Numerical Example: 
+
+
+
+Let <latex>𝑆 </latex>   =1000, <latex>𝑡=10000 </latex>             , <latex>𝜏=0.2 </latex>,            <latex>𝑃𝐿=1000</latex>              , <latex>𝑃𝑀=20000</latex>,                 , <latex>𝑃𝐻=25000</latex>
+
+
+
+1) Condition 1 (L does not deviate) :<latex>𝑆 +10𝜏𝑡 = 5000 + 20000 = 25000 </latex>                                                   , 
+
+<latex>𝑃𝐿+52𝑡−1+𝜏𝑡=1000+707.1−12000=−10292.9</latex>                                                                                   , 
+
+<latex>25000≥−10292.9 </latex>                             - HOLDS
+
+
+
+2) Condition 2 (M does not deviate): <latex>𝑃𝑀+52𝑡−1+𝜏𝑡 = 20000 + 707.1 − 12000 = 8707.1</latex>                                                                            
+
+<latex>𝑆+5𝜏𝑡2=5000+100002=7500</latex>, 
+
+<latex>8707.1≥7500 </latex>                       - HOLDS 
+
+
+
+3) Condition 3 (H does not deviate): 
+
+<latex>𝑃𝐻+52𝑡−1+𝜏𝑡 = 25000+707.1−12000=13707.1</latex>, 
+
+<latex>𝑆+5𝜏𝑡2=7500</latex>
+
+<latex>13707.1≥7500 </latex>- HOLDS 
+
+
+
+PART 2, QUESTION 3:
+
+Scenario 2 
+
+L and M in public <latex>𝑥=2</latex>,           H in private <latex>𝑦=1</latex>. 
+
+Here, <latex>𝐹=1×𝑡 = 𝑡 </latex>                    , <latex>𝑇=𝜏𝑡 </latex>. 
+
+Public school payoff <latex>𝑈𝑝𝑢𝑏=𝑆

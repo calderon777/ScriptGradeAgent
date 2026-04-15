@@ -1,0 +1,295 @@
+Economics and Society Coursework
+Part 1:
+1) Prompt used:
+You have been given a document (the attached file).
+Use only information contained in that document. Do not use memory or
+external websites. If the document lacks information needed for a confident
+statement, say so and label it as an information gap.
+Produce a 300-word summary (approximately 300 words) written on the
+document.
+The summary must:
+• Open with one sentence stating the main change(s) introduced by the VAT
+policy on private schools.
+• Concisely describe the likely benefits and costs.
+• Explain short-run vs long-run effects where relevant.
+Overall, the summary should cover the main changes introduced by the policy
+and its likely costs and benefits.
+Do not speculate beyond what the document supports. Ensure the writing is
+concise, structured, and coherent, and remains focused on costs, benefits, and
+economic mechanisms.
+2) Output from the AI:
+The policy would add VAT at the main rate to private school fees, removing
+related tax reliefs while exempting local-authority-funded specialist placements;
+revenues would be allocated to increase state school spending. The clear fiscal
+benefit is substantial: the report estimates around £1.6 billion of extra tax
+receipts before behavioural effects, reflecting a net VAT yield after input
+deductions and other adjustments. This could fund roughly a 2% uplift in day-to-
+day state spending in England targeted at disadvantaged pupils. Distributional
+effects are largely progressive: private schooling is concentrated among high-
+income families, so taxing fees shifts costs toward better-off households and
+can modestly reduce inequality. Costs include higher out-of-pocket payments
+for purchasers, additional administrative complexity, scope for avoidance, and
+possible small reductions in labour supply where fees form a material share of
+household income. Behavioural responses are central: historical evidence
+points to weak price responsiveness, so short-run changes in private attendance
+are likely to be small, yet medium to long-run effects may be larger. The report
+judges that a 15% effective VAT could reduce private attendance by about 3–7%,
+equivalent to roughly 20,000–40,000 pupils, which would increase state-sector
+costs. Estimated marginal cost per transferring pupil is lower than average
+spending; central assumptions imply extra school costs of roughly £100–300
+million per year. Moreover, even if private attendance falls, aggregate VAT
+revenues need not decline because spending may reallocate to other VATable
+goods and services. Key uncertainties remain: elasticity, avoidance,
+measurement of costs, and heterogeneity across schools; clear legal definitions,
+strong monitoring and contingency planning are therefore essential design
+features to limit unintended consequences and ensure revenues reach intended
+pupils. Policy evaluation should track enrolment flows, revenue timing and
+distributional impacts over short and long horizons, periods too.
+3) Comments on AI’s output
+The key points of the IFS report are accurately summarised by the AI. According
+to the IFS (IFS, 2023, p.3; Table 2, p.15), the headline fiscal claim that roughly
+£1.6 billion in additional VAT receipts before behavioural effects is consistent
+with the idea that this could finance a minor increase in regular school spending.
+Given that private education is concentrated among higher-income households,
+it is reasonable to say that the policy is "largely progressive" (IFS, 2023, p. 9).
+However, this requires a disclaimer from lectures that people's reactions can
+undermine the apparent progressivity from earmarked spending because VAT
+incidence is dependent on behavioural responses (Lecture 2, slide 26).
+Also, the AI accurately identifies important uncertainties. The IFS's main
+scenario, which is explicitly scenario-based and depends on elasticities and
+marginal-cost assumptions, suggests that a 15% effective VAT could reduce
+private attendance by roughly 3–7% (€20k–40k students) and imply additional
+public costs in the low hundreds of millions (IFS, 2023, p.21-24; p.24-27). The
+report's own concerns are mirrored in warnings about avoidance, administrative
+complexity, and the requirement for clear legal design (IFS, 2023, p.17-19).
+4) Edited summary
+The policy would increase state school spending by applying VAT to private
+school fees (removing existing exemptions) and exempting specialist
+placements funded by local authorities. Before behavioural effects, the Institute
+for Fiscal Studies estimates an additional £1.6 billion in tax revenues (IFS, 2023,
+p.3; Table 2, p.15). Even though VAT is a regressive consumption tax, allocating
+those revenues to support underprivileged students is likely to result in a
+progressive outcome because private education is concentrated among
+wealthier households (IFS, 2023, p.3; Lecture 2, slide 26). Therefore, the main
+advantages are evident: an increase in fiscal revenue and the possibility of
+redistribution through higher public education spending aimed at those in need.
+If the legal definition of private schooling is not strictly enforced, the main costs
+include higher out-of-pocket expenses for families who continue to use private
+provision, increased administrative complexity for regulators and schools, and
+opportunities for tax evasion (IFS, 2023, p.17-19). A 15% effective VAT could
+reduce private attendance over the medium to long term by about 3-7 percent
+(roughly 20,000-40,000 pupils), which would in turn create costs for the state
+sector. However, the IFS judges that short run demand is relatively inelastic, so
+immediate falls in private attendance are likely to be small (IFS, 2023, p.21-24).
+According to the report's main assumptions, the package still results in a net
+public finance gain even though the additional state cost is small, roughly £100-
+300 million per year (IFS, 2023, p. 24-25). Several uncertainties that affect
+incidence and revenue timing, including the true elasticity of demand, the
+potential for avoidance, and heterogeneity among schools (IFS, 2023, p.24-27;
+Lecture 2, slides 21-26). In order to ensure that revenues deliver the intended
+equity gains without unintended consequences, the IFS advises careful legal
+definition, monitoring, and contingency planning for policy design (IFS, 2023,
+p.27).
+Part 2:
+1) 10√𝐹
+𝑈_𝑝𝑟𝑖𝑣 = 𝑃ᵢ+ −(1+𝜏)𝑡
+𝑦
+Substitute F = yt
+10√𝑦𝑡
+U_priv = 𝑃ᵢ+ −(1+𝜏)𝑡
+𝑦
+Simplify the equation
+10√𝑡
+𝑈_𝑝𝑟𝑖𝑣 = 𝑃ᵢ + − (1 + 𝜏)𝑡, 𝑖 ∈ {𝐿,𝑀,𝐻}
+√𝑦
+P is the baseline private benefit. t is tuition, τ is the VAT rate and y is private enrolment.
+i ∈ {L, M, H}, where L represents low-income family, M the middle-income family, and H
+the high-income family.
+The private payoff has three parts.
+𝑃ᵢ
+represents why some families choose private
+schooling regardless of price based on non-price factors like status, school fit,
+reputation of school. In practice this means wealthier families have a higher
+𝑃ᵢ
+and are
+10√𝑡
+more resilient to price rises. The term shows the per pupil private school benefit
+√𝑦
+rises with √𝑡 (tuition) and falls with √𝑦 (number of private school pupils). Finally,
+(1 + 𝜏)𝑡 is the full monetary cost of the tuition, which is tuition plus VAT. Increasing 𝜏
+raises out-of-pocket charges directly and is a factor that discourages private schooling
+up take.
+This links to the costs and benefits mentioned as VAT revenue comes from the
+(1 + 𝜏)𝑡 term and can fund public schooling (fiscal benefit, IFS, 2023, p.3), in turn,
+distributional consequences result from the concentration of private students (those
+with greater 𝑃𝑖, IFS, 2023, p.9). Behavioural responses are driven by price increases,
+but they are moderated by quality feedback. Leaving a private school, for instance,
+reduces 𝑦, which increases per-pupil private quality and may partially offset departures
+(explains small, short-run elasticities but is more ambiguous to medium-run effects,
+IFS, 2023, p.21-24; Lecture 9, 2024, slides 7-9). Finally, the theoretical VAT yield may be
+lower in practice due to collection costs and avoidance risk, so careful legislative
+design and monitoring are crucial (IFS, 2023, p. 17-19; Lecture 9, 2024, slide 26).
+2)
+T = private tuition; τ = VAT rate: y = number of private pupils (y = 3 - x); x = number in
+public.
+𝑃ᵢ = baseline private benefit for family 𝑖 ∈ {𝐿,𝑀,𝐻}with 0 ≤ 𝑃 < 𝑃 < 𝑃
+𝐿 𝑀 𝐻
+Total private fees 𝐹 = 𝑦𝑡. Total VAT revenue 𝑇 = 𝜏𝐹 = 𝜏𝑦𝑡
+Public payoff equation:
+𝑆 𝑇
+𝑈𝑖 = + 5 ×
+𝑥 𝑥
+Private payoff equation:
+10√𝑡
+𝑈_𝑝𝑟𝑖𝑣 = 𝑃ᵢ + − (1 + 𝜏)𝑡
+√𝑦
+When x = 1 and y = 2 (only L attends public, M & H attend private)
+Public:
+𝑥
+U( = 1) = S +5T Sub in 𝑇 = 𝜏𝐹 = 𝜏𝑦𝑡 and make y = 2
+𝜏𝑡
+= S + (2 )
+𝝉𝒕
+= S + 10
+Private:
+𝟏𝟎√𝒕
+𝑷ᵢ + − (𝟏 + 𝝉)𝒕
+U_priv(y = 2) =
+√𝟐
+Low-income family (L) prefers public:
+S + 10 𝝉𝒕 ≥ P L + 𝟏𝟎√𝒕 − (𝟏 + 𝝉)𝒕
+√𝒚
+Middle income family (M) prefers private:
+If M switched to public it would be x = 2 and y = 1
+𝑆 5
++ 𝜏𝑡
+That would be
+2 2
+𝟏𝟎√𝒕 𝑺 𝟓
+P + − (𝟏 + 𝝉)𝒕 ≥ + 𝝉𝒕
+M
+√𝟐 𝟐 𝟐
+High-income family prefers private: If it was to switch to public the private payoff
+would be same as M assuming all other families don’t change their decision.
+𝟏𝟎√𝒕 𝑺 𝟓
+P + − (𝟏 + 𝝉)𝒕 ≥ + 𝝉𝒕
+H
+√𝟐 𝟐 𝟐
+The numerical figures to satisfy these conditions are below.
+t=1, τ=0.20, P =1, P =5, P =8, S=10
+L M H
+P
+For L
+(left) S + 10 𝜏𝑡 = (10) + 10 (0.2)(1) = 12
+(Right) 1 + 7.07 – 1.2 = 6.87
+12 ≥ 𝟔. 𝟖𝟕 so conditions are satisfied
+For P
+M
+(Left) 5 + 7.07 – 1.2 = 10.87
+𝑆 5
+(Right) + 𝜏𝑡 =5 + 0.5 = 6.5
+2 2
+10.87 ≥ 𝟓. 𝟓 so conditions are satisfied
+For P
+H
+(Left) 8 + 7.07 – 1.2 = 13.87
+(Right) =5.5 (Same as P )
+M
+13.87 ≥ 𝟓. 𝟓 so conditions are satisfied
+3)
+X=2 y=1 as now 2 families choose public
+Based on last question I know when x=2 public payoff is:
+𝑆 5
+𝑈(𝑥 = 2) = + 𝜏𝑡
+2 2
+Private payoff when y=1:
+10√𝑡
+𝑈_𝑝𝑟𝑖𝑣 = 𝑃ᵢ + − (1 + 𝜏)𝑡
+√𝑦
+𝑈_𝑝𝑟𝑖𝑣 (𝑦 = 1) = 𝑃ᵢ + 10√𝑡 − (1 + 𝜏)𝑡
+Low-income family prefers public so:
+𝑆 5 𝟏𝟎√𝒕
++ 𝜏𝑡 ≥ 𝑃
+𝐿
++ − ( 𝟏 + 𝝉 ) 𝒕
+2 2 √𝟐
+Middle income prefers public. For the private payoff, if M changes to private the payoff
+would be x=1, y=2 (same as private payoff in previous question):
+𝑆 5 𝟏𝟎√𝒕
++ 𝜏𝑡 ≥ P + − (𝟏 + 𝝉)𝒕
+M
+2 2 √𝟐
+High income family prefers private. For their public payoff, if they were to switch to
+public it would be at a payoff where x=3 and y=0.
+𝑆
+.
+If x=3 and y=0 public payoff would be
+3
+𝑆
+P
+H
++10√𝑡 − (1 + 𝜏)𝑡 ≥ .
+3
+Numerical values example
+t=1 , τ=0.20 , PL=1 , PM=5 , PH=12 , S=22
+10√𝑡
+≈ 7.0711.
+√2
+(1 + 𝜏)𝑡 = 1.2
+5
+𝜏𝑡 = 0.5.
+2
+𝑆 5
++ 𝜏𝑡 = 11 + 0.5 = 11.5.
+2 2
+𝑆
+≈ 7.333.
+3
+Low income
+𝑆 5
+(Left) + 𝜏𝑡 = 11 + 0.5 = 11.5.
+2 2
+𝟏𝟎√𝒕
+(Right) 𝑃𝐿 + − (𝟏 + 𝝉)𝒕 = 1 + 7.0711 − 1.2 = 6.8711
+√𝟐
+𝟏𝟏.𝟓 ≥ 𝟔.𝟖𝟕𝟏𝟏 so, conditions satisfied
+Middle income
+𝑆 5
+(Left) + 𝜏𝑡 = 11 + 0.5 = 11.5
+2 2
+(Right) 5 + 7.0711 − 1.2 = 10.8711
+𝟏𝟏.𝟓 ≥ 𝟏𝟎.𝟖𝟕𝟏𝟏 so, conditions satisfied
+High income
+(Left) PH +10√𝑡 − (1 + 𝜏)𝑡 = 12 + 10 - 1.2 = 20.8
+𝑆
+(Right) ≈ 7.333
+3
+𝟐𝟎.𝟖 ≥ 𝟕.𝟑𝟑𝟑 so, conditions satisfied
+4)
+Private payoff
+10√𝑡
+𝑈_𝑝𝑟𝑖𝑣 = 𝑃ᵢ + − (1 + 𝜏)𝑡
+√𝑦
+Public payoff
+𝑆 𝑇 𝑆 𝝉𝒚𝒕
+𝑈(𝑥) = + 5 × = + 5 ×
+𝑥 𝑥 𝑥 𝑥
+Scenario 1: 𝒙 = 𝟏,𝒚 = 𝟐.
+Scenario 2: 𝒙 = 𝟐,𝒚 = 𝟏.
+Effects on the likelihood of Scenario 1:
+• S : A small decrease in S increases the likelihood of Scenario 1. This is because
+lowering the baseline public benefit makes public schools less appealing to
+middle-class and upper-class families, so M and H are less likely to transfer
+from private to public education.
+• τ (VAT rate): In most situations, a decrease in τ increases the likelihood of
+Scenario 1. This is because lower VAT lowers both the additional public funding
+and the price penalty on private fees, public becomes less appealing to M/H
+while private becomes comparatively more affordable, assisting M and H in
+staying private. However, if τ drops too much, L may no longer find the public
+appealing.
+• t (tuition): Increase t can make Scenario 1 more likely if the quality gain
+𝟏𝟎√𝒕
+dominates the price rise. This is because the private school quality term 10
+√𝒚
+is increased by higher tuition. It increases the out-of-pocket expense but also
+makes private more appealing to M 

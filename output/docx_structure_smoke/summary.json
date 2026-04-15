@@ -1,0 +1,58 @@
+[
+  {
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Ruhama Saqib_1494021_assignsubmission_file\\EC3040 Final Assessment.docx",
+    "word_count": 3483,
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 4,
+    "exact_match": true
+  },
+  {
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Zakaria Hussain_1494019_assignsubmission_file\\Economics and society - vat policy cw.docx",
+    "word_count": 3494,
+    "detected_labels": [
+      "Introduction and Analysis",
+      "Policy Impact Evaluation",
+      "VAT Policy Analysis",
+      "Scenario Analysis",
+      "Policy Impact on Welfare",
+      "Policy Justification"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 0,
+    "exact_match": false
+  },
+  {
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Aya Kalada_1493952_assignsubmission_file\\EC3040- EconSoc CW2 Final.docx",
+    "word_count": 3863,
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 4,
+    "exact_match": true
+  }
+]

@@ -1,0 +1,92 @@
+[
+  {
+    "name": "current",
+    "elapsed_seconds": 1.08,
+    "note": "Current extractor baseline",
+    "metrics": {
+      "words": 3835,
+      "chars": 23031,
+      "picture_placeholders": 0,
+      "sqrt_like": 0,
+      "tau_like": 0,
+      "equation_markers": 543
+    },
+    "path": "c:\\Users\\Cam\\Documents\\GitProjects\\ScriptGradeAgent\\output\\math_extraction_bakeoff\\current.txt",
+    "snippet_path": "c:\\Users\\Cam\\Documents\\GitProjects\\ScriptGradeAgent\\output\\math_extraction_bakeoff\\current.snippet.txt"
+  },
+  {
+    "name": "pymupdf4llm_markdown",
+    "elapsed_seconds": 1.83,
+    "note": "Raw markdown output",
+    "metrics": {
+      "words": 3746,
+      "chars": 23906,
+      "picture_placeholders": 23,
+      "sqrt_like": 0,
+      "tau_like": 0,
+      "equation_markers": 641
+    },
+    "path": "c:\\Users\\Cam\\Documents\\GitProjects\\ScriptGradeAgent\\output\\math_extraction_bakeoff\\pymupdf4llm_markdown.txt",
+    "snippet_path": "c:\\Users\\Cam\\Documents\\GitProjects\\ScriptGradeAgent\\output\\math_extraction_bakeoff\\pymupdf4llm_markdown.snippet.txt"
+  },
+  {
+    "name": "pymupdf4llm_markdown_clean",
+    "elapsed_seconds": 0.0,
+    "note": "Cleaned markdown output",
+    "metrics": {
+      "words": 3530,
+      "chars": 22351,
+      "picture_placeholders": 0,
+      "sqrt_like": 0,
+      "tau_like": 0,
+      "equation_markers": 503
+    },
+    "path": "c:\\Users\\Cam\\Documents\\GitProjects\\ScriptGradeAgent\\output\\math_extraction_bakeoff\\pymupdf4llm_markdown_clean.txt",
+    "snippet_path": "c:\\Users\\Cam\\Documents\\GitProjects\\ScriptGradeAgent\\output\\math_extraction_bakeoff\\pymupdf4llm_markdown_clean.snippet.txt"
+  },
+  {
+    "name": "pymupdf4llm_text",
+    "elapsed_seconds": 1.74,
+    "note": "Plain-text output",
+    "metrics": {
+      "words": 3666,
+      "chars": 23128,
+      "picture_placeholders": 23,
+      "sqrt_like": 0,
+      "tau_like": 0,
+      "equation_markers": 618
+    },
+    "path": "c:\\Users\\Cam\\Documents\\GitProjects\\ScriptGradeAgent\\output\\math_extraction_bakeoff\\pymupdf4llm_text.txt",
+    "snippet_path": "c:\\Users\\Cam\\Documents\\GitProjects\\ScriptGradeAgent\\output\\math_extraction_bakeoff\\pymupdf4llm_text.snippet.txt"
+  },
+  {
+    "name": "pymupdf4llm_text_force_ocr",
+    "elapsed_seconds": 1.85,
+    "note": "Plain-text with forced OCR",
+    "metrics": {
+      "words": 3666,
+      "chars": 23128,
+      "picture_placeholders": 23,
+      "sqrt_like": 0,
+      "tau_like": 0,
+      "equation_markers": 618
+    },
+    "path": "c:\\Users\\Cam\\Documents\\GitProjects\\ScriptGradeAgent\\output\\math_extraction_bakeoff\\pymupdf4llm_text_force_ocr.txt",
+    "snippet_path": "c:\\Users\\Cam\\Documents\\GitProjects\\ScriptGradeAgent\\output\\math_extraction_bakeoff\\pymupdf4llm_text_force_ocr.snippet.txt"
+  },
+  {
+    "name": "pymupdf4llm_json_flat",
+    "elapsed_seconds": 1.98,
+    "note": "Custom flatten from JSON spans",
+    "metrics": {
+      "words": 2823,
+      "chars": 18224,
+      "picture_placeholders": 0,
+      "sqrt_like": 0,
+      "tau_like": 0,
+      "equation_markers": 424
+    },
+    "path": "c:\\Users\\Cam\\Documents\\GitProjects\\ScriptGradeAgent\\output\\math_extraction_bakeoff\\pymupdf4llm_json_flat.txt",
+    "snippet_path": "c:\\Users\\Cam\\Documents\\GitProjects\\ScriptGradeAgent\\output\\math_extraction_bakeoff\\pymupdf4llm_json_flat.snippet.txt"
+  }
+]

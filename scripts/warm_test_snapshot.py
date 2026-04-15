@@ -45,7 +45,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-mark", type=float, required=True, help="Configured overall maximum mark.")
     parser.add_argument("--limit", type=int, default=5, help="Number of scripts to run.")
     parser.add_argument("--grader", default="Qwen2 7B", choices=AVAILABLE_MODELS.keys())
-    parser.add_argument("--verifier", default="Gemma 3 4B", choices=AVAILABLE_MODELS.keys())
+    parser.add_argument("--verifier", default="Qwen2 7B", choices=AVAILABLE_MODELS.keys())
     parser.add_argument("--document-only", action="store_true", help="Use uploaded documents when there is no rubric.")
     parser.add_argument("--output-dir", default="output", help="Output directory for workbook bundle.")
     return parser.parse_args()

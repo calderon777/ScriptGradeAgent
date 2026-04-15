@@ -1,0 +1,53 @@
+PART 2, QUESTION 1:
+The payoff for families    (with ), from choosing private school is  ,                where                is the total fees collected by private school. The term  captures per student benefits from total school resources with diminishing returns (the square root). When rises, total fees increase, but the benefit is spread across more students, reflecting congestion or limited scale economies in private schools. This connects to our topics where we talked about resource gaps and class sizes. (Lecture 9).
+captures inherent valuations of private education across families, which is where inequality comes from in the model, since .
+This links to equity and inequality which we have discussed in Lecture 9, since higher income families derive more value from private schools and have more access to them, affecting social mobility.
+is the total private cost to the family. The tuition fee   is increased by the VAT rate  . This term is essential for the main policy: VAT raises the private cost of education, which discourages enrolment   and generated revenue             for the government, which feeds into the public-school payoff:                            , showing the redistribution and potential equity gains from improved state funding.
+PART 2, QUESTION 2:
+Scenario 1
+With ,we have and .
+The Nash equilibrium requires:
+L doesn't deviate from public school:
+M doesn't deviate from private to public school:
+H doesn't deviate from private to public school: ,                                          which automatically holds is 2) holds since
+Numerical Example:
+Let    =1000,              , ,                          , ,                 ,
+1) Condition 1 (L does not deviate) :                                                   ,
+,
+- HOLDS
+2) Condition 2 (M does not deviate):
+,
+- HOLDS
+3) Condition 3 (H does not deviate):
+,
+- HOLDS
+PART 2, QUESTION 3:
+Scenario 2
+L and M in public ,           H in private .
+Here,                     , .
+Public school payoff .
+Private school payoff for H: .
+Equilibrium conditions:
+L doesn't deviate to private:
+M doesn't deviate to private:
+H doesn't deviate to public: If H deviates, , , . H’s public payoff would be .
+NUMERICAL EXAMPLE:
+,                              ,             ,                   ,                    , .
+Conditions:
+L doesn't deviate to private:
+,
+,
+- HOLDS
+M doesn't deviate to private:
+,
+,
+- HOLDS
+H doesn't deviate to public:
+,
+,
+- HOLDS
+PART 2, QUESTION 4:
+What happens if I change the parameters?
+Increasing base public funding :   This raises public school payoff in both scenarios. A higher     makes Condition 1) from Scenario 1 (L stays public) and Condition 1) & 2) from Scenario 2 (L&M stay public) easier to satisfy (public school more attractive for L), supporting both scenarios. Its effect on middle- and high-income families’ choice is ambiguous but generally supports Scenario 2 (more in public school).
+Increasing the VAT rate : This has two effects: 1) It increases the cost of private school ,          making private school less attractive. 2) It increases VAT revenue , boosting public school payoffs .    Both effects make public school more attractive relative to private, making Scenario 2 more likely.
+Increasing the private valuation parameters       or :    This directly increases the private payoff for M and H. Tis makes conditions 2) and 3) for Scenario 1 easier to satisfy, and condition 3) for Scenario 2 harder to satisfy. Consequently, higher or  makes Scenario 1 (more

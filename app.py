@@ -17,6 +17,8 @@ from marking_pipeline import (
     build_rubric_matrix_markdown,
     build_verifier_report,
     call_ollama,
+    build_submission_texts_from_path,
+    build_submission_texts_from_upload,
     combine_text_sections,
     discover_assessment_bundles,
     get_last_ingest_manifest_path,
@@ -136,8 +138,10 @@ def read_csv_source(csv_source: object) -> pd.DataFrame:
 
 def load_submission_source_text(submission_source: object) -> tuple[str, str]:
     if isinstance(submission_source, Path):
-        return read_path_text(submission_source), submission_source.name
-    return read_uploaded_files_text([submission_source]), submission_source.name
+        script_text, _ = build_submission_texts_from_path(submission_source)
+        return script_text, submission_source.name
+    script_text, _ = build_submission_texts_from_upload(submission_source)
+    return script_text, submission_source.name
 
 
 def main() -> None:
@@ -172,7 +176,7 @@ def main() -> None:
         verifier_model_key = st.selectbox(
             "Verifier",
             options=model_keys,
-            index=model_keys.index("Gemma 3 4B"),
+            index=model_keys.index("Qwen2 7B"),
         )
 
     grader_model = AVAILABLE_MODELS[grader_model_key]
@@ -604,7 +608,7 @@ def main() -> None:
                         "source_path": str(submission_path),
                     }
                     try:
-                        script_text = read_path_text(submission_path)
+                        script_text, structure_script_text = build_submission_texts_from_path(submission_path)
                     except Exception as exc:
                         for _, label in selected_models:
                             apply_model_result(row, label, error=exc)
@@ -618,6 +622,7 @@ def main() -> None:
                         try:
                             result = call_ollama(
                                 script_text=script_text,
+                                structure_script_text=structure_script_text,
                                 context=marking_context,
                                 filename=submission_path.name,
                                 model_name=model_name,
@@ -763,7 +768,8 @@ def main() -> None:
             sidebar_status.info(f"Marking in progress ({marking_context.max_mark:g}-point scale)")
             total = len(run_script_files)
             for index, uploaded in enumerate(run_script_files, start=1):
-                script_text, filename = load_submission_source_text(uploaded)
+                script_text, structure_script_text = build_submission_texts_from_upload(uploaded)
+                filename = uploaded.name
                 status.text(f"Marking {filename} ({index}/{total})")
 
                 row = {"filename": filename}
@@ -771,6 +777,7 @@ def main() -> None:
                     try:
                         result = call_ollama(
                             script_text=script_text,
+                            structure_script_text=structure_script_text,
                             context=marking_context,
                             filename=filename,
                             model_name=model_name,

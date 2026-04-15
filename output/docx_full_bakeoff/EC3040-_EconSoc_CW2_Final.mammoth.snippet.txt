@@ -1,0 +1,237 @@
+Part 2 (40 Marks)
+
+Pay off from attending private school.
+
+For every family, the payoff for sending their child to private school is equal to the benefit from private education minus tuition fees and VAT.
+
+x = number of families that send their child to public school. 
+
+Y= 3- x = Number of families attending private schools. 
+
+F= y ⋅ t = Total private school fees. 
+
+Therefore, the payoff functions from attending private school are:
+
+Low-income family (L):
+
+
+
+Middle-income family (M):
+
+
+
+High-income family (H):
+
+
+
+The parameters satisfy:
+
+
+
+These payoff functions describe the utility of each family from attending private school.
+
+Explanation of terms
+
+The parameter Pi captures heterogeneity in preferences for private education across income groups, reflecting differences in ability and willingness to pay. 
+
+The term   captures peer effects and school quality in private schools, which increase with total resources but exhibit diminishing returns. 
+
+The term  represents the total price paid for private schooling, including tuition fees and VAT, and therefore captures the direct financial cost imposed by the policy. 
+
+In conclusion, these payoff functions formalise how VAT on private school fees affect families differently through income-dependent preferences, peer effects in private schools, and high effective prices of private education.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Conditions for equilibrium school choices 
+
+A family chooses private school if and only if:
+
+
+
+According to the model, the payoff from attending public school is:
+
+
+
+Scenario 1:
+
+Low-income family attends public school
+
+Middle-income and High-income families attend private school
+
+So, x=1, y=3-x=2
+
+Total private school fees:
+
+F=yt=2t
+
+Total VAT revenue:
+
+T= τty= 2τt
+
+Where x= number of families attending public school 
+
+Where T= the total VAT revenue raised from private school fees.
+
+
+
+Payoffs in scenario 1:
+
+
+
+Public school payoff (Low-income families)
+
+
+
+Private school payoff (middle- and high-income families)
+
+
+
+
+
+
+
+If there is no-deviation conditions:
+
+
+
+Low-income families don’t deviate to private school 
+
+Required:
+
+
+
+Middle-income family doesn’t deviate to public school but if they do:
+
+
+
+
+
+
+
+Similarly, high-income family doesn’t deviate to public school so:
+
+
+
+Since PH> PM, this condition is automatically satisfied if it holds for the middle-income family. 
+
+
+
+Scenario 1 is an equilibrium if:
+
+
+
+
+
+One set of values satisfying this condition is:
+
+
+
+Under these conditions, the low-income family attends public school while middle and high-income families attend private school in equilibrium. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ VAT revenue and public-school funding 
+
+In scenario 2: 
+
+Low-income family= public school
+
+Middle-income family= public school 
+
+High-income family= private school 
+
+Thus:
+
+
+
+Total private school fees:
+
+
+
+Total VAT revenue:
+
+
+
+
+
+Payoffs in scenario 2
+
+Public school payoff (for L and M):
+
+
+
+
+
+
+
+Private school payoff (for H):
+
+
+
+
+
+No deviation conditions
+
+Low-income family doesn’t deviate to private school:
+
+
+
+Middle-income family doesn’t deviate to private school:
+
+
+
+Since, PM>PL, this condition is binding for both L and M. 
+
+
+
+High-income family doesn’t deviate to public school.
+
+X=3,  y=0  T=0
+
+Public school pay off after deviation:
+
+
+
+
+
+Equilibrium conditions
+
+Scenario 2 is an equilibrium if:
+
+
+
+And
+
+
+
+Example numerical values
+
+
+
+To conclude, this proves that the low and middle-income families attend public school while the high-income family attends private school in equilibri

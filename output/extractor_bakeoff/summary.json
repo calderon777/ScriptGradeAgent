@@ -1,0 +1,74 @@
+[
+  {
+    "extractor": "current",
+    "path": "C:\\Users\\Cam\\Documents\\GitProjects\\ScriptGradeAgent\\scripts\\test\\student1.pdf",
+    "elapsed_seconds": 1.18,
+    "char_count": 29829,
+    "word_count": 4448,
+    "line_count": 360,
+    "heading_like_lines": 1,
+    "suspicious_char_count": 0,
+    "empty": false,
+    "error": ""
+  },
+  {
+    "extractor": "markitdown",
+    "path": "C:\\Users\\Cam\\Documents\\GitProjects\\ScriptGradeAgent\\scripts\\test\\student1.pdf",
+    "elapsed_seconds": 2.08,
+    "char_count": 29927,
+    "word_count": 4448,
+    "line_count": 360,
+    "heading_like_lines": 1,
+    "suspicious_char_count": 0,
+    "empty": false,
+    "error": ""
+  },
+  {
+    "extractor": "pymupdf4llm",
+    "path": "C:\\Users\\Cam\\Documents\\GitProjects\\ScriptGradeAgent\\scripts\\test\\student1.pdf",
+    "elapsed_seconds": 1.87,
+    "char_count": 30050,
+    "word_count": 4453,
+    "line_count": 72,
+    "heading_like_lines": 3,
+    "suspicious_char_count": 0,
+    "empty": false,
+    "error": ""
+  },
+  {
+    "extractor": "current",
+    "path": "C:\\Users\\Cam\\Documents\\GitProjects\\ScriptGradeAgent\\.scriptgrade_cache\\last_ingest\\marking_scheme\\001_Final_Main_2025_V03_-_solutions.pdf",
+    "elapsed_seconds": 1.23,
+    "char_count": 41625,
+    "word_count": 7366,
+    "line_count": 824,
+    "heading_like_lines": 16,
+    "suspicious_char_count": 0,
+    "empty": false,
+    "error": ""
+  },
+  {
+    "extractor": "markitdown",
+    "path": "C:\\Users\\Cam\\Documents\\GitProjects\\ScriptGradeAgent\\.scriptgrade_cache\\last_ingest\\marking_scheme\\001_Final_Main_2025_V03_-_solutions.pdf",
+    "elapsed_seconds": 2.08,
+    "char_count": 42609,
+    "word_count": 7917,
+    "line_count": 1008,
+    "heading_like_lines": 4,
+    "suspicious_char_count": 0,
+    "empty": false,
+    "error": ""
+  },
+  {
+    "extractor": "pymupdf4llm",
+    "path": "C:\\Users\\Cam\\Documents\\GitProjects\\ScriptGradeAgent\\.scriptgrade_cache\\last_ingest\\marking_scheme\\001_Final_Main_2025_V03_-_solutions.pdf",
+    "elapsed_seconds": 2.97,
+    "char_count": 43630,
+    "word_count": 7382,
+    "line_count": 209,
+    "heading_like_lines": 10,
+    "suspicious_char_count": 12,
+    "empty": false,
+    "error": ""
+  }
+]

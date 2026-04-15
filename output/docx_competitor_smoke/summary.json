@@ -1,0 +1,172 @@
+[
+  {
+    "backend": "current",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Ruhama Saqib_1494021_assignsubmission_file\\EC3040 Final Assessment.docx",
+    "word_count": 3483,
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Question 4",
+      "Question 5",
+      "Question 6"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 2,
+    "exact_match": false
+  },
+  {
+    "backend": "markitdown",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Ruhama Saqib_1494021_assignsubmission_file\\EC3040 Final Assessment.docx",
+    "word_count": 3506,
+    "detected_labels": [
+      "Whole Submission"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 0,
+    "exact_match": false
+  },
+  {
+    "backend": "mammoth",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Ruhama Saqib_1494021_assignsubmission_file\\EC3040 Final Assessment.docx",
+    "word_count": 3483,
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Question 4"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 2,
+    "exact_match": false
+  },
+  {
+    "backend": "current",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Zakaria Hussain_1494019_assignsubmission_file\\Economics and society - vat policy cw.docx",
+    "word_count": 3494,
+    "detected_labels": [
+      "Introduction and Analysis",
+      "Costs and Benefits Analysis",
+      "Policy Impact Evaluation",
+      "VAT Policy Conditions",
+      "Scenario Analysis",
+      "Policy Impact on Welfare"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 0,
+    "exact_match": false
+  },
+  {
+    "backend": "markitdown",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Zakaria Hussain_1494019_assignsubmission_file\\Economics and society - vat policy cw.docx",
+    "word_count": 3501,
+    "detected_labels": [
+      "Introduction and Costs-Benefits Analysis",
+      "Conditions for Equilibrium and Policy Analysis",
+      "Impact of Parameter Changes",
+      "VAT Impact on Equilibrium",
+      "Policy Evaluation",
+      "Model Predictions"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 0,
+    "exact_match": false
+  },
+  {
+    "backend": "mammoth",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Zakaria Hussain_1494019_assignsubmission_file\\Economics and society - vat policy cw.docx",
+    "word_count": 3444,
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "D) Alternative Arguments"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 2,
+    "exact_match": false
+  },
+  {
+    "backend": "current",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Aya Kalada_1493952_assignsubmission_file\\EC3040- EconSoc CW2 Final.docx",
+    "word_count": 3863,
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 4,
+    "exact_match": true
+  },
+  {
+    "backend": "markitdown",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Aya Kalada_1493952_assignsubmission_file\\EC3040- EconSoc CW2 Final.docx",
+    "word_count": 4114,
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Whole Submission"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 2,
+    "exact_match": false
+  },
+  {
+    "backend": "mammoth",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Aya Kalada_1493952_assignsubmission_file\\EC3040- EconSoc CW2 Final.docx",
+    "word_count": 3863,
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 4,
+    "exact_match": true
+  }
+]

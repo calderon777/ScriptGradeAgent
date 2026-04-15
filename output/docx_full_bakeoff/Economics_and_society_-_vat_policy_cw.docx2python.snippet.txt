@@ -1,0 +1,19 @@
+part 2 of this question the tuition fees have an ambiguous effect on private school attendance. However, since Pl<Pm<Ph, payoff for private school is always lowest for low-income families. This would suggest that higher tuition fees would have a higher deterrent effect on low-income families which could induce them to switch to public school making scenario 1 more likely if tuition fees rise.
+
+
+
+e) Under scenario 1, if we add all of the families’ payoffs ( <latex>S+10t</latex>τ for low-income, <latex>Pm+52t-t-tτ</latex> for middle-income and <latex>Ph+52t-t-tτ</latex> for high-income) we get the total utility (social welfare) <latex>W1= S+</latex> <latex>8t</latex>τ + <latex>Pm+102t</latex> + <latex>Ph-2t</latex>. If we derivate this with respect to τ we get 8t. Therefore, if t>0 an increase in the vat rate will increase social welfare. However, not all families will have increased utilities. We can see from the individual payoffs that an increase in vat increases payoff for low-income but decreases payoff for middle and high-income. 
+
+If an increase in vat (<latex>τ*)</latex> causes middle-income to switch to public school, we get scenario 2. If we add all of the families’ payoffs ( <latex> S2+5 2tτ*</latex> for low-income, <latex> S2+5 2tτ*</latex> for middle-income and <latex> Ph-t-tτ*</latex> for high-income) we get <latex>W2=S+4tτ*+Ph-t</latex> as the total social welfare. If we now do W1 (<latex>τ)</latex> – W2(<latex>τ*)</latex>  we get <latex>Pm+10 (2t</latex> ) + <latex>8tτ+4tτ*-t</latex>.
+
+ If <latex>Pm+10 (2t</latex> ) + <latex>8tτ+4tτ*</latex> > t then W1(<latex>τ)</latex>>W2(<latex>τ*)</latex>. So, while an increase in vat can increase welfare as shown in scenario 1 it can also decrease welfare if the increase induces the economy to change from scenario 1 to scenario 2.
+
+
+
+f) This policy increases the cost of private schools and redistribute these costs to public-school, targeting children from disadvantaged backgrounds. The purpose could link to lecture 1 which discusses government intervention, covering factors such as fairness and impacts of inequality on economic growth as justifications for redistributions. Scenario 1 allows us to analyse the impact of vat when family behaviour is fixed. Vat increases, increased public-school payoffs through increased revenues and decreased private-school payoffs through higher costs, aligning with lecture 2 which discusses how tax revenues can be redistributed for public goods such as schools to decrease inequality.
+
+While total social welfare could rise when vat rises, this is not across all groups. Only the low-income family benefits while middle and high-income families saw a decrease in their utilities due to higher costs. This links to the equity-efficiency trade off discussed in lecture 2 where taxes will raise revenues and reduce inequality, but reduce work incentives on taxpayers, creating economic inefficiencies.
+
+From the analysis we saw when switching occurs, total welfare can fall. Lecture 9 explains that private schooling reduces pressure on state schools due to less crowding. An increase in students increases the student teacher ratio and could lead to a fall in the quality of education, decreasing payoffs from attending public schools.  
+
+Overall, vat could be a good policy and improve equity and welfare when analysing a fixed situation. However, when behavioural responses are introduced, welfare can drop if price sensitivity for middle-income families is high. There is

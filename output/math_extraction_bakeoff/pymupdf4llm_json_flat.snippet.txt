@@ -1,0 +1,38 @@
+You have been given a document (the attached file).
+Use only information contained in that document. Do not use memory or
+external websites. If the document lacks information needed for a confident
+statement, say so and label it as an information gap.
+Produce a 300-word summary (approximately 300 words) written on the
+document.
+The summary must:
+Overall, the summary should cover the main changes introduced by the policy
+and its likely costs and benefits.
+Do not speculate beyond what the document supports. Ensure the writing is
+concise, structured, and coherent, and remains focused on costs, benefits, and
+economic mechanisms.
+The policy would add VAT at the main rate to private school fees, removing
+related tax reliefs while exempting local-authority-funded specialist placements;
+revenues would be allocated to increase state school spending. The clear fiscal
+benefit is substantial: the report estimates around £1.6 billion of extra tax
+receipts before behavioural effects, reflecting a net VAT yield after input
+deductions and other adjustments. This could fund roughly a 2% uplift in day-to-
+day state spending in England targeted at disadvantaged pupils. Distributional
+effects are largely progressive: private schooling is concentrated among high-
+income families, so taxing fees shifts costs toward better-off households and
+
+can modestly reduce inequality. Costs include higher out-of-pocket payments
+for purchasers, additional administrative complexity, scope for avoidance, and
+possible small reductions in labour supply where fees form a material share of
+household income. Behavioural responses are central: historical evidence
+points to weak price responsiveness, so short-run changes in private attendance
+are likely to be small, yet medium to long-run effects may be larger. The report
+judges that a 15% effective VAT could reduce private attendance by about 3–7%,
+equivalent to roughly 20,000–40,000 pupils, which would increase state-sector
+costs. Estimated marginal cost per transferring pupil is lower than average
+spending; central assumptions imply extra school costs of roughly £100–300
+million per year. Moreover, even if private attendance falls, aggregate VAT
+revenues need not decline because spending may reallocate to other VATable
+goods and services. Key uncertainties remain: elasticity, avoidance,
+measurement of costs, and heterogeneity across schools; clear legal definitions,
+strong monitoring and contingency planning are therefore essential design
+feature

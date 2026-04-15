@@ -1,0 +1,821 @@
+[
+  {
+    "backend": "current",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Ruhama Saqib_1494021_assignsubmission_file\\EC3040 Final Assessment.docx",
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "PART 1",
+      "PART 2"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 2,
+    "exact_match": false,
+    "metrics": {
+      "words": 3483,
+      "chars": 24664,
+      "sqrt_like": 3,
+      "tau_like": 3,
+      "equation_equals": 3,
+      "part_mentions": 15,
+      "question_mentions": 10
+    }
+  },
+  {
+    "backend": "python_docx",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Ruhama Saqib_1494021_assignsubmission_file\\EC3040 Final Assessment.docx",
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "PART 3",
+      "PART 4"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 2,
+    "exact_match": false,
+    "metrics": {
+      "words": 3483,
+      "chars": 24098,
+      "sqrt_like": 3,
+      "tau_like": 3,
+      "equation_equals": 3,
+      "part_mentions": 15,
+      "question_mentions": 10
+    }
+  },
+  {
+    "backend": "mammoth",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Ruhama Saqib_1494021_assignsubmission_file\\EC3040 Final Assessment.docx",
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Whole Submission"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 2,
+    "exact_match": false,
+    "metrics": {
+      "words": 3483,
+      "chars": 24924,
+      "sqrt_like": 3,
+      "tau_like": 3,
+      "equation_equals": 3,
+      "part_mentions": 15,
+      "question_mentions": 10
+    }
+  },
+  {
+    "backend": "docx2python",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Ruhama Saqib_1494021_assignsubmission_file\\EC3040 Final Assessment.docx",
+    "detected_labels": [
+      "Introduction"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 0,
+    "exact_match": false,
+    "metrics": {
+      "words": 3744,
+      "chars": 30311,
+      "sqrt_like": 3,
+      "tau_like": 3,
+      "equation_equals": 94,
+      "part_mentions": 15,
+      "question_mentions": 10
+    }
+  },
+  {
+    "backend": "docx_extractor",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Ruhama Saqib_1494021_assignsubmission_file\\EC3040 Final Assessment.docx",
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Whole Submission"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 2,
+    "exact_match": false,
+    "metrics": {
+      "words": 3483,
+      "chars": 24098,
+      "sqrt_like": 3,
+      "tau_like": 3,
+      "equation_equals": 3,
+      "part_mentions": 15,
+      "question_mentions": 10
+    }
+  },
+  {
+    "backend": "markitdown",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Ruhama Saqib_1494021_assignsubmission_file\\EC3040 Final Assessment.docx",
+    "detected_labels": [
+      "Whole Submission"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 0,
+    "exact_match": false,
+    "metrics": {
+      "words": 3506,
+      "chars": 24584,
+      "sqrt_like": 3,
+      "tau_like": 3,
+      "equation_equals": 3,
+      "part_mentions": 15,
+      "question_mentions": 10
+    }
+  },
+  {
+    "backend": "current",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Zakaria Hussain_1494019_assignsubmission_file\\Economics and society - vat policy cw.docx",
+    "detected_labels": [
+      "Introduction and Costs & Benefits",
+      "Costs to Households",
+      "Benefits and Fiscal Impact",
+      "VAT on Private School Fees",
+      "Conditions for Equilibrium and Changes in Parameters",
+      "Impact of VAT on Private School Attendance",
+      "Discussion and Policy Evaluation"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 0,
+    "exact_match": false,
+    "metrics": {
+      "words": 3494,
+      "chars": 22517,
+      "sqrt_like": 3,
+      "tau_like": 3,
+      "equation_equals": 56,
+      "part_mentions": 6,
+      "question_mentions": 0
+    }
+  },
+  {
+    "backend": "python_docx",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Zakaria Hussain_1494019_assignsubmission_file\\Economics and society - vat policy cw.docx",
+    "detected_labels": [
+      "Introduction and Costs & Benefits",
+      "Analysis of Policy Impact",
+      "Conditions for Equilibrium",
+      "Effects of Parameter Changes",
+      "VAT's Impact on Equilibrium",
+      "Policy Evaluation"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 0,
+    "exact_match": false,
+    "metrics": {
+      "words": 3444,
+      "chars": 21955,
+      "sqrt_like": 3,
+      "tau_like": 3,
+      "equation_equals": 44,
+      "part_mentions": 6,
+      "question_mentions": 0
+    }
+  },
+  {
+    "backend": "mammoth",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Zakaria Hussain_1494019_assignsubmission_file\\Economics and society - vat policy cw.docx",
+    "detected_labels": [
+      "Introduction and Costs & Benefits",
+      "Policy Impact Analysis",
+      "Scenario Analysis",
+      "Policy Evaluation"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 0,
+    "exact_match": false,
+    "metrics": {
+      "words": 3444,
+      "chars": 22175,
+      "sqrt_like": 3,
+      "tau_like": 3,
+      "equation_equals": 44,
+      "part_mentions": 6,
+      "question_mentions": 0
+    }
+  },
+  {
+    "backend": "docx2python",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Zakaria Hussain_1494019_assignsubmission_file\\Economics and society - vat policy cw.docx",
+    "detected_labels": [
+      "Introduction and Costs & Benefits",
+      "Analysis of Policy Impact",
+      "Effects of Parameter Changes",
+      "VAT Impact on Equilibrium",
+      "Policy Evaluation"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 0,
+    "exact_match": false,
+    "metrics": {
+      "words": 3505,
+      "chars": 24365,
+      "sqrt_like": 6,
+      "tau_like": 6,
+      "equation_equals": 77,
+      "part_mentions": 6,
+      "question_mentions": 0
+    }
+  },
+  {
+    "backend": "docx_extractor",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Zakaria Hussain_1494019_assignsubmission_file\\Economics and society - vat policy cw.docx",
+    "detected_labels": [
+      "Introduction and Costs & Benefits",
+      "Analysis of Policy Impact",
+      "VAT Policy Evaluation",
+      "Policy Outcomes Discussion",
+      "Policy Impact Analysis",
+      "Scenario-Based Analysis",
+      "Policy Evaluation"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 0,
+    "exact_match": false,
+    "metrics": {
+      "words": 3444,
+      "chars": 21955,
+      "sqrt_like": 3,
+      "tau_like": 3,
+      "equation_equals": 44,
+      "part_mentions": 6,
+      "question_mentions": 0
+    }
+  },
+  {
+    "backend": "markitdown",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Zakaria Hussain_1494019_assignsubmission_file\\Economics and society - vat policy cw.docx",
+    "detected_labels": [
+      "Introduction and Costs-Benefits Analysis",
+      "Conditions for Equilibrium and Policy Analysis",
+      "Impact of Parameter Changes",
+      "VAT Impact on Equilibrium",
+      "Policy Evaluation",
+      "Model Predictions"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 0,
+    "exact_match": false,
+    "metrics": {
+      "words": 3501,
+      "chars": 23050,
+      "sqrt_like": 3,
+      "tau_like": 3,
+      "equation_equals": 56,
+      "part_mentions": 6,
+      "question_mentions": 0
+    }
+  },
+  {
+    "backend": "current",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Aya Kalada_1493952_assignsubmission_file\\EC3040- EconSoc CW2 Final.docx",
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 4,
+    "exact_match": true,
+    "metrics": {
+      "words": 3863,
+      "chars": 25680,
+      "sqrt_like": 2,
+      "tau_like": 2,
+      "equation_equals": 23,
+      "part_mentions": 8,
+      "question_mentions": 3
+    }
+  },
+  {
+    "backend": "python_docx",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Aya Kalada_1493952_assignsubmission_file\\EC3040- EconSoc CW2 Final.docx",
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 4,
+    "exact_match": true,
+    "metrics": {
+      "words": 3757,
+      "chars": 24849,
+      "sqrt_like": 2,
+      "tau_like": 2,
+      "equation_equals": 23,
+      "part_mentions": 8,
+      "question_mentions": 3
+    }
+  },
+  {
+    "backend": "mammoth",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Aya Kalada_1493952_assignsubmission_file\\EC3040- EconSoc CW2 Final.docx",
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 4,
+    "exact_match": true,
+    "metrics": {
+      "words": 3863,
+      "chars": 26147,
+      "sqrt_like": 2,
+      "tau_like": 2,
+      "equation_equals": 23,
+      "part_mentions": 8,
+      "question_mentions": 3
+    }
+  },
+  {
+    "backend": "docx2python",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Aya Kalada_1493952_assignsubmission_file\\EC3040- EconSoc CW2 Final.docx",
+    "detected_labels": [
+      "Part 1 (15 Marks)",
+      "Part 2 (40 Marks)",
+      "Part 3 (30 Marks)",
+      "Part 4 (15 Marks)"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 0,
+    "exact_match": false,
+    "metrics": {
+      "words": 3916,
+      "chars": 27000,
+      "sqrt_like": 2,
+      "tau_like": 2,
+      "equation_equals": 23,
+      "part_mentions": 8,
+      "question_mentions": 3
+    }
+  },
+  {
+    "backend": "docx_extractor",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Aya Kalada_1493952_assignsubmission_file\\EC3040- EconSoc CW2 Final.docx",
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 4,
+    "exact_match": true,
+    "metrics": {
+      "words": 3566,
+      "chars": 23602,
+      "sqrt_like": 1,
+      "tau_like": 1,
+      "equation_equals": 23,
+      "part_mentions": 8,
+      "question_mentions": 3
+    }
+  },
+  {
+    "backend": "markitdown",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Aya Kalada_1493952_assignsubmission_file\\EC3040- EconSoc CW2 Final.docx",
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Whole Submission"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 2,
+    "exact_match": false,
+    "metrics": {
+      "words": 4114,
+      "chars": 27598,
+      "sqrt_like": 2,
+      "tau_like": 2,
+      "equation_equals": 23,
+      "part_mentions": 8,
+      "question_mentions": 3
+    }
+  },
+  {
+    "backend": "current",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\AIAH BAROOM_1494167_assignsubmission_file\\EC3040 Final.docx",
+    "detected_labels": [
+      "Introduction",
+      "Theoretical Model",
+      "Empirical Evidence",
+      "Proposed Model Changes"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 0,
+    "exact_match": false,
+    "metrics": {
+      "words": 6622,
+      "chars": 43010,
+      "sqrt_like": 0,
+      "tau_like": 0,
+      "equation_equals": 48,
+      "part_mentions": 8,
+      "question_mentions": 10
+    }
+  },
+  {
+    "backend": "python_docx",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\AIAH BAROOM_1494167_assignsubmission_file\\EC3040 Final.docx",
+    "detected_labels": [
+      "Introduction",
+      "Economic Analysis",
+      "Policy Evaluation",
+      "Empirical Evidence",
+      "Modeling and Analysis",
+      "Policy Alternatives"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 0,
+    "exact_match": false,
+    "metrics": {
+      "words": 6457,
+      "chars": 42287,
+      "sqrt_like": 0,
+      "tau_like": 0,
+      "equation_equals": 32,
+      "part_mentions": 8,
+      "question_mentions": 10
+    }
+  },
+  {
+    "backend": "mammoth",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\AIAH BAROOM_1494167_assignsubmission_file\\EC3040 Final.docx",
+    "detected_labels": [
+      "Introduction",
+      "Equity-Efficiency Trade-off",
+      "Testable Predictions",
+      "Regression Framework"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 0,
+    "exact_match": false,
+    "metrics": {
+      "words": 6457,
+      "chars": 42680,
+      "sqrt_like": 0,
+      "tau_like": 0,
+      "equation_equals": 32,
+      "part_mentions": 8,
+      "question_mentions": 10
+    }
+  },
+  {
+    "backend": "docx2python",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\AIAH BAROOM_1494167_assignsubmission_file\\EC3040 Final.docx",
+    "detected_labels": [
+      "Introduction",
+      "Equity and Efficiency Analysis",
+      "Model Theoretical Framework",
+      "Empirical Evidence",
+      "Policy Implications"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 0,
+    "exact_match": false,
+    "metrics": {
+      "words": 6728,
+      "chars": 45671,
+      "sqrt_like": 0,
+      "tau_like": 0,
+      "equation_equals": 56,
+      "part_mentions": 8,
+      "question_mentions": 10
+    }
+  },
+  {
+    "backend": "docx_extractor",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\AIAH BAROOM_1494167_assignsubmission_file\\EC3040 Final.docx",
+    "detected_labels": [
+      "Introduction",
+      "Economic Analysis",
+      "Equity Arguments",
+      "Policy Alternatives and Critiques",
+      "Public Perception and Political Considerations",
+      "Conclusion"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 0,
+    "exact_match": false,
+    "metrics": {
+      "words": 6457,
+      "chars": 42287,
+      "sqrt_like": 0,
+      "tau_like": 0,
+      "equation_equals": 32,
+      "part_mentions": 8,
+      "question_mentions": 10
+    }
+  },
+  {
+    "backend": "markitdown",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\AIAH BAROOM_1494167_assignsubmission_file\\EC3040 Final.docx",
+    "detected_labels": [
+      "Introduction",
+      "Economic Models",
+      "Empirical Analysis",
+      "Policy Implications",
+      "Conclusion"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 0,
+    "exact_match": false,
+    "metrics": {
+      "words": 6562,
+      "chars": 43885,
+      "sqrt_like": 0,
+      "tau_like": 0,
+      "equation_equals": 32,
+      "part_mentions": 8,
+      "question_mentions": 10
+    }
+  },
+  {
+    "backend": "current",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Apisan Rasiah_1494186_assignsubmission_file\\Economics and Society individual coursework (2).docx",
+    "detected_labels": [
+      "Part 1",
+      "Part 2"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 2,
+    "exact_match": false,
+    "metrics": {
+      "words": 2847,
+      "chars": 18426,
+      "sqrt_like": 0,
+      "tau_like": 0,
+      "equation_equals": 68,
+      "part_mentions": 4,
+      "question_mentions": 12
+    }
+  },
+  {
+    "backend": "python_docx",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Apisan Rasiah_1494186_assignsubmission_file\\Economics and Society individual coursework (2).docx",
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 4,
+    "exact_match": true,
+    "metrics": {
+      "words": 2834,
+      "chars": 17735,
+      "sqrt_like": 0,
+      "tau_like": 0,
+      "equation_equals": 25,
+      "part_mentions": 4,
+      "question_mentions": 12
+    }
+  },
+  {
+    "backend": "mammoth",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Apisan Rasiah_1494186_assignsubmission_file\\Economics and Society individual coursework (2).docx",
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Q1",
+      "Q3",
+      "Q4",
+      "Q5",
+      "Q6"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 2,
+    "exact_match": false,
+    "metrics": {
+      "words": 2823,
+      "chars": 17906,
+      "sqrt_like": 0,
+      "tau_like": 0,
+      "equation_equals": 25,
+      "part_mentions": 4,
+      "question_mentions": 12
+    }
+  },
+  {
+    "backend": "docx2python",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Apisan Rasiah_1494186_assignsubmission_file\\Economics and Society individual coursework (2).docx",
+    "detected_labels": [
+      "Part 1",
+      "Part 2"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 2,
+    "exact_match": false,
+    "metrics": {
+      "words": 2898,
+      "chars": 19686,
+      "sqrt_like": 0,
+      "tau_like": 0,
+      "equation_equals": 68,
+      "part_mentions": 4,
+      "question_mentions": 12
+    }
+  },
+  {
+    "backend": "docx_extractor",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Apisan Rasiah_1494186_assignsubmission_file\\Economics and Society individual coursework (2).docx",
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Q3",
+      "Q4",
+      "Q5",
+      "Q6",
+      "Part 3",
+      "Part 4"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 4,
+    "exact_match": false,
+    "metrics": {
+      "words": 2834,
+      "chars": 17735,
+      "sqrt_like": 0,
+      "tau_like": 0,
+      "equation_equals": 25,
+      "part_mentions": 4,
+      "question_mentions": 12
+    }
+  },
+  {
+    "backend": "markitdown",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Apisan Rasiah_1494186_assignsubmission_file\\Economics and Society individual coursework (2).docx",
+    "detected_labels": [
+      "Part 1",
+      "Part 2"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "matched_expected_labels": 2,
+    "exact_match": false,
+    "metrics": {
+      "words": 2866,
+      "chars": 18132,
+      "sqrt_like": 0,
+      "tau_like": 0,
+      "equation_equals": 25,
+      "part_mentions": 4,
+      "question_mentions": 12
+    }
+  }
+]

@@ -1,0 +1,596 @@
+EC3040 Economics and society 
+
+
+
+Part 1 (15 Marks
+
+
+
+Prompt submitted to the generative AI platform
+
+‘’Provide a neutral 300-word summary of the UK government’s proposal to introduce VAT on private school fees. The summary should describe the main features of the policy, the objectives behind it, and the potential economic costs and benefits, including effects on households, inequality, public school funding, and government revenue.’’
+
+ Output from the generative AI platform
+
+The UK government has proposed introducing Value Added Tax (VAT) on private school fees, removing the long-standing VAT exemption that applies to independent schools. Under the proposal, private school fees would be subject to VAT at the standard rate, while allowing deductions for VAT paid on inputs and maintaining exemptions for specialist provision funded by local authorities. The policy represents a significant change to the tax treatment of private education.
+
+The primary objective of the policy is to raise additional government revenue, which is intended to be redirected towards state education, particularly to support pupils from disadvantaged backgrounds. The proposal is also motivated by concerns about inequality, as attendance at private schools is heavily concentrated among higher-income households, and private schools typically spend substantially more per pupil than state schools.
+
+In terms of economic effects, the policy would increase the cost of private schooling for households, potentially reducing demand. However, evidence suggests that demand for private education is relatively price inelastic, meaning that any reduction in private school attendance is likely to be limited. If some pupils move from private to state schools, additional public spending would be required to accommodate them, though these costs are expected to be lower than average per-pupil spending, as such pupils are less likely to require additional support.
+
+Overall, the policy is expected to raise significant tax revenue, even after accounting for increased public spending. Potential benefits include higher government revenue and modest reductions in educational inequality, while potential costs include higher expenses for households using private education and short-term adjustment pressures on the state school system.
+
+
+
+Comments on the AI output. 
+
+ The AI-generated summary captures the broad purpose of the proposed VAT on private school fees and correctly outlines its main policy objectives. It accurately identifies revenue generation and increased funding for state education as central goals of the reform. This is consistent with the IFS report, which estimates that removing tax exemptions from private schools could raise approximately £1.6 billion per year in additional tax revenue (IFS, 2023, p. 3). As such, the summary reflects the policy’s role as a fiscal tool for redistribution.
+
+The discussion of inequality in the AI output is also broadly consistent with the course material. Lecture 1 emphasises that income and wealth in the UK are highly unevenly distributed, with a large share accruing to households at the top of the distribution (Lecture 1, slides 11–15). Given that private school attendance is concentrated among higher-income families, taxing private school fees is consistent with the equity-based justification for government intervention discussed in the lectures. In particular, Lecture 2 outlines both utilitarian and Rawlsian arguments for redistribution, which support policies that place a larger burden on those with higher incomes in order to improve outcomes for the less well-off (Lecture 2, slide 4).
+
+However, the AI output simplifies the distributional implications of the policy. The lectures stress that VAT is a consumption tax and that consumption taxes are generally regressive, as they tend to take up a larger share of income for poorer households (Lecture 2, slide 16). While this concern is less pronounced in the case of private school fees—since these are primarily paid by high-income households—the AI summary does not explicitly acknowledge that the ultimate burden of the tax depends on tax incidence and behavioural responses (Lecture 2, slides 15–26).
+
+Finally, although the AI output notes that demand for private schooling is relatively unresponsive to price changes, it does not clearly link this to the equity–efficiency trade-off discussed in the lectures. Lecture 2 highlights that redistribution through taxation can create efficiency costs if individuals or firms change their behaviour in response to taxes (Lecture 2, slide 36). The IFS report suggests that such efficiency losses are likely to be limited in this case due to inelastic demand (IFS, 2023, pp. 11–12), but making this connection explicit would improve the depth of the analysis.
+
+Re-written answer
+
+The proposal to apply Value Added Tax (VAT) to private school fees would remove the tax exemption currently enjoyed by independent schools and bring private education within the standard VAT framework. In practical terms, private schools would be required to charge VAT on tuition fees, while retaining the ability to reclaim VAT on inputs. Provision funded by local authorities for pupils with specialist needs would continue to be excluded. This reform marks a shift in how private education is treated relative to other consumer services (IFS, 2023).
+
+A key justification for the policy is its potential to strengthen public finances and support state education. Estimates from the Institute for Fiscal Studies suggest that the removal of tax exemptions from private schools could raise substantial revenue, even after accounting for additional costs in the state sector, resulting in a net fiscal gain of around £1.3–£1.5 billion per year (IFS, 2023, pp. 3, 24). From the perspective of the course, this reflects the redistributive role of taxation in addressing high levels of income and wealth inequality in the UK (Lecture 1).
+
+Although introducing VAT would raise the price of private schooling, the evidence indicates that household responses are likely to be limited. Private school attendance has remained relatively stable despite significant increases in fees over time, suggesting that demand is not highly sensitive to price changes (IFS, 2023, pp. 11–12). This implies that only a small proportion of pupils would move into the state sector, keeping additional public spending requirements relatively low.
+
+While VAT is generally classified as a regressive consumption tax (Lecture 2), this classification is less clear-cut in this case. Because private education is predominantly consumed by higher-income households, the effective burden of the tax would fall mainly on those with greater ability to pay. Taken together, the policy illustrates the equity–efficiency trade-off discussed in the lectures: while taxation can distort behaviour, limited responsiveness in this context suggests that the policy may improve equity with only modest efficiency costs.
+
+
+
+
+
+Part 2 (40 Marks)
+
+Pay off from attending private school.
+
+For every family, the payoff for sending their child to private school is equal to the benefit from private education minus tuition fees and VAT.
+
+x = number of families that send their child to public school. 
+
+Y= 3- x = Number of families attending private schools. 
+
+F= y ⋅ t = Total private school fees. 
+
+Therefore, the payoff functions from attending private school are:
+
+Low-income family (L):
+
+
+
+Middle-income family (M):
+
+
+
+High-income family (H):
+
+
+
+The parameters satisfy:
+
+
+
+These payoff functions describe the utility of each family from attending private school.
+
+Explanation of terms
+
+The parameter Pi captures heterogeneity in preferences for private education across income groups, reflecting differences in ability and willingness to pay. 
+
+The term   captures peer effects and school quality in private schools, which increase with total resources but exhibit diminishing returns. 
+
+The term  represents the total price paid for private schooling, including tuition fees and VAT, and therefore captures the direct financial cost imposed by the policy. 
+
+In conclusion, these payoff functions formalise how VAT on private school fees affect families differently through income-dependent preferences, peer effects in private schools, and high effective prices of private education.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Conditions for equilibrium school choices 
+
+A family chooses private school if and only if:
+
+
+
+According to the model, the payoff from attending public school is:
+
+
+
+Scenario 1:
+
+Low-income family attends public school
+
+Middle-income and High-income families attend private school
+
+So, x=1, y=3-x=2
+
+Total private school fees:
+
+F=yt=2t
+
+Total VAT revenue:
+
+T= τty= 2τt
+
+Where x= number of families attending public school 
+
+Where T= the total VAT revenue raised from private school fees.
+
+
+
+Payoffs in scenario 1:
+
+
+
+Public school payoff (Low-income families)
+
+
+
+Private school payoff (middle- and high-income families)
+
+
+
+
+
+
+
+If there is no-deviation conditions:
+
+
+
+Low-income families don’t deviate to private school 
+
+Required:
+
+
+
+Middle-income family doesn’t deviate to public school but if they do:
+
+
+
+
+
+
+
+Similarly, high-income family doesn’t deviate to public school so:
+
+
+
+Since PH> PM, this condition is automatically satisfied if it holds for the middle-income family. 
+
+
+
+Scenario 1 is an equilibrium if:
+
+
+
+
+
+One set of values satisfying this condition is:
+
+
+
+Under these conditions, the low-income family attends public school while middle and high-income families attend private school in equilibrium. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ VAT revenue and public-school funding 
+
+In scenario 2: 
+
+Low-income family= public school
+
+Middle-income family= public school 
+
+High-income family= private school 
+
+Thus:
+
+
+
+Total private school fees:
+
+
+
+Total VAT revenue:
+
+
+
+
+
+Payoffs in scenario 2
+
+Public school payoff (for L and M):
+
+
+
+
+
+
+
+Private school payoff (for H):
+
+
+
+
+
+No deviation conditions
+
+Low-income family doesn’t deviate to private school:
+
+
+
+Middle-income family doesn’t deviate to private school:
+
+
+
+Since, PM>PL, this condition is binding for both L and M. 
+
+
+
+High-income family doesn’t deviate to public school.
+
+X=3,  y=0  T=0
+
+Public school pay off after deviation:
+
+
+
+
+
+Equilibrium conditions
+
+Scenario 2 is an equilibrium if:
+
+
+
+And
+
+
+
+Example numerical values
+
+
+
+To conclude, this proves that the low and middle-income families attend public school while the high-income family attends private school in equilibrium. 
+
+
+
+
+
+How parameter changes make scenario 1 more likely than scenario 2
+
+Scenario 1 has only the low-income family attending public school, while Scenario 2 has both the low- and middle-income families attending public school. Scenario 1 is therefore more likely when private schooling becomes relatively more attractive, or when public schooling becomes less attractive.
+
+An increase in public school quality S spikes the payoff from public schooling, making it more attractive for the middle-income family to attend public school. This favours scenario 2. Hence a lower value of S makes scenario 1 more likely. 
+
+An increase in tuition fees t raises the cost of private schooling through the term t ( 1 + τ), discouraging private school attendance and making scenario 2 more likely. Lower tuition fees therefore favour scenario 1. 
+
+An increase in the VAT rate both increases the effective price of private schooling and increases public school fees through VAT revenue. Both effects encourage public school attendance, favouring Scenario 2. A lower VAT rate makes scenario 1 more likely.
+
+High values of PL and PM increase the private school payoff for the low- and middle-income families, making scenario 1 more likely. Changes in PH do not affect which scenario arises, since the high-income family attends private school in both cases.
+
+To conclude, scenario 1 is more likely when public school quality, tuition fees, and VAT are lower, and when low and middle-income families place a higher value on private education. 
+
+
+
+When an increase in VAT increases or decreases social welfare
+
+Social welfare is the sum of utilities of all families. An increase in VAT affects families differently depending on whether they attend public or private school.
+
+For any family attending private school, utility is:
+
+ 
+
+For a family attending private school, utility is:
+
+
+
+Thus, this shows when there’s an increase in VAT, utility is reduced for each family attending private schools. This shows that VAT is a consumption tax which raises prices and lowers consumer welfare. 
+
+Effect of VAT on public-school families:
+
+
+
+This shows an increasee in VAT raises the utility of families attending public school by increasing tax revenue used to fund public education. 
+
+The overall effect on social welfare
+
+An increase in VAT raises social welfare if the total gain to public-school families exceeds the total loss to private-school families, this is more likely when more families attend public school (scenario 2). On the other hand, VAT reduces social welfare when many families attend private schools (Scenario 1), so the private utility loses dominate. 
+
+
+
+Is introducing VAT on private schools a good idea?
+
+Whether introducing VAT on private school fees is a good policy depends on the balance between equity gains and efficiency costs. 
+
+The theoretical model developed in this coursework helps to make these trade-offs explicit. In the model, VAT affects families differently depending on their school choice. For any family attending private school, utility includes the term −t(1+τ), implying that an increase in VAT lowers private-school utility by t. By contrast, families attending public school benefit from higher tax revenue. As shown in Part 2.5, public school utility increases with VAT at a rate of 5ty/x, where y is the number of private-school families and x the number of public-school families. This creates a redistribution from private to public school families.
+
+The effect on social welfare can be illustrated by comparing total gains and losses. If there are ‘y’ private-school families, the total welfare loss from VAT is ‘yt’. If there are ‘x’ public-school families, the total welfare gain is ‘x ⋅ 5ty/x= 5ty’. Social welfare therefore increases when the gains to public-school families exceed the losses to private-school families, that is when ‘5ty>yt’, which holds when public funding is sufficiently effective. This condition is more likely to be satisfied in scenario 2, where more families attend public school.
+
+From an equity perspective, VAT on private schools can be justified. High-income families, who place a higher value on private education, are more likely to continue sending their children to private schools and therefore bear most of the tax burden. Low-income families benefit indirectly through improved public education. This reflects the redistributive role of taxation discussed in the lectures.
+
+However, there are also efficiency concerns. If VAT leads to large shifts into public schools without proportional improvements in quality, congestion effects may reduce welfare. This highlights that education is not a pure public good, as discussed in the lectures.
+
+In conclusion, introducing VAT on private schools can be a good idea when the revenue is effectively used to improve public education and redistribution dominates efficiency losses. Otherwise, the policy may reduce overall welfare.
+
+
+
+Part 3 (30 marks)
+
+Predictions from the theoretical model
+
+VAT and private school attendance- When the VAT rate increases, the number of families attending private school decreases. 
+
+ VAT and public-school attendance- When the VAT rate increases, the number of families attending public school increases. 
+
+VAT and public-school funding- When the VAT rate increases, public school funding increases, provided that at least one family attends private school. 
+
+Public school quality and school choice- When public school quality S increases, public school attendance increases. 
+
+Income and responsiveness to VAT- When the VAT rate increases, low-and middle-income families are more likely to switch from private to public school than high-income families. 
+
+VAT and social welfare- An increase in VAT raises social welfare when the number of families attending public school is sufficiently large and reduces social welfare when most families attend private school. 
+
+Tuition fees and VAT effects- When tuition fees t increase, the negative effect of VAT on private school attendance becomes stronger. 
+
+
+
+Measurement of variables and data sources
+
+
+
+
+
+Prediction from theory
+
+Variables
+
+Measuring tool
+
+Data source (online)
+
+Why this measures theory?
+
+Higher VAT reduces private school attendance
+
+Private school attendance, VAT rate
+
+
+
+
+
+Share or number of pupils enrolled in private schools; statutory VAT rate on private education
+
+
+
+UK Department for Education (DfE) School Census; HMRC VAT documentation
+
+
+
+Private enrolment directly captures school choice, which is the outcome affected by VAT in the model
+
+
+
+Higher VAT increases public school funding
+
+Public school attendance; VAT rate 
+
+Share or number of pupils enrolled in state-funded schools
+
+UK DfE School Census
+
+
+
+
+
+Public enrolment rises when families switch away from private schools, as predicted by the model
+
+Higher public school quality increases public school attendance
+
+Public funding T; VAT rate 
+
+Government education expenditure per pupil
+
+
+
+
+
+DfE school funding statistics; OECD Education Finance Indicators
+
+
+
+
+
+VAT revenue is redistributed to public schools in the model, captured by spending per pupil
+
+
+
+
+
+Higher public school quality increases public school attendance
+
+Public school quality S; enrolment 
+
+Pupil–teacher ratio; average test scores
+
+
+
+
+
+DfE workforce statistics; OECD PISA
+
+
+
+
+
+These are standard empirical proxies for school quality used in education economics
+
+
+
+
+
+Low- and middle-income families respond more to VAT than high income families. 
+
+Household income; school choice 
+
+Household income deciles combined with school enrolment
+
+
+
+
+
+Office for National Statistics (ONS) household income surveys
+
+
+
+
+
+Income groups allow testing heterogeneous responses predicted by preference differences
+
+Higher tuition fees strengthen VAT effects
+
+Tuition fees t; school choice 
+
+Average annual private school fees
+
+
+
+
+
+Independent Schools Council (ISC) annual reports
+
+
+
+
+
+Tuition fees determine how strongly VAT affects the effective price of private education
+
+
+
+
+
+VAT may raise or reduce social welfare
+
+Social welfare components 
+
+Combination of enrolment shares and funding per pupil
+
+
+
+
+
+DfE enrolment data + DfE/OECD funding data
+
+
+
+
+
+Welfare effects depend on how many families benefit from public funding versus lose from higher prices
+
+
+
+
+
+
+
+
+
+
+
+Testing the theoretical prediction using regression analysis
+
+
+
+One key prediction of the model discussed in Question 1 is that increasing the cost of private schooling through VAT reduces demand for private education, as some families switch to state schools. 
+
+This follows the standard demand response to a price increase discussed in the lectures on taxation and policy evaluation.
+
+To test this prediction, I would estimate the following regression:
+
+
+
+This regression structure follows the reduced-form policy evaluation approach covered in the course, where a policy dummy is used to estimate the effect of a government intervention on an economic outcome.
+
+Private share = The dependant variable and measures the share of pupils attending private schools in area ‘i’ at time ‘t’. This variable captures the outcome predicted by the theory. 
+
+VAT= This is the dummy variable equal to 1 after VAT on private school fees is introduced and 0 before. This variable captures the policy change and is the main explanatory variable. 
+
+The coefficient β is the main coefficient. It measures the effect of the VAT policy on private school attendance. According to the theory, β is expected to be negative, since the VAT increases the price of private schooling and reduces demand. 
+
+Xit is a vector of control variables that may affect school choice, such as average houshold income, local population size and state school capacity. 
+
+‘μi’ are area fixed effects, which control for time-invariant differences across areas, such as long-standing preferences for private education. λt are time fixed effects, which control for common shocks over time. 
+
+Finally, ε is the error term capturing unobserved factors affecting private school attendance. 
+
+To whether the theory is correct, I would test the hypothesis:
+
+
+
+Rejecting the null hypothesis would provide empirical suppor for the theoretical prediction that increasing private school fees through VAT reduces private school attendance. 
+
+Endogeneity concerns and potential solutions
+
+The regression specified in Question 3 may be affected by endogeneity, meaning that the VAT policy variable could be correlated with unobserved factors in the error term. As discussed repeatedly in the lectures, this makes it difficult to interpret the estimated coefficient as a causal effect.
+
+One potential source of endogeneity is omitted variables. There may be factors that influence both the decision to introduce VAT on private school fees and families’ schooling choices, but which are not directly observed in the data. For example, shifts in political priorities, growing concern about educational inequality, or wider changes to the education system could affect both policy design and private school attendance. If these influences are not fully controlled for, they will bias the estimated effect of the VAT policy.
+
+A second concern is reverse causality, which is emphasised in the lectures when analysing policy outcomes. If private school attendance has been increasing over time and contributing to concerns about segregation or inequality, this may itself prompt policymakers to introduce VAT. In this case, changes in school attendance would influence the policy, rather than the policy influencing school attendance.
+
+These endogeneity issues can be understood using the theoretical model in Part 2, where families’ school choices depend on income, preferences, and redistribution. Many of these factors are difficult to measure empirically, yet they may also shape political support for taxing private education. As a result, the VAT variable may be correlated with unobserved determinants of school choice.
+
+Several approaches could help address these concerns. One option, discussed in the lectures, is a difference-in-differences strategy, which compares changes in private school attendance before and after the introduction of VAT across areas with different exposure to private schooling. This method controls for common time trends and fixed differences between areas, although it relies on the assumption that trends would have been similar in the absence of the policy.
+
+Another possible solution is the use of an instrumental variable that affects the likelihood of VAT being introduced but does not directly affect school choice. However, as highlighted in the lectures, identifying a convincing instrument in this context is likely to be difficult, since most political or fiscal factors influencing the policy may also be related to education outcomes.
+
+Finally, including area and time fixed effects, as done in Question 3, helps reduce bias by controlling for unobserved, time-invariant differences across areas and economy-wide shocks over time. While this does not completely resolve endogeneity, it improves the reliability of the estimates.
+
+In practice, fixed effects and difference-in-differences are relatively feasible with available data, whereas instrumental variable approaches are harder to implement credibly. As stressed throughout the course, careful empirical methods can reduce endogeneity concerns, even if they cannot eliminate them entirely.
+
+
+
+Part 4 (15 Marks)
+
+The theoretical framework developed in Part 2 helps clarify several of the arguments raised in the two YouTube videos discussing the introduction of VAT on private school fees. In the model, households decide between private and state schooling by comparing costs and benefits, with VAT increasing the price of private education. This directly reflects a key claim in the videos: that higher fees will discourage private school attendance and lead some families to switch into the state sector.
+
+The empirical approach outlined in Part 3 allows this claim to be evaluated using data. By estimating how private school enrolment changes following the introduction of VAT, we can assess whether the policy has a substantial impact on families’ schooling decisions. This evidence can therefore inform debates in the videos about whether the policy will lead to large behavioural responses or whether demand for private schooling is relatively insensitive to price changes.
+
+At the same time, several points raised in the videos are not fully captured by the baseline model. One commonly mentioned concern is that an inflow of pupils into state schools could strain resources and reduce education quality through larger class sizes. In the model, state school quality is assumed to be fixed and unaffected by enrolment. The videos also highlight that some families may face constraints in switching schools, for example due to special educational needs or strong preferences for particular types of schooling, which are not represented in a simple, representative household framework. In addition, the videos discuss political and fairness considerations behind the policy, which are outside the scope of the model.
+
+To incorporate these arguments, the model could be extended by allowing state school quality to depend on enrolment or public spending. Introducing heterogeneous households with different constraints or preferences would also capture uneven responses to the policy. Finally, explicitly modelling government use of VAT revenues could help analyse potential improvements in state education alongside the costs imposed on private school users. 
+
+
+
+
+

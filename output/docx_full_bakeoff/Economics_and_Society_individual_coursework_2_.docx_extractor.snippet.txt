@@ -1,0 +1,53 @@
+Part 2
+Tuition fee: t
+VAT rate: τ
+Public-school families: x
+Private-school families: y = 3 − x
+Total VAT raised: T = y·τ·t (VAT collected from each private pupil is τt)
+Public-school payoff:
+Private-school benefit for type :
+Private payoff:
+Q1:
+Private school payoff for each family:
+: private value by income type (captures that higher-income families may value private schooling more: ). This shows that higher-income households are more willing to pay.
+: is the effect from private sector scale . It rises with total fee income but is inversely proportional to private pupils. This captures that private schooling quality/benefits depend partly on resources and composition.
+: total cost paid by families (tuition + VAT). Raising τ increases the private price and can push some households toward public schooling.
+Public payoff includes : VAT is recycled into public schools with a multiplier of 5, indicating that an additional amount of money can increase the quality of public schools (policy benefit) and introduces a redistribution between the payers to the private schools and the users in the public one.
+Q3:
+Scenario 2: Low (L) and Middle (M) choose public, High (H) chooses private.
+So: x = 2, y = 1, T = τt.
+Payoffs in Scenario 2
+Public payoff (for L and M):
+Private payoff for H (y=1)
+If H deviates to public, then x=3, y=0 ⇒ T=0:
+No deviation inequalities so Nash equilibrium checks
+H must prefer private to deviating to public:
+This ensures the high-income family stays private given others.
+L must prefer public to deviating to private (given M public and H private):
+If L deviates then x=1, y=2, T=2τt.
+Public payoff if stayed is .
+Private payoff if deviates (y=2):
+M must prefer public to deviating to private
+One valid set:
+, ,
+, ,
+Public payoff (x=2,y=1):
+H private payoff (y=1):
+H public deviation: ⇒ H stays private
+L private deviation: < 90
+M private deviation: < 90
+So Scenario 2 holds.
+Q4:
+Scenario 1: only L public, M & H private ⇒
+Scenario 2: L & M public, H private ⇒
+Scenario 1 has more VAT revenue (y higher) and less congestion in public (x lower), so public payoff can be high for the single public pupil; but private becomes attractive for M if is high and costs aren’t too high.
+Increase in S (baseline public quality): makes public more attractive for everyone therefore pushes toward Scenario 2 (more public).
+Increase in τ (VAT rate): raises private cost  which makes private less attractive which pushes toward Scenario 2. It also raises public funding via T which can strengthen public attractiveness too (again toward Scenario 2). Overall higher τ makes Scenario 2 more likely (more public attendance).
+Increase in t (tuition): increases private cost directly also affects the “private benefit” term , but the dominant effect is typically higher cost which pushes toward Scenario 2.
+Increase in or  (taste/valuation for private): makes private more attractive for those types which pushes toward Scenario 1 (more private).
+Q5:
+Total public welfare (sum across x public families):
+Total private welfare (sum across y private families):
+With , total welfare:
+So, if y is fixed and at least one family is private (y>0):
+Therefore, a higher VAT increases welfare because VAT funds public school benefits strongly (the “5×T” term) and only counts as a cost once in private utilities. However, welfare can decrease in practice if raising τ changes behavior (y falls). If higher τ causes a discrete switch from Scenario 1 (y=2) to Scenario 2 (y=1), welfare changes b

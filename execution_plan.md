@@ -2,6 +2,45 @@
 
 Ranked from highest priority to lowest priority.
 
+Current extraction note:
+- PDF handling is now hybrid by design.
+- `PyMuPDF4LLM` cleaned text is used for structure detection only.
+- The current extractor output is used for segmentation and scoring text because it preserves math and equations better.
+- The two texts are not merged into one document; they are used at different pipeline stages.
+- If future work changes PDF extraction again, preserve this split unless a replacement backend clearly beats the current extractor on both structure recovery and equation retention in end-to-end tests.
+
+Next steps in this area:
+- Promote this branch as the new baseline for ongoing work. The assessment-preparation cache refactor, Qwen/Qwen policy, PDF hybrid, and DOCX hybrid are a better default than the prior branch state.
+- Run a small end-to-end benchmark against human marks for both PDF and DOCX:
+  - reuse one prepared assessment map per assessment
+  - grade at least 2 PDF submissions and 2 DOCX submissions
+  - compare total mark, part-level marks, and feedback quality against human marking
+- Focus the first post-merge DOCX check on the known risk:
+  - confirm whether the adaptive DOCX scoring extractor reduces under-marking on the Aya sample and a second contrasting sample
+  - if under-marking persists, inspect whether the loss comes from extraction, section detection, granularity refinement, or scoring prompts
+- Validate the new DOCX heading hints on a broader mixed sample:
+  - confirm they improve section detection often enough to justify keeping them
+  - watch for false positives from bold inline prose or stylistic emphasis
+- Keep the DOCX policy generic:
+  - rely on formatting/layout signals first
+  - avoid assessment-specific lexical heuristics
+- Do not change the PDF split lightly:
+  - structure text remains `PyMuPDF4LLM` with cleanup
+  - scoring text remains the current extractor unless a new benchmark shows a better end-to-end outcome
+- Record benchmark results in a stable output location so future extraction changes can be compared against the same cases.
+- Recommended next benchmark slice after this extraction phase:
+  - rerun the same 4-script EC3040 benchmark set after any scoring or missing-evidence changes
+  - keep the benchmark fixed to:
+    - Sadik PDF
+    - Federica PDF
+    - Aya DOCX
+    - Apisan DOCX
+  - target the next improvements at:
+    - false positives for absent evidence
+    - over-harsh per-part scoring on PDFs
+    - alignment with human zero-credit decisions such as missing-answer cases
+  - treat this as a scoring-calibration benchmark, not another extraction bakeoff, unless a later change clearly reopens extraction as the main bottleneck
+
 1. Validate the canonical app end to end with real marking inputs
    Run `streamlit run app.py` and test the full workflow with:
    - a valid text-based submission and valid rubric

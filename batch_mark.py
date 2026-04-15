@@ -2,7 +2,14 @@ from datetime import datetime
 
 import pandas as pd
 
-from marking_pipeline import MarkingContext, ROOT_DIR, call_ollama, list_submission_files, prepare_marking_context, read_path_text
+from marking_pipeline import (
+    MarkingContext,
+    ROOT_DIR,
+    build_submission_texts_from_path,
+    call_ollama,
+    list_submission_files,
+    prepare_marking_context,
+)
 
 
 SCRIPTS_DIR = ROOT_DIR / "scripts" / "test"
@@ -10,7 +17,7 @@ RUBRIC_FILE = ROOT_DIR / "rubrics" / "labour_year2_rubric.txt"
 OUTPUT_DIR = ROOT_DIR / "output"
 
 MODELS = [
-    ("gemma3:4b", "Gemma3_4B"),
+    ("qwen2:7b", "Qwen2_7B"),
     ("llama3.1:8b", "Llama3.1_8B"),
 ]
 
@@ -62,7 +69,7 @@ def main() -> None:
         print(f"\nMarking: {submission_path.name}")
         row: dict[str, object] = {"filename": submission_path.name}
         try:
-            script_text = read_path_text(submission_path)
+            script_text, structure_script_text = build_submission_texts_from_path(submission_path)
         except Exception as exc:
             print(f"  Could not read file: {exc}")
             continue
@@ -71,6 +78,7 @@ def main() -> None:
             try:
                 result = call_ollama(
                     script_text=script_text,
+                    structure_script_text=structure_script_text,
                     context=marking_context,
                     filename=submission_path.name,
                     model_name=model_name,
@@ -87,9 +95,9 @@ def main() -> None:
         return
 
     df = pd.DataFrame(rows)
-    if "Gemma3_4B_mark" in df.columns and "Llama3.1_8B_mark" in df.columns:
-        df["average_mark"] = df[["Gemma3_4B_mark", "Llama3.1_8B_mark"]].mean(axis=1)
-        df["mark_difference"] = (df["Gemma3_4B_mark"] - df["Llama3.1_8B_mark"]).abs()
+    if "Qwen2_7B_mark" in df.columns and "Llama3.1_8B_mark" in df.columns:
+        df["average_mark"] = df[["Qwen2_7B_mark", "Llama3.1_8B_mark"]].mean(axis=1)
+        df["mark_difference"] = (df["Qwen2_7B_mark"] - df["Llama3.1_8B_mark"]).abs()
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     output_path = OUTPUT_DIR / f"marks_{timestamp}.xlsx"

@@ -1,0 +1,22 @@
+Part 2
+Q1
+The payoff (Vi) represents the net benefit a family receives after accounting for tuition fees and the newly introduced VAT.
+1. The Payoff Functions
+The payoff for each family type (L, M, H) to attend private school is expressed as:
+Low-income (L):
+Middle-income (M):
+High-income (H):
+Where
+(Note: Since total fee revenue is F = y x t, the term F/y simplifies to, representing the utility gained from the level of resources or fees spent per pupil.)
+2. Analytical Significance of the Terms
+Each component of these payoff functions captures a distinct economic channel through which the VAT policy affects household decisions.
+Intrinsic Value and Sorting ():
+This term refers to the family's baseline preference for private education, which is frequently driven by cultural norms, parental beliefs, or preferences for specific teaching methods. The ordering  implies that higher-income families derive greater intrinsic benefits from private schooling, as they place greater value on the ‘status’ or ‘networks’ associated with private education. This is consistent with findings showing a high concentration of private school enrolment among households at the top of the income distribution.
+Quality and Resource Effect ():
+The term  captures the quality and resource benefits associated with private schooling. It summarises the advantages arising from greater resources available to private schools. As highlighted in the article, this relates to the £7,200 difference in per-pupil spending between the private and public sectors. Higher tuition fees (ttt) allow private schools to invest more in educational inputs, resulting in better facilities and lower student–teacher ratios (9:1 compared to 18:1 in the state sector). The square-root functional form reflects diminishing marginal returns to additional spending, so increases in tuition raise educational quality at a decreasing rate.
+Tuition and Tax Burden : This term represents the total financial cost of private schooling faced by parents.
+The Tuition (t): This corresponds to the average net fee of £15,200 identified in the sources.
+The VAT (): The introduction of a 20% VAT constitutes the main policy change. This component is the primary driver of behavioural responses in the model, as families may switch to state schooling if the inclusion of τ reduces the total payoff () below the utility associated with attending a public school.
+3. Relation to Costs and Benefits
+Benefits (Revenue vs. Utility): Although VAT enters the payoff function as a cost to households, the term τt is the source of the £1.3–1.5 billion net gain to public finances identified in Part 1. The model highlights the equity-efficiency trade-off underpinning the policy: to finance a 2% increase in state school spending targeted at disadvantaged pupils, the government accepts a reduction in private utility for families choosing private education. In this sense, the loss in private payoffs is directly linked to the redistributional benefits generated through higher public spending.
+Costs (Elasticity and Migration): The sources indicate that demand for private schooling is relatively inelastic. In the model, this implies that high-income families continue to choose private schooling provided  is sufficiently large, even after the introduction of VAT. By contrast, the increase in the effective price of private education through τt is more likely to induce low- and middle-income families, for whom  is lower, to switch to the state sector

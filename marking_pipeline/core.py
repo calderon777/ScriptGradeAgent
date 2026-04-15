@@ -67,6 +67,8 @@ class SubmissionPart:
     section_text: str = ""
     max_mark: float | None = None
     marking_guidance: str = ""
+    question_text_exact: str = ""
+    task_type: str = ""
 
 
 @dataclass(frozen=True)
@@ -84,7 +86,9 @@ class AssessmentUnit:
     max_mark: float | None = None
     parent_label: str = ""
     grading_mode: str = "deterministic"
+    task_type: str = ""
     dependency_group: str = ""
+    question_text_exact: str = ""
     marking_guidance: str = ""
     rubric_text: str = ""
     rubric_confidence_0_to_100: float | None = None
@@ -486,6 +490,9 @@ def build_part_messages(
 
 
 def _build_part_task_text(part: SubmissionPart) -> str:
+    task_from_type = _task_goal_from_task_type(part.task_type, part.question_text_exact)
+    if task_from_type:
+        return task_from_type
     focus = part.focus_hint.strip()
     guidance_focus = _extract_task_focus_from_guidance(part.marking_guidance)
     if focus:
@@ -580,6 +587,36 @@ def _extract_prompt_scoring_rules(marking_guidance: str, max_mark: float | None)
     if any(term in guidance_text for term in ("rewrite", "own tone", "own words", "correct any mistakes", "edit the output")):
         rules.append("Reward correction of mistakes and rewriting in the student's own justified form when the task asks for it.")
     return rules
+
+
+def _task_goal_from_task_type(task_type: str, question_text: str) -> str:
+    if task_type == "critique_and_revision":
+        return "generate, audit, and correct an AI-produced answer using supporting sources"
+    if task_type == "model_specification":
+        return "write out the payoff function and explain how each term maps to the policy analysis"
+    if task_type == "deterministic_derivation":
+        return "derive the required conditions and justify why they produce the stated scenario"
+    if task_type == "explanation_interpretation":
+        return "explain the model logic, parameter effects, or interpretation required by the question"
+    if task_type == "welfare_reasoning":
+        return "explain when VAT increases or decreases social welfare and how each family's utility changes"
+    if task_type == "evaluative_discussion":
+        return "make a justified evaluative judgement using the model or course concepts"
+    if task_type == "prediction_generation":
+        return "state the model's testable predictions clearly and correctly"
+    if task_type == "measurement_and_data_design":
+        return "show how the theoretical variables could be measured and linked to real data sources"
+    if task_type == "regression_specification":
+        return "write the regression equation, define its terms, and state the testable hypothesis"
+    if task_type == "causal_identification":
+        return "explain the endogeneity risks and propose feasible remedies"
+    if task_type == "synthesis_across_sources":
+        return "use theory and evidence to evaluate source claims and explain what the model misses"
+    normalized = " ".join(question_text.split()).strip()
+    if not normalized:
+        return ""
+    first_sentence = re.split(r"(?<=[.!?])\s+", normalized, maxsplit=1)[0].strip()
+    return first_sentence[:220].rstrip()
 
 
 def build_structure_messages(script_text: str, filename: str) -> list[dict[str, str]]:
@@ -1090,6 +1127,8 @@ def reconcile_detected_parts(detected_parts: list[SubmissionPart], context: Mark
                 section_text=part.section_text,
                 max_mark=expected.max_mark,
                 marking_guidance=expected.marking_guidance,
+                question_text_exact=expected.question_text_exact,
+                task_type=expected.task_type,
             )
         )
     return enriched
@@ -1097,7 +1136,7 @@ def reconcile_detected_parts(detected_parts: list[SubmissionPart], context: Mark
 
 def segment_submission_parts(script_text: str, detected_parts: list[SubmissionPart]) -> list[SubmissionPart]:
     if len(detected_parts) == 1 and detected_parts[0].label == "Whole Submission":
-        return [SubmissionPart(label="Whole Submission", focus_hint=detected_parts[0].focus_hint, anchor_text="", section_text=script_text.strip(), max_mark=detected_parts[0].max_mark, marking_guidance=detected_parts[0].marking_guidance)]
+        return [SubmissionPart(label="Whole Submission", focus_hint=detected_parts[0].focus_hint, anchor_text="", section_text=script_text.strip(), max_mark=detected_parts[0].max_mark, marking_guidance=detected_parts[0].marking_guidance, question_text_exact=detected_parts[0].question_text_exact, task_type=detected_parts[0].task_type)]
 
     normalized_text = script_text.replace("\r\n", "\n")
     anchors: list[tuple[int, SubmissionPart]] = []
@@ -1118,6 +1157,8 @@ def segment_submission_parts(script_text: str, detected_parts: list[SubmissionPa
                 section_text=script_text.strip(),
                 max_mark=part.max_mark,
                 marking_guidance=part.marking_guidance,
+                question_text_exact=part.question_text_exact,
+                task_type=part.task_type,
             )
             for part in detected_parts
         ]
@@ -1135,6 +1176,8 @@ def segment_submission_parts(script_text: str, detected_parts: list[SubmissionPa
                 section_text=section_text,
                 max_mark=part.max_mark,
                 marking_guidance=part.marking_guidance,
+                question_text_exact=part.question_text_exact,
+                task_type=part.task_type,
             )
         )
     return segmented
@@ -1226,12 +1269,17 @@ def extract_expected_parts_from_context(context: MarkingContext) -> list[Submiss
         seen.add(key)
         marks = float(match.group("marks")) if match.group("marks") else None
         guidance_lines = [line.strip()]
-        for extra in lines[index + 1 : index + 5]:
+        for extra in lines[index + 1 :]:
             if pattern.search(extra):
                 break
-            if len(guidance_lines) >= 4:
+            if extra.lower().startswith("answer:"):
                 break
+            if len(guidance_lines) >= 18:
+                break
+            if extra.isdigit():
+                continue
             guidance_lines.append(extra)
+        question_text_exact = "\n".join(guidance_lines).strip()
         parts.append(
             SubmissionPart(
                 label=label,
@@ -1239,6 +1287,7 @@ def extract_expected_parts_from_context(context: MarkingContext) -> list[Submiss
                 anchor_text=label,
                 max_mark=marks,
                 marking_guidance="\n".join(guidance_lines),
+                question_text_exact=question_text_exact,
             )
         )
     return parts
@@ -1273,7 +1322,7 @@ def extract_expected_subparts_from_context(context: MarkingContext) -> dict[str,
             child_map[current_parent] = list(current_children)
         current_children = []
 
-    for line in lines:
+    for index, line in enumerate(lines):
         top_match = top_level_pattern.search(line)
         if top_match:
             flush_children()
@@ -1285,13 +1334,24 @@ def extract_expected_subparts_from_context(context: MarkingContext) -> dict[str,
         if not sub_match:
             continue
         question_id = sub_match.group("id")
+        guidance_lines = [line]
+        for extra in lines[index + 1 :]:
+            if top_level_pattern.search(extra) or subpart_pattern.search(extra):
+                break
+            if extra.lower().startswith("answer:"):
+                break
+            guidance_lines.append(extra)
+            if len(guidance_lines) >= 6:
+                break
+        question_text_exact = "\n".join(guidance_lines).strip()
         current_children.append(
             SubmissionPart(
                 label=f"{_restore_label_from_key(current_parent)} Q{question_id}",
                 focus_hint=line,
                 anchor_text=f"Q{question_id}",
                 max_mark=float(sub_match.group("marks")),
-                marking_guidance=line,
+                marking_guidance=question_text_exact,
+                question_text_exact=question_text_exact,
             )
         )
 
@@ -1525,7 +1585,9 @@ def build_assessment_map(context: MarkingContext) -> AssessmentMap:
             children = child_map.get(_normalize_label_key(part.label), [])
             if children:
                 for child in children:
-                    mode = infer_grading_mode(child.label, child.marking_guidance or part.marking_guidance or part.focus_hint)
+                    question_text = child.question_text_exact or child.marking_guidance or part.question_text_exact or part.marking_guidance or part.focus_hint
+                    task_type = infer_task_type(child.label, question_text)
+                    mode = infer_grading_mode(child.label, child.marking_guidance or part.marking_guidance or part.focus_hint, task_type=task_type)
                     dependency = infer_dependency_group(child.label, child.marking_guidance, parent_label=part.label)
                     units.append(
                         AssessmentUnit(
@@ -1533,18 +1595,24 @@ def build_assessment_map(context: MarkingContext) -> AssessmentMap:
                             max_mark=child.max_mark,
                             parent_label=part.label,
                             grading_mode=mode,
+                            task_type=task_type,
                             dependency_group=dependency,
+                            question_text_exact=question_text,
                             marking_guidance=child.marking_guidance,
                             rubric_text=build_unit_rubric_text(
                                 label=child.label,
                                 max_mark=child.max_mark,
                                 grading_mode=mode,
+                                task_type=task_type,
+                                question_text_exact=question_text,
                                 marking_guidance=child.marking_guidance,
                             ),
                         )
                     )
             else:
-                mode = infer_grading_mode(part.label, part.marking_guidance or part.focus_hint)
+                question_text = part.question_text_exact or part.marking_guidance or part.focus_hint
+                task_type = infer_task_type(part.label, question_text)
+                mode = infer_grading_mode(part.label, part.marking_guidance or part.focus_hint, task_type=task_type)
                 dependency = infer_dependency_group(part.label, part.marking_guidance, parent_label=part.label)
                 units.append(
                     AssessmentUnit(
@@ -1552,12 +1620,16 @@ def build_assessment_map(context: MarkingContext) -> AssessmentMap:
                         max_mark=part.max_mark,
                         parent_label="",
                         grading_mode=mode,
+                        task_type=task_type,
                         dependency_group=dependency,
+                        question_text_exact=question_text,
                         marking_guidance=part.marking_guidance,
                         rubric_text=build_unit_rubric_text(
                             label=part.label,
                             max_mark=part.max_mark,
                             grading_mode=mode,
+                            task_type=task_type,
+                            question_text_exact=question_text,
                             marking_guidance=part.marking_guidance,
                         ),
                     )
@@ -1569,12 +1641,16 @@ def build_assessment_map(context: MarkingContext) -> AssessmentMap:
                 label="Whole Submission",
                 max_mark=context.max_mark,
                 grading_mode="analytical",
+                task_type="whole_submission_holistic",
                 dependency_group="",
+                question_text_exact="Assess the full submission as one unit.",
                 marking_guidance="Assess the full submission as one unit.",
                 rubric_text=build_unit_rubric_text(
                     label="Whole Submission",
                     max_mark=context.max_mark,
                     grading_mode="analytical",
+                    task_type="whole_submission_holistic",
+                    question_text_exact="Assess the full submission as one unit.",
                     marking_guidance="Assess the full submission as one unit.",
                 ),
             )
@@ -1722,7 +1798,56 @@ def verify_assessment_rubrics(
     return replace(assessment_map, units=tuple(verified_units))
 
 
-def infer_grading_mode(label: str, marking_guidance: str) -> str:
+def infer_task_type(label: str, question_text: str) -> str:
+    text = f"{label}\n{question_text}".lower()
+    if any(term in text for term in ("generative ai", "rewrite it in your own tone", "edit the output", "hallucinating", "correct any mistakes")):
+        return "critique_and_revision"
+    if "summary" in text and any(term in text for term in ("cost", "benefit", "policy")):
+        return "evaluative_discussion"
+    if any(term in text for term in ("cost", "benefit")) and any(term in text for term in ("policy", "overview", "broad overview")):
+        return "evaluative_discussion"
+    if any(term in text for term in ("theoretical model from part 2", "shed light on", "youtube", "video", "not included in the model", "change the model")):
+        return "synthesis_across_sources"
+    if "social welfare" in text or "utility of each family" in text:
+        return "welfare_reasoning"
+    if any(term in text for term in ("regression equation", "coefficient of interest", "what hypothesis you would test")):
+        return "regression_specification"
+    if "endogeneity" in text:
+        return "causal_identification"
+    if any(term in text for term in ("data source", "data sources", "measured in the real world", "which variable or combination of variables")):
+        return "measurement_and_data_design"
+    if any(term in text for term in ("list some predictions", "theory makes about the relationship between variables", "prediction is a statement")):
+        return "prediction_generation"
+    if any(term in text for term in ("derive conditions", "what you should report are inequalities", "equilibrium")):
+        return "deterministic_derivation"
+    if "write out the payoff function" in text:
+        return "model_specification"
+    if any(term in text for term in ("explain how changing", "explain carefully why", "discuss the intuition")):
+        return "explanation_interpretation"
+    if any(term in text for term in ("discuss carefully", "whether you think", "good idea", "evaluate", "comment on whether")):
+        return "evaluative_discussion"
+    return "deterministic_derivation"
+
+
+def infer_grading_mode(label: str, marking_guidance: str, task_type: str = "") -> str:
+    if task_type in {
+        "critique_and_revision",
+        "evaluative_discussion",
+        "synthesis_across_sources",
+        "whole_submission_holistic",
+    }:
+        return "analytical"
+    if task_type in {
+        "model_specification",
+        "deterministic_derivation",
+        "explanation_interpretation",
+        "welfare_reasoning",
+        "prediction_generation",
+        "measurement_and_data_design",
+        "regression_specification",
+        "causal_identification",
+    }:
+        return "deterministic"
     text = f"{label}\n{marking_guidance}".lower()
     analytical_patterns = (
         "summary",
@@ -1778,12 +1903,16 @@ def build_unit_rubric_text(
     label: str,
     max_mark: float | None,
     grading_mode: str,
+    task_type: str,
+    question_text_exact: str,
     marking_guidance: str,
 ) -> str:
     unit = AssessmentUnit(
         label=label,
         max_mark=max_mark,
         grading_mode=grading_mode,
+        task_type=task_type,
+        question_text_exact=question_text_exact,
         marking_guidance=marking_guidance,
     )
     if grading_mode == "analytical":
@@ -1948,6 +2077,28 @@ def _build_ranking_rule(unit: AssessmentUnit) -> str:
 
 
 def _build_task_focus(unit: AssessmentUnit) -> str:
+    if unit.task_type == "critique_and_revision":
+        return "the required AI-generated summary, source-based accuracy audit, and corrected rewrite"
+    if unit.task_type == "model_specification":
+        return "the required payoff function and explanation of its terms"
+    if unit.task_type == "deterministic_derivation":
+        return "the required derivation and resulting conditions"
+    if unit.task_type == "explanation_interpretation":
+        return "the required explanation and interpretation"
+    if unit.task_type == "welfare_reasoning":
+        return "the welfare conditions and family-level utility effects"
+    if unit.task_type == "evaluative_discussion":
+        return "the required evaluative discussion"
+    if unit.task_type == "prediction_generation":
+        return "the model's predictions"
+    if unit.task_type == "measurement_and_data_design":
+        return "the required measurement choices and data-source mapping"
+    if unit.task_type == "regression_specification":
+        return "the required regression equation, coefficient of interest, and hypothesis"
+    if unit.task_type == "causal_identification":
+        return "the endogeneity concerns and feasible solutions"
+    if unit.task_type == "synthesis_across_sources":
+        return "the required synthesis of theory, evidence, and source claims"
     text = unit.marking_guidance.lower()
     if unit.grading_mode == "analytical":
         if "summary" in text and ("cost" in text or "benefit" in text):
@@ -2775,6 +2926,8 @@ def apply_assessment_map_to_submission_parts(parts: list[SubmissionPart], assess
                 section_text=part.section_text,
                 max_mark=unit.max_mark if unit.max_mark is not None else part.max_mark,
                 marking_guidance=unit.rubric_text or unit.marking_guidance or part.marking_guidance,
+                question_text_exact=unit.question_text_exact or part.question_text_exact,
+                task_type=unit.task_type or part.task_type,
             )
         )
     return enriched
@@ -2808,6 +2961,8 @@ def apply_prepared_artifact_to_submission_parts(
                 section_text=part.section_text,
                 max_mark=part.max_mark,
                 marking_guidance=merged_guidance,
+                question_text_exact=part.question_text_exact,
+                task_type=part.task_type,
             )
         )
     return enriched
@@ -3250,6 +3405,8 @@ def _segment_subparts_within_section(parent_part: SubmissionPart, child_specs: l
                 section_text=child_text,
                 max_mark=child.max_mark,
                 marking_guidance=child.marking_guidance,
+                question_text_exact=child.question_text_exact,
+                task_type=child.task_type,
             )
         )
     return segmented
@@ -3273,6 +3430,8 @@ def _resolve_expected_child_parts(
                 section_text=section_text,
                 max_mark=expected.max_mark,
                 marking_guidance=expected.marking_guidance,
+                question_text_exact=expected.question_text_exact,
+                task_type=expected.task_type,
             )
         )
     return resolved
@@ -3328,6 +3487,8 @@ def _detect_subparts_with_model(
                 anchor_text=child.anchor_text or expected.anchor_text,
                 max_mark=expected.max_mark,
                 marking_guidance=expected.marking_guidance,
+                question_text_exact=expected.question_text_exact,
+                task_type=expected.task_type,
             )
         )
     if len(normalized_children) < 2:

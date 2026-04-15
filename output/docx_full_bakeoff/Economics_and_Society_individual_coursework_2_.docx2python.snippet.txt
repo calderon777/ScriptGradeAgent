@@ -1,0 +1,111 @@
+Part 2
+
+--	Tuition fee: t
+
+--	VAT rate: τ
+
+--	Public-school families: x
+
+--	Private-school families: y = 3 − x
+
+--	Total VAT raised: T = y·τ·t (VAT collected from each private pupil is τt)
+
+Public-school payoff:
+
+<latex>Upub=Sx+5Tx=Sx+5yτtx</latex>
+
+Private-school benefit for type <latex>i∈{L,M,H}</latex>:
+
+--	<latex>F=y⋅t</latex>
+
+--	<latex>10Fy=10yty=10ty</latex>
+
+Private payoff:
+
+<latex>Uipriv=Pi+10yty-(1+τ)t</latex>
+
+Q1:
+
+Private school payoff for each family:
+
+<latex>ULpriv=PL+10yty-(1+τ)t</latex><latex>UMpriv=PM+10yty-(1+τ)t</latex><latex>UHpriv=PH+10yty-(1+τ)t</latex>
+
+--	<latex>Pi</latex>: private value by income type (captures that higher-income families may value private schooling more: <latex>PH>PM>PL</latex>). This shows that higher-income households are more willing to pay.
+
+--	<latex>10yty</latex>: is the effect from private sector scale <latex>F=yt</latex>. It rises with total fee income but is inversely proportional to private pupils. This captures that private schooling quality/benefits depend partly on resources and composition.
+
+--	<latex>-(1+τ)t</latex>: total cost paid by families (tuition + VAT). Raising τ increases the private price and can push some households toward public schooling.
+
+--	Public payoff includes <latex>5T</latex>: VAT is recycled into public schools with a multiplier of 5, indicating that an additional amount of money can increase the quality of public schools (policy benefit) and introduces a redistribution between the payers to the private schools and the users in the public one.
+
+Q3: 
+
+Scenario 2: Low (L) and Middle (M) choose public, High (H) chooses private.
+So: x = 2, y = 1, T = τt.
+
+ Payoffs in Scenario 2
+
+--	Public payoff (for L and M):
+
+<latex>Ux=2,y=1pub=S2+5τt2</latex>
+
+--	Private payoff for H (y=1)
+
+--	If H deviates to public, then x=3, y=0 ⇒ T=0:
+
+<latex>Ux=3,y=0pub=S3</latex>
+
+No deviation inequalities so Nash equilibrium checks
+
+
+
+
+
+H must prefer private to deviating to public:
+
+<latex>PH+10t-(1+τ)t≥S3</latex>
+
+This ensures the high-income family stays private given others.
+
+ L must prefer public to deviating to private (given M public and H private):
+If L deviates then x=1, y=2, T=2τt.
+Public payoff if stayed is <latex>S2+5τt2</latex>.
+Private payoff if deviates (y=2):
+
+<latex>S2+5τt2≥PL+52t-(1+τ)t</latex>
+
+M must prefer public to deviating to private
+
+<latex>S2+5τt2≥PM+52t-(1+τ)t</latex>One valid set:
+
+--	<latex>t=100</latex>, <latex>τ=0.2</latex>, <latex>S=80</latex>
+
+--	<latex>PL=10</latex>, <latex>PM=20</latex>, <latex>PH=60</latex>
+
+Public payoff (x=2,y=1): <latex>80/2+(5⋅0.2⋅100)/2=40+50=90</latex>
+
+H private payoff (y=1): <latex>60+10⋅10-120=40</latex>
+
+H public deviation: <latex>80/3≈26.67</latex>⇒ H stays private 
+
+L private deviation: <latex>10+5200-120≈-39.3</latex>< 90 
+
+M private deviation: <latex>20+5200-120≈-29.3</latex>< 90 
+
+So Scenario 2 holds.
+
+
+
+
+
+Q4:
+
+--	Scenario 1: only L public, M & H private ⇒ <latex>x=1,y=2,T=2τt</latex>
+
+--	Scenario 2: L & M public, H private ⇒ <latex>x=2,y=1,T=τt</latex>
+
+ Scenario 1 has more VAT revenue (y higher) and less congestion in public (x lower), so public payoff can be high for the single public pupil; but private becomes attractive for M if <latex>PM</latex>is high and costs aren’t too high.
+
+--	Increase in S (baseline public quality): makes public more attractive for everyone therefore pushes toward Scenario 2 (more public).
+
+--	Increase in τ (VAT rate): raises private cost <latex>(1+τ)t</latex> which makes private less attrac

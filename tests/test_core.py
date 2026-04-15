@@ -491,6 +491,43 @@ class SubmissionStructureTests(unittest.TestCase):
         self.assertIn("UK-style quality bands", unit_by_label["Part 4"].rubric_text)
         self.assertIn("Task focus:", unit_by_label["Part 4"].rubric_text)
 
+    def test_assessment_map_preserves_exact_question_text_and_task_type(self) -> None:
+        context = prepare_marking_context(
+            rubric_text=(
+                "Part 1 (15 marks)\n"
+                "Using a publicly available generative AI platform of your choice, generate a 300 word summary.\n"
+                "Using the course material and the IFS report provided, comment on whether the output generated seems accurate.\n"
+                "Edit the output to correct any mistakes or inaccuracies and rewrite it in your own tone.\n"
+                "Part 2 (40 marks)\n"
+                "1. [5 marks] Write out the payoff function of sending a child to private school for each family.\n"
+                "2. [7.5 marks] Derive conditions on the model's parameters such that the equilibrium has the required structure.\n"
+                "Part 3 (30 marks)\n"
+                "1. [7.5 marks] List some predictions implied by the model.\n"
+                "2. [7.5 marks] Explain how each variable could be measured using data.\n"
+                "3. [7.5 marks] Choose one of the theory's predictions and write down the regression equation.\n"
+                "4. [7.5 marks] Explain carefully why the regression might suffer from endogeneity issues.\n"
+                "Part 4 (15 marks)\n"
+                "Discuss how the theoretical model from Part 2, and the evidence we could get to test it from Part 3, can shed light on the arguments brought up in the videos.\n"
+                "What arguments are brought up in the video but not included in the model? How would you change the model to analyse these points?\n"
+                "out of 100\n"
+            ),
+            brief_text="",
+            marking_scheme_text="",
+            graded_sample_text="",
+            other_context_text="",
+        )
+        assessment_map = build_assessment_map(context)
+        unit_by_label = {unit.label: unit for unit in assessment_map.units}
+
+        self.assertEqual(unit_by_label["Part 1"].task_type, "critique_and_revision")
+        self.assertIn("publicly available generative AI platform", unit_by_label["Part 1"].question_text_exact)
+        self.assertEqual(unit_by_label["Part 2 Q1"].task_type, "model_specification")
+        self.assertEqual(unit_by_label["Part 3 Q3"].task_type, "regression_specification")
+        self.assertEqual(unit_by_label["Part 4"].task_type, "synthesis_across_sources")
+        self.assertEqual(unit_by_label["Part 4"].grading_mode, "analytical")
+        self.assertIn("theoretical model from Part 2", unit_by_label["Part 4"].question_text_exact)
+        self.assertIn("the required synthesis of theory, evidence, and source claims", unit_by_label["Part 4"].rubric_text)
+
     def test_rubric_generation_avoids_raw_task_prose_as_criterion(self) -> None:
         context = prepare_marking_context(
             rubric_text=(

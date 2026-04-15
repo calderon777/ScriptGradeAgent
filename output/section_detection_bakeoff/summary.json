@@ -1,0 +1,252 @@
+[
+  {
+    "backend": "current",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Sadik Ulusow_1494125_assignsubmission_file\\Economics and Society Coursework (60^L1) (Final).pdf",
+    "elapsed_seconds": 68.15,
+    "detected_count": 11,
+    "matched_expected_labels": 2,
+    "expected_count": 4,
+    "exact_match": false,
+    "detected_labels": [
+      "Part 1",
+      "Question 1",
+      "Question 2",
+      "Question 3",
+      "Question 4",
+      "Question 5",
+      "Question 6",
+      "Part 3",
+      "Question 1 (Part 3)",
+      "Question 2 (Part 3)",
+      "Question 3 (Part 3)"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "anchor_hits_in_text": 1,
+    "extracted_word_count": 3835,
+    "error": ""
+  },
+  {
+    "backend": "pymupdf4llm_clean",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Sadik Ulusow_1494125_assignsubmission_file\\Economics and Society Coursework (60^L1) (Final).pdf",
+    "elapsed_seconds": 31.67,
+    "detected_count": 6,
+    "matched_expected_labels": 1,
+    "expected_count": 4,
+    "exact_match": false,
+    "detected_labels": [
+      "Part 1",
+      "Question 2",
+      "Question 3",
+      "Question 4",
+      "Question 5",
+      "Question 6"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "anchor_hits_in_text": 0,
+    "extracted_word_count": 3533,
+    "error": ""
+  },
+  {
+    "backend": "current",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Federica Alvarez-Ossorio Zaldo_1494127_assignsubmission_file\\Econ and society FINAL.pdf",
+    "elapsed_seconds": 25.16,
+    "detected_count": 3,
+    "matched_expected_labels": 1,
+    "expected_count": 4,
+    "exact_match": false,
+    "detected_labels": [
+      "Part 1",
+      "Question 3",
+      "Question 6"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "anchor_hits_in_text": 0,
+    "extracted_word_count": 3850,
+    "error": ""
+  },
+  {
+    "backend": "pymupdf4llm_clean",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Federica Alvarez-Ossorio Zaldo_1494127_assignsubmission_file\\Econ and society FINAL.pdf",
+    "elapsed_seconds": 38.1,
+    "detected_count": 6,
+    "matched_expected_labels": 1,
+    "expected_count": 4,
+    "exact_match": false,
+    "detected_labels": [
+      "Part 1",
+      "Question 2",
+      "Question 3",
+      "Question 4",
+      "Question 5",
+      "Question 6"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "anchor_hits_in_text": 5,
+    "extracted_word_count": 3862,
+    "error": ""
+  },
+  {
+    "backend": "current",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Bakisha Letchumikanthan_1494185_assignsubmission_file\\Bakisha Coursework final.pdf",
+    "elapsed_seconds": 32.24,
+    "detected_count": 4,
+    "matched_expected_labels": 0,
+    "expected_count": 4,
+    "exact_match": false,
+    "detected_labels": [
+      "Introduction",
+      "Theoretical Analysis",
+      "Empirical Evidence",
+      "Policy Implications"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "anchor_hits_in_text": 0,
+    "extracted_word_count": 5465,
+    "error": ""
+  },
+  {
+    "backend": "pymupdf4llm_clean",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Bakisha Letchumikanthan_1494185_assignsubmission_file\\Bakisha Coursework final.pdf",
+    "elapsed_seconds": 27.07,
+    "detected_count": 3,
+    "matched_expected_labels": 3,
+    "expected_count": 4,
+    "exact_match": false,
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "anchor_hits_in_text": 3,
+    "extracted_word_count": 4956,
+    "error": ""
+  },
+  {
+    "backend": "current",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Faisal Khalid H Alotaibi_1494150_assignsubmission_file\\Economics and Society.pdf",
+    "elapsed_seconds": 35.93,
+    "detected_count": 5,
+    "matched_expected_labels": 0,
+    "expected_count": 4,
+    "exact_match": false,
+    "detected_labels": [
+      "Introduction",
+      "Economic Impact",
+      "Social Mobility",
+      "Policy Evaluation",
+      "Model Predictions"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "anchor_hits_in_text": 0,
+    "extracted_word_count": 5562,
+    "error": ""
+  },
+  {
+    "backend": "pymupdf4llm_clean",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Faisal Khalid H Alotaibi_1494150_assignsubmission_file\\Economics and Society.pdf",
+    "elapsed_seconds": 29.43,
+    "detected_count": 4,
+    "matched_expected_labels": 4,
+    "expected_count": 4,
+    "exact_match": true,
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "anchor_hits_in_text": 3,
+    "extracted_word_count": 4925,
+    "error": ""
+  },
+  {
+    "backend": "current",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Gina Lott_1494174_assignsubmission_file\\Gina Lott - Coursework EC3040.pdf",
+    "elapsed_seconds": 30.88,
+    "detected_count": 4,
+    "matched_expected_labels": 4,
+    "expected_count": 4,
+    "exact_match": true,
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "anchor_hits_in_text": 1,
+    "extracted_word_count": 2893,
+    "error": ""
+  },
+  {
+    "backend": "pymupdf4llm_clean",
+    "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Gina Lott_1494174_assignsubmission_file\\Gina Lott - Coursework EC3040.pdf",
+    "elapsed_seconds": 30.95,
+    "detected_count": 4,
+    "matched_expected_labels": 4,
+    "expected_count": 4,
+    "exact_match": true,
+    "detected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "expected_labels": [
+      "Part 1",
+      "Part 2",
+      "Part 3",
+      "Part 4"
+    ],
+    "anchor_hits_in_text": 3,
+    "extracted_word_count": 2894,
+    "error": ""
+  }
+]

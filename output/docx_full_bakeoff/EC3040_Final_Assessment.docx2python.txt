@@ -1,0 +1,514 @@
+EC3040
+
+PART 1, 1: 
+
+The prompt I have submitted to ChatGPT: 
+
+“Provide a 300-word overview of the UK government’s proposal to apply VAT to private school fees. The summary should explain the main policy change and discuss the potential economic costs and benefits. Be brief and clear. Thanks.”
+
+PART 1, 2:
+
+What I received from ChatGPT: 
+
+The UK's 2025 VAT policy on private school fees introduces a significant change by imposing a 20% Value Added Tax (VAT) on tuition fees at private schools, effective from January 2025. Previously exempt, this policy ends the VAT-free status for independent schools, aiming to raise additional revenue for the government. The main change is that private schools must now charge VAT on fees, which parents will pay, though schools may absorb some costs to remain competitive.
+
+Likely benefits include generating around £1.5-1.8 billion annually in extra tax revenue, as estimated by the Institute for Fiscal Studies (IFS). This revenue is earmarked for state education improvements, such as hiring more teachers and enhancing facilities, potentially reducing educational inequality by bolstering public schools. Proponents argue it promotes social mobility, as wealthier families subsidize broader access to quality education. It could also encourage some students to shift to state schools, fostering diversity and reducing class divides.
+
+However, costs are notable. The IFS warns of potential enrolment drops of 3-7% in private schools, leading to short-term disruptions like school closures or job losses for staff. Higher fees might burden middle-income families, exacerbating financial strain without improving access for the poorest. There's risk of 'deadweight loss' from reduced private investment in education. Critics highlight that elite schools may pass on costs easily, while smaller ones struggle. Overall, the policy balances fiscal gains with equity goals but risks unintended market distortions in education provision.
+
+PART 1, 3:
+
+
+
+My comments on the output: 
+
+The AI’s output is mostly accurate, but includes a few mistakes, oversimplifications, and missing details that need to be clarified using the lecture materials and the IFS report. 
+
+
+
+First, the £1.5 - £1.8 billion revenue figure is a bit overstated. The IFS puts net revenue closer to £1.3 - £1.5 billion once behavioural responses like students moving out of private schools are factored in, which the AI downplays. (IFS, p. 3 in key findings, number 6) This connects to Lecture 4 on externalities: taxes can create deadweight loss by changing market outcomes. Here, lower private investment in education could reduce overall quality if schools respond by cutting costs. 
+
+
+
+Second, the AI oversimplifies the inequality story. It notes lower inequality through extra public school funding, but doesn't mention that middle income families can end up worse off without the poorest gaining much, as the IFS highlights. (p. 27, line 1 & 2) This links to our first Lecture on equity and relative poverty: policies like this actually can worsen intergenerational mobility if private school becomes even more privileged, since the richest can absorb VAT more easily. 
+
+
+
+Third, the AI mentions “deadweight loss” without explaining it properly. Here, it comes from lower efficiency in private schools, and this could turn into a moral hazard problem if schools quietly cut quality to absorb VAT while parents can't fully monitor them. Short run disruption can force schools into losses and lead to closures, and job losses. (IFS, p. 3, key findings, section 5) To capture this properly, the model needs to be dynamic or two stage. In stage 1, schools with fixed costs decide whether to operate based on expected demand. A VAT induced demand drop could push some schools into losses. That would temporarily reduce welfare, and might even damage quality of education, since less private school competition reduce incentives for public schools to improve, reflecting our lecture 4 where Coeasean bargaining could help but is limited by transaction costs. 
+
+
+
+PART 1, 4:
+
+My rewritten summary: 
+
+
+
+The UK’s government’s 2025 VAT policy removes the tax exemption on private school fees, applying a 20% rate to raise funds for state education. (IFS, page 4). This means private schools now have to charge VAT, even though competition within the private schools might lead some schools to absorb part of the cost, rather than passing it all on to parents. 
+
+
+
+According to the IFS (page 3), the policy is expected to bring in around £1.3 - £1.5 billion annually in the medium term, enough to support roughly a 2 % increase in state school spending, particularly for disadvantaged students. (IFS, page 27). This aims to improve equity by redistributing resources from wealthier households and could help reduce educational inequality, similar to the model discussed in our first lecture on inequality and redistribution. It also helps internalise the positive externalities of education, for instance higher productivity and greater social mobility. (Chetty, 2014) Additionally, the IFS estimates that around 3% - 7% of students may move from private to state schools, which could increase diversity within the state school system. (IFS, page 3). 
+
+
+
+On the downside, short term challenges could include possible enrolment declines, schools closing and job losses, since costs do not fall proportionally with student numbers. (IFS, page 23). The burden may fall the hardest on middle income families, creating regressive outcomes that do not necessary benefit the poorest. (OECD, 2023). There are also efficiency concerns: the tax could create deadweight loss by changing market behaviour, which may be intensified by behavioural biases such as present bias, where parents underestimate long term education benefits and end up not saving enough for their children’s future education.
+
+Also, moral hazard could happen if parents become less active in advocating for school quality, if they expect state funding to pay, and Coasean problems could prevent efficient negotiations between all parties involved. (Parents and the Schools)
+
+
+
+PART 2, QUESTION 1:
+
+
+
+The payoff for families <latex>𝑖 </latex>   (with <latex>𝑖𝜖𝐿,𝑀,𝐻</latex>), from choosing private school is  <latex>𝑢𝑖𝑝𝑟𝑖𝑣=𝑃𝑖+10𝐹𝑦−1+𝜏𝑡</latex>,                where    <latex>𝐹=𝑦𝑡 </latex>            is the total fees collected by private school. The term <latex>10𝐹𝑦=10𝑦𝑡𝑦</latex> captures per student benefits from total school resources with diminishing returns (the square root). When <latex>𝑦 </latex>rises, total fees <latex>𝐹 </latex>increase, but the benefit is spread across more students, reflecting congestion or limited scale economies in private schools. This connects to our topics where we talked about resource gaps and class sizes. (Lecture 9). 
+
+<latex>𝑃𝑖 </latex>    captures inherent valuations of private education across families, which is where inequality comes from in the model, since <latex>𝑃𝐿<𝑃𝑀<𝑃𝐻</latex>.
+
+This links to equity and inequality which we have discussed in Lecture 9, since higher income families derive more value from private schools and have more access to them, affecting social mobility. 
+
+  <latex>−1+𝜏𝑡</latex>               is the total private cost to the family. The tuition fee <latex>𝑡 </latex>  is increased by the VAT rate <latex>𝜏 </latex> . This term is essential for the main policy: VAT raises the private cost of education, which discourages enrolment <latex>𝑦 </latex>  and generated revenue <latex>𝑇=𝜏𝐹 </latex>            for the government, which feeds into the public-school payoff:  <latex>𝑢𝑝𝑢𝑏=𝑆𝑥+5×𝑇𝑥</latex>                          , showing the redistribution and potential equity gains from improved state funding. 
+
+
+
+PART 2, QUESTION 2: 
+
+Scenario 1
+
+With <latex>𝑦=2 </latex>,we have <latex>𝐹=2𝑡 </latex>and <latex>𝐹𝑦=2𝑡2</latex>.
+
+  <latex>𝑢𝑖𝑝𝑟𝑖𝑣=𝑃𝑖+102𝑡2−1+𝜏𝑡 =𝑃𝑖+5×2𝑡−1+𝜏𝑡</latex>
+
+
+
+ <latex>𝑈𝑝𝑢𝑏=𝑆𝑥+5 𝑇𝑥=𝑆+10𝜏𝑡 sin𝑐𝑒 𝑥=1, 𝑇=𝜏𝐹 = 2𝜏𝑡</latex>
+
+
+
+The Nash equilibrium requires: 
+
+
+
+1)	L doesn't deviate from public school: <latex>𝑈𝐿𝑝𝑢𝑏=𝑆+10𝜏𝑡 ≥𝑃𝐿+52𝑡−1+𝜏𝑡</latex>
+
+2)	M doesn't deviate from private to public school: <latex>𝑃𝑀+52𝑡−1+𝜏𝑡 ≥𝑆+5𝜏𝑡2</latex>
+
+3)	H doesn't deviate from private to public school: <latex>𝑃𝐻+52𝑡−1+𝜏𝑡≥𝑆+5𝜏𝑡2</latex>,                                          which automatically holds is 2) holds since <latex>𝑃𝐻≥𝑃𝑀</latex>
+
+
+
+Numerical Example: 
+
+
+
+Let <latex>𝑆 </latex>   =1000, <latex>𝑡=10000 </latex>             , <latex>𝜏=0.2 </latex>,            <latex>𝑃𝐿=1000</latex>              , <latex>𝑃𝑀=20000</latex>,                 , <latex>𝑃𝐻=25000</latex>
+
+
+
+1) Condition 1 (L does not deviate) :<latex>𝑆 +10𝜏𝑡 = 5000 + 20000 = 25000 </latex>                                                   , 
+
+<latex>𝑃𝐿+52𝑡−1+𝜏𝑡=1000+707.1−12000=−10292.9</latex>                                                                                   , 
+
+<latex>25000≥−10292.9 </latex>                             - HOLDS
+
+
+
+2) Condition 2 (M does not deviate): <latex>𝑃𝑀+52𝑡−1+𝜏𝑡 = 20000 + 707.1 − 12000 = 8707.1</latex>                                                                            
+
+<latex>𝑆+5𝜏𝑡2=5000+100002=7500</latex>, 
+
+<latex>8707.1≥7500 </latex>                       - HOLDS 
+
+
+
+3) Condition 3 (H does not deviate): 
+
+<latex>𝑃𝐻+52𝑡−1+𝜏𝑡 = 25000+707.1−12000=13707.1</latex>, 
+
+<latex>𝑆+5𝜏𝑡2=7500</latex>
+
+<latex>13707.1≥7500 </latex>- HOLDS 
+
+
+
+PART 2, QUESTION 3:
+
+Scenario 2 
+
+L and M in public <latex>𝑥=2</latex>,           H in private <latex>𝑦=1</latex>. 
+
+Here, <latex>𝐹=1×𝑡 = 𝑡 </latex>                    , <latex>𝑇=𝜏𝑡 </latex>. 
+
+Public school payoff <latex>𝑈𝑝𝑢𝑏=𝑆+5𝜏𝑡2</latex>. 
+
+Private school payoff for H: <latex>𝑈𝐻𝑝𝑟𝑖𝑣=𝑃𝐻+10 𝐹𝑦− 1+𝜏𝑡 = 𝑃𝐻+10𝑡 − 1+𝜏𝑡</latex>.
+
+Equilibrium conditions: 
+
+1)	L doesn't deviate to private: <latex>𝑆+5𝜏𝑡2≥ 𝑃𝐿+52𝑡 − 1+𝜏𝑡</latex>
+
+2)	M doesn't deviate to private: <latex>𝑆+5𝜏𝑡2≥ 𝑃𝑀+52𝑡 − 1+𝜏𝑡</latex>
+
+3)	H doesn't deviate to public: If H deviates, <latex>𝑥=3 </latex>, <latex>𝑦=0 </latex>, <latex>𝑇=0 </latex>. H’s public payoff would be <latex>𝑆3</latex>. 
+
+<latex>𝑃𝐻+10𝑡−1+𝜏𝑡 ≥ 𝑆3</latex>
+
+
+
+NUMERICAL EXAMPLE: 
+
+<latex>𝑆=10000 </latex>,               <latex>𝑡=10000 </latex>               , <latex>𝜏=0.2 </latex>            , <latex>𝑃𝐿 =5000</latex>                  , <latex>𝑃𝑀=15000</latex>                   , <latex>𝑃𝐻=20000</latex>. 
+
+
+
+Conditions:
+
+1)	L doesn't deviate to private:
+
+<latex>𝑆+5𝜏𝑡2=10000+100002=10000</latex>, 
+
+<latex>𝑃𝐿+52𝑡−1+𝜏𝑡=5000+707.1−12000=−6292.9</latex>,                
+
+<latex>10000≥−6292.9 </latex>                            - HOLDS
+
+
+
+2)	M doesn't deviate to private: 
+
+<latex>𝑆+5𝜏𝑡2=10000</latex>, 
+
+<latex>𝑃𝑀+52𝑡−1+𝜏𝑡=15000+707.1−12000=3707.1</latex>, 
+
+<latex>10000≥3707.1 </latex>                         - HOLDS
+
+
+
+3)	H doesn't deviate to public: 
+
+<latex>𝑃𝐻+10𝑡−1+𝜏𝑡 = 20000 + 1000 − 12000 = 9000</latex>, 
+
+<latex>𝑆3=100003≈3333.3</latex>, 
+
+<latex>9000≥3333.3 </latex>                       - HOLDS 
+
+
+
+PART 2, QUESTION 4:
+
+What happens if I change the parameters?  
+
+Increasing base public funding <latex>𝑆 </latex>:   This raises public school payoff <latex>𝑈𝑝𝑢𝑏</latex>in both scenarios. A higher <latex>𝑆 </latex>    makes Condition 1) from Scenario 1 (L stays public) and Condition 1) & 2) from Scenario 2 (L&M stay public) easier to satisfy (public school more attractive for L), supporting both scenarios. Its effect on middle- and high-income families’ choice is ambiguous but generally supports Scenario 2 (more in public school).
+
+Increasing the VAT rate <latex>𝜏 </latex>: This has two effects: 1) It increases the cost of private school <latex>1+𝜏𝑡</latex>,          making private school less attractive. 2) It increases VAT revenue <latex>𝑇 </latex>, boosting public school payoffs <latex>5𝑇𝑥</latex>.    Both effects make public school more attractive relative to private, making Scenario 2 more likely. 
+
+Increasing the private valuation parameters <latex>𝑃𝑀</latex>      or <latex>𝑃𝐻</latex>:    This directly increases the private payoff for M and H. Tis makes conditions 2) and 3) for Scenario 1 easier to satisfy, and condition 3) for Scenario 2 harder to satisfy. Consequently, higher <latex>𝑃𝑀</latex>or <latex>𝑃𝐻</latex> makes Scenario 1 (more in private school) more likely. 
+
+
+
+PART 2, QUESTION 5:
+
+ Welfare effects of VAT
+
+Social welfare <latex>𝑊 </latex>i   s the sum of equilibrium payoffs across all families. 
+
+In Scenario 1: 
+
+<latex>𝑊1=𝑆+10𝜏𝑡+𝑃𝑀+52𝑡−1+𝜏𝑡+𝑃𝐻+52𝑡−1+𝜏𝑡=𝑆+𝑃𝑀+𝑃𝐻+102𝑡−2𝑡+8𝜏𝑡</latex>
+
+So <latex>𝑑𝑊1𝑑𝜏=8𝑡>0</latex>.                      Welfare increases with <latex>𝜏 </latex>within this equilibrium because the redistributive gain to the low-income family (through public funding <latex>8𝜏𝑡 </latex>) outweighs the direct cost borne by the two private school families <latex>−2𝜏𝑡</latex>. 
+
+In Scenario 2 <latex>𝑥=2,𝑦=1</latex>: 
+
+<latex>𝑊2=2×𝑆+5𝜏𝑡2+𝑃𝐻+10𝑡−1+𝜏𝑡=𝑆+5𝜏𝑡+𝑃𝐻+10𝑡−𝑡+4𝜏𝑡</latex>
+
+Thus, <latex>𝑑𝑊2𝑑𝜏=4𝑡>0</latex>                     . Welfare also increases with <latex>𝜏 </latex>, but at a slower rate (<latex>4𝑡 </latex>    instead of <latex>8𝑡 </latex> ), because only one family pays VAT and the revenue is split between two public school families. 
+
+Effect of <latex>𝜏 </latex>Triggering a Switch from Scenario 1 to 2: The derivatives show welfare gains if the equilibrium type (scenario) remains unchanged. However, an increase in <latex>𝜏 </latex>could induce a switch from Scenario 1 to Scenario 2. the change in welfare from switching is <latex>∆𝑊=𝑊2−𝑊1</latex>.                        This can be negative if the loss of the middle-income family’s high private valuation <latex>𝑃𝑀</latex>      and increased public school congestion are not offset by saved fees. 
+
+PART 2, QUESTION 6:
+
+My thoughts on the VAT on private schools
+
+The model suggests VAT can be a solid but imperfect tool for improving education equity. The welfare analysis shows that, holding the student allocation constant, VAT unambiguously raises total welfare <latex>𝑑𝑊𝑑𝜏>0</latex>                  due to redistribution from higher income families funding public goods, which reminds me of the equity argument in Lecture 9. 
+
+However, the policy’s impact is heterogeneous across groups. The model identifies the middle-income family M as the group most likely to move from private to public school due to VAT. While this promoted integration, it may generate deadweight loss through congestion in public schools and the loss of M’s high private valuation <latex>𝑃𝑀</latex>    , which links to the IFS concerns about pressure on middle income households. High income families H, due to their high <latex>𝑃𝐻</latex>,    are more likely to absorb the tax cost and stay private, making the tax progressive overall. Low-income families L unambiguously gain from better funded public schools. 
+
+The model has limitations relevant to real world debate, it assumes perfect rationality, ignoring present bias, where parents might overreact to upfront cost increases and not save enough for the future. It abstracts from Coasean bargaining failures and short run fixed costs that could lead to school closures and job losses.
+
+What's the conclusion? To maximise equity gains while minimising efficiency costs like deadweight loss and middle-income burden, the VAT policy should be complemented with targeted measures. Income linked bursaries could lower the effective <latex>𝜏 </latex>for struggling families, and transitional support for schools could mitigate fixed cost shocks. Successful implementation requires managing these trade-offs.
+
+PART 3, QUESTION 1:
+
+ Model predictions
+
+1)	An increase in the VAT rate <latex>𝜏 </latex>  leads to a decrease in private school enrolment <latex>𝑦 </latex>and an increase in public school enrolment <latex>𝑥 </latex>. (Lambert, 2025)
+
+2)	An increase in base public school funding <latex>𝑆 </latex>   leads to an increase in public school enrolment. <latex>𝑥 </latex>   (Stanford Institute for Economic Policy Research (SIEPR), 2025)
+
+3)	A rise in tuition fees <latex>𝑡 </latex>  reduces welfare <latex>𝑊 </latex>,    but only if the VAT rate <latex>𝜏 </latex> is high enough to cause a significant number of families to switch from private school to public school. (Scenario 1 to 2) (Dynarski, Gruber and Li, 2011)
+
+4)	In places where families place a higher income-based valuation on private education <latex>𝑃𝑀</latex>      private school enrolment <latex>𝑦 </latex>   will be higher. 
+
+PART 3, QUESTION 2:
+
+Prediction 1: An increase in the VAT rate <latex>𝜏 </latex> leads to a decrease in private school enrolment <latex>𝑦 </latex> and an increase in public school enrolment <latex>𝑥 </latex>.
+
+<latex>𝜏 </latex>   Is measured either as a dummy (0 before 2025, 1 after 2025) or as a continuous rate (20% from January 2025). Source: (GOV.UK, n.d.), using “VAT rate on educational services” from HMRC VAT Notice 701/30. 
+
+<latex>𝑥 </latex>    Is measured as the number or share of students in public schools. Source: (Department for Education, 2025) “Schools, pupils and their characteristics”, using “pupil numbers by school type” for the 2025/26 post VAT release. 
+
+<latex>𝑦 </latex>   Is measured as the number or share of students in private schools. Source: (Isc.co.uk, 2025), using pupil numbers from the 2025 report, which shows around a 1.9% decline. 
+
+Prediction 2: When public funding <latex>𝑆 </latex>   rises, public school enrolment <latex>𝑥 </latex>  increases.
+
+<latex>𝑆 </latex>   Is measured using per pupil funding levels that exclude VAT funded grants, focusing on core school budgets. Source: (Department for Education, 2025), using revenue funding for 5–16-year-olds in 2025/26 and isolating base grants. 
+
+<latex>𝑥 </latex>   Is measured the same way as before, using (Department for Education, 2025) data on pupil numbers and school characteristics.
+
+When private tuition t rises, social welfare W falls, but only if VAT τ is high enough to cause a switch.
+
+t is measured using average annual (day and boarding) private school fees by school type. Source: the Good Schools Guide Private School Fees 2025, using reported fee ranges after the roughly 22% increase.
+
+W is measured by education inequality outcomes, such as attainment gaps by income. Source: the EPI Annual Report 2025, using measures of attainment gaps linked to economic disadvantage.
+
+τ is measured the same way as in Prediction 1 and enters through an interaction term in the regression.
+
+Prediction 3: When private tuition <latex>𝑡 </latex>  rises, social welfare <latex>𝑊 </latex>     falls, but only if VAT <latex>𝜏 </latex>  is high enough to cause a switch. 
+
+<latex>𝑡 </latex>   Is measured using average annual (day and boarding) private school fees by school type. Source: (The Good Schools Guide, 2025), using reported fee ranges after the roughly 22% increase.
+
+<latex>𝑊 </latex>    Is measured by education inequality outcomes, such as attainment gaps by income. Source: (Education Policy Institute, 2025), using measures of attainment gaps linked to economic disadvantage. 
+
+<latex>𝜏 </latex>  Is measured the same way as in Prediction 1 and enters through an interaction term in the regression. 
+
+Prediction 4: When middle income private valuation <latex>𝑃𝑀</latex>     rises, private school enrolment <latex>𝑦 </latex>increases. 
+
+<latex>𝑃𝑀</latex>     : measured by parental preferences / preferences surveys or income thresholds for private school (e.g.: household incomes deciles 4-7) source: (Social Mobility Commission, 2024) on income returns to education, using how education levels affect earnings for 25 – 29-year-olds as a measurement for how much families value schooling.
+
+<latex>𝑦 </latex>   is measured the same way as in Prediction 1, using pupil numbers from (Isc.co.uk, 2025)
+
+PART 3, QUESTION 3:
+
+ Regression equation for Prediction 1
+
+To test Prediction 1, a difference in differences (DID) setup fits well, using the 2025 policy rollout as the shock: 
+
+<latex>𝑦𝑖𝑡=𝛽0+𝛽1𝑃𝑜𝑠𝑡𝑡×𝑇𝑟𝑒𝑎𝑡𝑒𝑑𝑖+𝛽2𝑋𝑖𝑡+𝛾𝑖+𝛿𝑡+𝜖𝑖𝑡</latex>
+
+Where: 
+
+--	<latex>𝑦𝑖𝑡</latex>    :  private school enrolment share in local authority <latex>𝑖 </latex>in year <latex>𝑡 </latex>. Source: Department for Education (DfE).
+
+--	<latex>𝑃𝑜𝑠𝑡𝑡</latex>         : Dummy = 1 from 2025 onwards
+
+--	<latex>𝑇𝑟𝑒𝑎𝑡𝑒𝑑𝑖</latex>             :  Dummy = 1 for local authorities with above median private school enrolment share in the pre period (more exposed to the shock) 
+
+--	<latex>𝑋𝑖𝑡</latex>     : Control variables (e.g.: median income, population density) 
+
+--	<latex>𝛾𝑖, 𝛿𝑡</latex>          : Local authority and year fixed effects. 
+
+--	<latex>𝛽1</latex>:    Main DID coefficient. The model predicts <latex>𝛽1<0</latex>         , meaning VAT led to a bigger fall in private enrolment in treated areas. 
+
+PART 3, QUESTION 4:
+
+ Endogeneity & Solutions 
+
+The main endogeneity issue here is the omitted variable bias. (Fiveable, 2025) For example, local preferences for private schooling (the model’s <latex>𝑃𝑀</latex>     )   are likely linked to both high baseline private enrolment <latex>𝑇𝑟𝑒𝑎𝑡𝑒𝑑𝑖</latex>                and underlying enrolment trends<latex>𝑦𝑖𝑡</latex>    . If places with high <latex>𝑃𝑀</latex>      were already on different paths before VAT, the estimate of<latex>𝛽1</latex>     would be biased. 
+
+Solutions: 
+
+1)	Event study / parallel trends test: Add leads and lags of the integration between <latex>𝑇𝑟𝑒𝑎𝑡𝑒𝑑𝑖</latex>               and year dummied in the DID regression. If the pre policy coefficient are small and insignificant, this supports the parallel trends assumption and strengthens the causal claim. (Butts and Gardner, 2022)
+
+<latex>𝑦𝑖𝑡=𝛽0+Σ𝑘=−𝑚−1 𝛽𝑘𝑝𝑟𝑒𝑇𝑟𝑒𝑎𝑡𝑒𝑑𝑖×𝑌𝑒𝑎𝑟𝑡=𝑘 +𝛽1𝑃𝑜𝑠𝑡𝑡×𝑇𝑟𝑒𝑎𝑡𝑒𝑑𝑖+Σ𝑘=1𝑛𝛽𝑘𝑝𝑜𝑠𝑡 𝑇𝑟𝑒𝑎𝑡𝑒𝑑𝑖×𝑌𝑒𝑎𝑟𝑡=𝑘 +𝛽2𝑋𝑖𝑡+𝛾𝑖+𝛿𝑡𝜖𝑖𝑡</latex>
+
+2)	Instrumental Variables (IV): Instrument <latex>𝑇𝑟𝑒𝑎𝑡𝑒𝑑𝑖</latex>            (or its interaction term) using a geographic or historical factor that affects private school supply but not current enrolment trends directly. Plausible examples include historical grammar school presence or cathedral cities, which predict private school concentration without directly driving today’s enrolment changes. 
+
+
+
+Both approaches are realistic with the relevant data. Event studies are standard in DID work, and historical instruments can be built from well documented sources like historical census records. 
+
+PART 4
+
+The first video emphasises equity gains from funding public schools. This lines up neatly with the model’s redistribution channel. VAT revenue <latex>𝑇 </latex>   raises public school payoffs <latex>5𝑇𝑥</latex>,      helping low- and middle-income families who stay in public schools. In the model, this can raise total welfare <latex>𝑑𝑊𝑑𝜏>0</latex>              by offsetting inequality coming from different <latex>𝑃𝑖</latex>     values. That fits with our lecture 9’s view of education as a main driver of social mobility. (Green and Kynaston, 2019)
+
+The second video, instead, points to short run adjustment costs that the static model doesn't fully capture, like job losses and school closures. The model hints at this through fixed costs: if schools face high fixed costs, a fall in private enrolment <latex>𝑦 </latex>can push them into losses and force exits, creating disruptions. To analyse this properly, the model would need a dynamic, two stage extension. (Lambert and Atherton, 2025)
+
+1)	In stage 1, schools with fixed cost <latex>𝐾 </latex>   (facilities, staff, teachers) decide whether to operate based on expected <latex>𝑦 </latex>  They only operate if expected fee revenue is <latex>𝐹=𝑦𝑡≥𝐾 </latex>. 
+
+2)	Stage 2: Families choose schools given the set of operating private schools. 
+
+Introducing VAT reduces equilibrium <latex>𝑦 </latex>, potentially pushing some private schools below <latex>𝐹<𝐾 </latex>,           leading to exit, job losses, and reduces choice. (Alpesh Maisuria and Lally, 2024) This would cause a temporary welfare loss and could hurt long run quality through reduced competition, which connects to our lectures on market structures and adjustment costs. 
+
+Furthermore, the second video talks about lobbying and political economy aspects: parents in private schools may advocate for better public education. The model’s moral hazard argument touches on this: expecting state funding might reduce such advocacy. A better model could include school quality investment funded by fees or lobbying. 
+
+In conclusion, while the model effectively captures the equity efficiency trade off, a comprehensive analysis for policymakers must also incorporate dynamic fixed cost effects and political economy feedback to fully weigh the arguments in both videos. 
+
+
+
+REFERENCE LIST // BIBLIOGRAPHY:
+
+
+
+Chetty, R., Hendren, N., Kline, P. and Saez, E. (2014). Where is the land of opportunity? The geography of intergenerational mobility in the United States. The Quarterly Journal of Economics, 129(4), pp.1553–1623. doi:https://doi.org/10.1093/qje/qju022.
+
+
+
+
+
+OECD. (2025). Reassessing the regressivity of the VAT. [online] Available at: <a href="https://www.oecd.org/en/publications/reassessing-the-regressivity-of-the-vat_b76ced82-en.html">https://www.oecd.org/en/publications/reassessing-the-regressivity-of-the-vat_b76ced82-en.html</a>.
+
+
+
+Repec.org. (2015). Leah Platt Boustan. [online] Available at: <a href="https://ideas.repec.org/f/c/pbo332.html">https://ideas.repec.org/f/c/pbo332.html</a> [Accessed 24 Dec. 2025].
+
+
+
+Kindness, D. (2022). Coase Theorem . [online] Investopedia. Available at: <a href="https://www.investopedia.com/terms/c/coase-theorem.asp">https://www.investopedia.com/terms/c/coase-theorem.asp</a>.
+
+
+
+GOV.UK. (n.d.). Education and vocational training (VAT Notice 701/30). [online] Available at: <a href="https://www.gov.uk/guidance/vat-on-education-and-vocational-training-notice-70130">https://www.gov.uk/guidance/vat-on-education-and-vocational-training-notice-70130</a>.
+
+
+
+Department for Education (2025). Schools, pupils and their characteristics, Academic year 2024/25. [online] Service.gov.uk. Available at: <a href="https://explore-education-statistics.service.gov.uk/find-statistics/school-pupils-and-their-characteristics/2024-25">https://explore-education-statistics.service.gov.uk/find-statistics/school-pupils-and-their-characteristics/2024-25</a>.
+
+
+
+Isc.co.uk. (2025). Welcome To Zscaler Directory Authentication. [online] Available at: <a href="https://www.isc.co.uk/research/annual-census">https://www.isc.co.uk/research/annual-census</a> [Accessed 30 Dec. 2025].
+
+
+
+The Good Schools Guide. (2025). Private School Fees | The Good Schools Guide. [online] Available at: <a href="https://www.goodschoolsguide.co.uk/uk-schools/advice/private-school-fees-explained">https://www.goodschoolsguide.co.uk/uk-schools/advice/private-school-fees-explained</a>.
+
+
+
+Education Policy Institute. (2025). Annual Report 2025 - Education Policy Institute. [online] Available at: <a href="https://epi.org.uk/annual-report-2025">https://epi.org.uk/annual-report-2025</a> [Accessed 30 Dec. 2025].
+
+
+
+Social Mobility Commission (2024). Income returns to education - Social Mobility Commission State of the Nation - GOV.UK. [online] Data.gov.uk. Available at: <a href="https://social-mobility.data.gov.uk/intermediate_outcomes/work_in_early_adulthood_(25_to_29_years)/income_returns_to_education/latest">https://social-mobility.data.gov.uk/intermediate_outcomes/work_in_early_adulthood_(25_to_29_years)/income_returns_to_education/latest</a>.
+
+
+
+Ons.gov.uk. (2011). Education and childcare - Office for National Statistics. [online] Available at: <a href="https://www.ons.gov.uk/peoplepopulationandcommunity/educationandchildcare">https://www.ons.gov.uk/peoplepopulationandcommunity/educationandchildcare</a>.
+
+
+
+Price, C. (2025). Household Costs Indices for UK household groups. [online] Ons.gov.uk. Available at: <a href="https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/householdcostsindicesforukhouseholdgroups/apriltojune2025">https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/householdcostsindicesforukhouseholdgroups/apriltojune2025</a>.
+
+
+
+Green, F. and Kynaston, D. (2019). Engines of Privilege.
+
+
+
+Alpesh Maisuria and Lally, C. (2024). Education: inequalities and attainment gaps. [online] POST. Available at: <a href="https://post.parliament.uk/education-inequalities-and-attainment-gaps">https://post.parliament.uk/education-inequalities-and-attainment-gaps</a>.
+
+
+
+Lambert, G. and Atherton, D. (2025). More than fifty UK private schools shut since Labour put VAT on fees. [online] Thetimes.com. Available at: <a href="https://www.thetimes.com/uk/education/article/private-school-vat-fees-labour-f0562gkfx">https://www.thetimes.com/uk/education/article/private-school-vat-fees-labour-f0562gkfx</a> [Accessed 1 Jan. 2026].
+
+
+
+Fiveable (2025). Endogeneity. [online] Fiveable. Available at: <a href="https://fiveable.me/introduction-econometrics/unit-9/endogeneity/study-guide/0wsiKdjcucAFysLt">https://fiveable.me/introduction-econometrics/unit-9/endogeneity/study-guide/0wsiKdjcucAFysLt</a> [Accessed 1 Jan. 2026].
+
+
+
+Butts, K. and Gardner, J. (2022). did2s: Two-Stage Difference-in-Differences. The R Journal, 14(3), pp.162–173. doi:https://doi.org/10.32614/rj-2022-048.
+
+
+
+Lambert, G. (2025). Private school pupil numbers drop by 11,000 after VAT hike. [online] Thetimes.com. Available at: <a href="https://www.thetimes.com/uk/education/article/private-school-pupil-numbers-drop-by-11000-after-vat-hike-0hcklh7jv">https://www.thetimes.com/uk/education/article/private-school-pupil-numbers-drop-by-11000-after-vat-hike-0hcklh7jv</a> [Accessed 3 Jan. 2026].
+
+
+
+Stanford Institute for Economic Policy Research (SIEPR). (2025). Quantifying the Supply Response of Private Schools to Public Policies. [online] Available at: <a href="https://siepr.stanford.edu/publications/working-paper/quantifying-supply-response-private-schools-public-policies">https://siepr.stanford.edu/publications/working-paper/quantifying-supply-response-private-schools-public-policies</a> [Accessed 3 Jan. 2026].
+
+
+
+Dynarski, S.M., Gruber, J. and Li, D. (2011). Cheaper by the Dozen: Using Sibling Discounts at Catholic Schools to Estimate the Price Elasticity of Private School Attendance. SSRN Electronic Journal. doi:https://doi.org/10.2139/ssrn.1949664.
+
+‌
+
+
+
+‌
+
+
+
+‌
+
+
+
+‌
+
+
+
+‌
+
+
+
+‌
+
+
+
+‌
+
+
+
+‌
+
+
+
+‌
+
+
+
+‌
+
+
+
+‌
+
+
+
+‌
+
+
+
+‌
+
+
+
+‌
+
+
+
+‌
+
+
+
+‌
+
+
+
+‌
+
+
+
+‌
+
+
+
+‌
+
+
+
+‌
+
+
+
+‌
+

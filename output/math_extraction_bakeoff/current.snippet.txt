@@ -1,0 +1,118 @@
+Part 2:
+1) 10√𝐹
+𝑈_𝑝𝑟𝑖𝑣 = 𝑃ᵢ+ −(1+𝜏)𝑡
+𝑦
+Substitute F = yt
+10√𝑦𝑡
+U_priv = 𝑃ᵢ+ −(1+𝜏)𝑡
+𝑦
+Simplify the equation
+10√𝑡
+𝑈_𝑝𝑟𝑖𝑣 = 𝑃ᵢ + − (1 + 𝜏)𝑡, 𝑖 ∈ {𝐿,𝑀,𝐻}
+√𝑦
+P is the baseline private benefit. t is tuition, τ is the VAT rate and y is private enrolment.
+i ∈ {L, M, H}, where L represents low-income family, M the middle-income family, and H
+the high-income family.
+The private payoff has three parts.
+𝑃ᵢ
+represents why some families choose private
+schooling regardless of price based on non-price factors like status, school fit,
+reputation of school. In practice this means wealthier families have a higher
+𝑃ᵢ
+and are
+10√𝑡
+more resilient to price rises. The term shows the per pupil private school benefit
+√𝑦
+rises with √𝑡 (tuition) and falls with √𝑦 (number of private school pupils). Finally,
+(1 + 𝜏)𝑡 is the full monetary cost of the tuition, which is tuition plus VAT. Increasing 𝜏
+raises out-of-pocket charges directly and is a factor that discourages private schooling
+up take.
+This links to the costs and benefits mentioned as VAT revenue comes from the
+(1 + 𝜏)𝑡 term and can fund public schooling (fiscal benefit, IFS, 2023, p.3), in turn,
+distributional consequences result from the concentration of private students (those
+with greater 𝑃𝑖, IFS, 2023, p.9). Behavioural responses are driven by price increases,
+but they are moderated by quality feedback. Leaving a private school, for instance,
+reduces 𝑦, which increases per-pupil private quality and may partially offset departures
+(explains small, short-run elasticities but is more ambiguous to medium-run effects,
+IFS, 2023, p.21-24; Lecture 9, 2024, slides 7-9). Finally, the theoretical VAT yield may be
+lower in practice due to collection costs and avoidance risk, so careful legislative
+design and monitoring are crucial (IFS, 2023, p. 17-19; Lecture 9, 2024, slide 26).
+2)
+T = private tuition; τ = VAT rate: y = number of private pupils (y = 3 - x); x = number in
+public.
+𝑃ᵢ = baseline private benefit for family 𝑖 ∈ {𝐿,𝑀,𝐻}with 0 ≤ 𝑃 < 𝑃 < 𝑃
+𝐿 𝑀 𝐻
+Total private fees 𝐹 = 𝑦𝑡. Total VAT revenue 𝑇 = 𝜏𝐹 = 𝜏𝑦𝑡
+Public payoff equation:
+𝑆 𝑇
+𝑈𝑖 = + 5 ×
+𝑥 𝑥
+Private payoff equation:
+10√𝑡
+𝑈_𝑝𝑟𝑖𝑣 = 𝑃ᵢ + − (1 + 𝜏)𝑡
+√𝑦
+When x = 1 and y = 2 (only L attends public, M & H attend private)
+Public:
+𝑥
+U( = 1) = S +5T Sub in 𝑇 = 𝜏𝐹 = 𝜏𝑦𝑡 and make y = 2
+𝜏𝑡
+= S + (2 )
+𝝉𝒕
+= S + 10
+Private:
+𝟏𝟎√𝒕
+𝑷ᵢ + − (𝟏 + 𝝉)𝒕
+U_priv(y = 2) =
+√𝟐
+Low-income family (L) prefers public:
+S + 10 𝝉𝒕 ≥ P L + 𝟏𝟎√𝒕 − (𝟏 + 𝝉)𝒕
+√𝒚
+Middle income family (M) prefers private:
+If M switched to public it would be x = 2 and y = 1
+𝑆 5
++ 𝜏𝑡
+That would be
+2 2
+𝟏𝟎√𝒕 𝑺 𝟓
+P + − (𝟏 + 𝝉)𝒕 ≥ + 𝝉𝒕
+M
+√𝟐 𝟐 𝟐
+High-income family prefers private: If it was to switch to public the private payoff
+would be same as M assuming all other families don’t change their decision.
+𝟏𝟎√𝒕 𝑺 𝟓
+P + − (𝟏 + 𝝉)𝒕 ≥ + 𝝉𝒕
+H
+√𝟐 𝟐 𝟐
+The numerical figures to satisfy these conditions are below.
+t=1, τ=0.20, P =1, P =5, P =8, S=10
+L M H
+P
+For L
+(left) S + 10 𝜏𝑡 = (10) + 10 (0.2)(1) = 12
+(Right) 1 + 7.07 – 1.2 = 6.87
+12 ≥ 𝟔. 𝟖𝟕 so conditions are satisfied
+For P
+M
+(Left) 5 + 7.07 – 1.2 = 10.87
+𝑆 5
+(Right) + 𝜏𝑡 =5 + 0.5 = 6.5
+2 2
+10.87 ≥ 𝟓. 𝟓 so conditions are satisfied
+For P
+H
+(Left) 8 + 7.07 – 1.2 = 13.87
+(Right) =5.5 (Same as P )
+M
+13.87 ≥ 𝟓. 𝟓 so conditions are satisfied
+3)
+X=2 y=1 as now 2 families choose public
+Based on last question I know when x=2 public payoff is:
+𝑆 5
+𝑈(𝑥 = 2) = + 𝜏𝑡
+2 2
+Private payoff when y=1:
+10√𝑡
+𝑈_𝑝𝑟𝑖𝑣 = 𝑃ᵢ + − (1 + 𝜏)𝑡
+√𝑦
+𝑈_𝑝𝑟𝑖𝑣 (𝑦 = 1) = 𝑃ᵢ + 10√𝑡 − (1 + 𝜏)𝑡
+Low-income family pref

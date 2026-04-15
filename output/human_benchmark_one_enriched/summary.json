@@ -1,0 +1,172 @@
+{
+  "assessment_context": "C:\\Users\\Cam\\Documents\\GitProjects\\ScriptGradeAgent\\.scriptgrade_cache\\last_ingest\\marking_scheme\\001_Final_Main_2025_V03_-_solutions.pdf",
+  "workbook": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040 deanonymised grades.xlsx",
+  "model_name": "qwen2:7b",
+  "verifier_model_name": "qwen2:7b",
+  "variants": [
+    "prepared_artifact_enriched"
+  ],
+  "repeats": 1,
+  "prepared_assessment_seconds_by_variant": {
+    "prepared_artifact_enriched": 4984.94
+  },
+  "sample_paths": [
+    "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Sadik Ulusow_1494125_assignsubmission_file\\Economics and Society Coursework (60^L1) (Final).pdf"
+  ],
+  "aggregate": {
+    "prepared_artifact_enriched": {
+      "sample_count": 1,
+      "mean_abs_total_delta": 2.5,
+      "mean_abs_part_delta": 1.29,
+      "mean_latency_total": 1185.82,
+      "by_type": {
+        ".pdf": {
+          "count": 1,
+          "mean_abs_total_delta": 2.5
+        }
+      }
+    }
+  },
+  "summary_rows": [
+    {
+      "variant": "prepared_artifact_enriched",
+      "sample_count": 1,
+      "repeat_count": 1,
+      "mean_abs_total_delta": 2.5,
+      "mean_abs_part_delta": 1.29,
+      "mean_model_total": 66.5,
+      "mean_human_total": 64.0,
+      "mean_script_latency_seconds": 1185.82,
+      "mean_preparation_seconds": 4984.94,
+      "amortized_batch_size": 1,
+      "amortized_total_seconds_per_script": 6170.76
+    },
+    {
+      "variant": "prepared_artifact_enriched",
+      "sample_count": 1,
+      "repeat_count": 1,
+      "mean_abs_total_delta": 2.5,
+      "mean_abs_part_delta": 1.29,
+      "mean_model_total": 66.5,
+      "mean_human_total": 64.0,
+      "mean_script_latency_seconds": 1185.82,
+      "mean_preparation_seconds": 4984.94,
+      "amortized_batch_size": 5,
+      "amortized_total_seconds_per_script": 2182.81
+    },
+    {
+      "variant": "prepared_artifact_enriched",
+      "sample_count": 1,
+      "repeat_count": 1,
+      "mean_abs_total_delta": 2.5,
+      "mean_abs_part_delta": 1.29,
+      "mean_model_total": 66.5,
+      "mean_human_total": 64.0,
+      "mean_script_latency_seconds": 1185.82,
+      "mean_preparation_seconds": 4984.94,
+      "amortized_batch_size": 10,
+      "amortized_total_seconds_per_script": 1684.31
+    },
+    {
+      "variant": "prepared_artifact_enriched",
+      "sample_count": 1,
+      "repeat_count": 1,
+      "mean_abs_total_delta": 2.5,
+      "mean_abs_part_delta": 1.29,
+      "mean_model_total": 66.5,
+      "mean_human_total": 64.0,
+      "mean_script_latency_seconds": 1185.82,
+      "mean_preparation_seconds": 4984.94,
+      "amortized_batch_size": 25,
+      "amortized_total_seconds_per_script": 1385.22
+    },
+    {
+      "variant": "prepared_artifact_enriched",
+      "sample_count": 1,
+      "repeat_count": 1,
+      "mean_abs_total_delta": 2.5,
+      "mean_abs_part_delta": 1.29,
+      "mean_model_total": 66.5,
+      "mean_human_total": 64.0,
+      "mean_script_latency_seconds": 1185.82,
+      "mean_preparation_seconds": 4984.94,
+      "amortized_batch_size": 50,
+      "amortized_total_seconds_per_script": 1285.52
+    }
+  ],
+  "comparison_rows": [],
+  "results": [
+    {
+      "variant": "prepared_artifact_enriched",
+      "run_index": 1,
+      "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Sadik Ulusow_1494125_assignsubmission_file\\Economics and Society Coursework (60^L1) (Final).pdf",
+      "participant_id": "1494125",
+      "full_name": "Participant 1494125 (Sadik Ulusow)",
+      "file_type": ".pdf",
+      "human_total": 64.0,
+      "model_total": 66.5,
+      "total_delta": 2.5,
+      "abs_total_delta": 2.5,
+      "human_part_breakdown": {
+        "Part 1": 9.0,
+        "Part 2 Q1": 4.0,
+        "Part 2 Q2": 6.0,
+        "Part 2 Q3": 6.5,
+        "Part 2 Q4": 4.0,
+        "Part 2 Q5": 2.5,
+        "Part 2 Q6": 6.0,
+        "Part 3 Q1": 5.0,
+        "Part 3 Q2": 3.0,
+        "Part 3 Q3": 3.0,
+        "Part 3 Q4": 4.0,
+        "Part 4": 11.0
+      },
+      "model_part_breakdown": {
+        "Part 1": 12.0,
+        "Part 2 Q1": 3.0,
+        "Part 2 Q2": 4.5,
+        "Part 2 Q3": 4.5,
+        "Part 2 Q4": 3.0,
+        "Part 2 Q5": 3.0,
+        "Part 2 Q6": 7.0,
+        "Part 3 Q1": 5.0,
+        "Part 3 Q2": 4.5,
+        "Part 3 Q3": 5.0,
+        "Part 3 Q4": 5.0,
+        "Part 4": 10.0
+      },
+      "part_abs_delta_sum": 15.5,
+      "part_abs_delta_mean": 1.29,
+      "detected_part_labels": [
+        "Part 1",
+        "Part 2 Q1",
+        "Part 2 Q2",
+        "Part 2 Q3",
+        "Part 2 Q4",
+        "Part 2 Q5",
+        "Part 2 Q6",
+        "Part 3 Q1",
+        "Part 3 Q2",
+        "Part 3 Q3",
+        "Part 3 Q4",
+        "Part 4"
+      ],
+      "scoring_word_count": 3835,
+      "structure_word_count": 3835,
+      "preparation_seconds": 4984.94,
+      "latency_total": 1185.82,
+      "latency_structure_detect": 165.12,
+      "latency_part_refine": 0.0,
+      "latency_part_analysis": 947.04,
+      "latency_moderation": 71.71,
+      "latency_finalize": 0.0,
+      "validation_notes": [
+        "part_score_spread=9.00",
+        "part_moderation_max_delta=0.00",
+        "math_total_used"
+      ],
+      "human_feedback_excerpt": "This is a well-structured and strong assignment. Overall, a goodsubmission with clear strengths in theory and interpretation, but scope to strengthen precision and depth in the empirical analysis. Your grade breakdown is...",
+      "model_feedback_excerpt": "This script is classified from part-level evidence rather than a separate final-language pass. The deterministic overall mark is 66.5 out of 100, computed as the sum of the part scores. Part 1 scored 12/15 and was placed..."
+    }
+  ]
+}

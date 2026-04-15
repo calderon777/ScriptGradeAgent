@@ -1,11 +1,17 @@
-from marking_pipeline import ROOT_DIR, call_ollama, list_submission_files, prepare_marking_context, read_path_text
+from marking_pipeline import (
+    ROOT_DIR,
+    build_submission_texts_from_path,
+    call_ollama,
+    list_submission_files,
+    prepare_marking_context,
+)
 
 
 SCRIPTS_DIR = ROOT_DIR / "scripts" / "test"
 RUBRIC_FILE = ROOT_DIR / "rubrics" / "labour_year2_rubric.txt"
 
 MODELS = [
-    ("gemma3:4b", "Gemma3_4B"),
+    ("qwen2:7b", "Qwen2_7B"),
     ("llama3.1:8b", "Llama3.1_8B"),
 ]
 
@@ -38,7 +44,7 @@ def main() -> None:
 
     submission_path = submission_paths[0]
     try:
-        script_text = read_path_text(submission_path)
+        script_text, structure_script_text = build_submission_texts_from_path(submission_path)
     except Exception as exc:
         print(f"Could not read {submission_path.name}: {exc}")
         return
@@ -48,6 +54,7 @@ def main() -> None:
         try:
             result = call_ollama(
                 script_text=script_text,
+                structure_script_text=structure_script_text,
                 context=marking_context,
                 filename=submission_path.name,
                 model_name=model_name,
