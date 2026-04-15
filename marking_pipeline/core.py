@@ -438,55 +438,244 @@ def build_part_messages(
     filename: str,
 ) -> list[dict[str, str]]:
     max_mark_text = _format_number(part.max_mark) if part.max_mark is not None else "100"
-    score_key = '- "provisional_score": number\n'
-    score_rule = f"1. provisional_score must be between 0 and {max_mark_text}.\n"
+    score_field = "provisional_score"
+    score_rule = f"{score_field} must be between 0 and {max_mark_text}."
     if part.max_mark is None:
-        score_key = '- "provisional_score_0_to_100": number\n'
-        score_rule = "1. provisional_score_0_to_100 must be between 0 and 100.\n"
+        score_field = "provisional_score_0_to_100"
+        score_rule = f"{score_field} must be between 0 and 100."
     task_text = _build_part_task_text(part)
-    criteria = _extract_prompt_criteria(part.marking_guidance)
-    if not criteria:
-        criteria = _default_prompt_criteria(task_text)
+    question_text = _question_text_for_model(part.question_text_exact or part.focus_hint or part.label)
+    task_goal = _task_goal_for_model(task_text, question_text)
+    criteria = _build_prompt_criteria(part)
     scoring_rules = _extract_prompt_scoring_rules(part.marking_guidance, part.max_mark)
-    criteria_block = "\n".join(f"- {criterion}" for criterion in criteria)
-    scoring_rule_lines = [score_rule.rstrip(), "2. Base the score only on this section text and the section-specific criteria."]
-    for index, rule in enumerate(scoring_rules, start=3):
-        scoring_rule_lines.append(f"{index}. {rule}")
+    question_payload: dict[str, Any] = {
+        "text": question_text,
+        "task_type": part.task_type or "unspecified",
+    }
+    if task_goal:
+        question_payload["task_goal"] = task_goal
+    payload = {
+        "section_id": part.label,
+        "max_mark": part.max_mark if part.max_mark is not None else 100,
+        "question": question_payload,
+        "scoring": {
+            "method": _part_scoring_method(part),
+            "criteria": criteria,
+            "rules": [
+                score_rule,
+                "Use only this section text and these section criteria.",
+                *scoring_rules,
+            ],
+        },
+        "student_response": {
+            "text": part.section_text or part.focus_hint or part.label,
+        },
+        "output_contract": {
+            "return_json_keys": [
+                "section_label",
+                score_field,
+                "criterion_notes",
+                "strengths",
+                "weaknesses",
+                "evidence",
+                "coverage_comment",
+            ],
+            "optional_json_keys": [
+                "grade_band",
+                "within_band_position",
+            ],
+            "criterion_notes_format": {
+                "status_allowed_values": ["met", "partial", "missed"],
+                "note_rule": "Use 2 to 5 words only. Do not copy the criterion text, weak_anchor, or strong_anchor.",
+                "example": {
+                    "criterion_name": "criterion_1",
+                    "status": "partial",
+                    "note": "support too vague",
+                },
+            },
+            "constraints": [
+                "criterion_notes must contain one item per criterion with criterion_name, status, and note.",
+                "criterion_notes.status must be met, partial, or missed.",
+                "criterion_notes.note must be 2 to 5 words, not a full sentence.",
+                "strengths must contain at least 2 concrete items.",
+                "weaknesses must contain at least 2 concrete items.",
+                "evidence must contain at least 1 concrete reference to the section content.",
+                "coverage_comment must justify the score placement for this section.",
+            ],
+        },
+    }
     system = (
-        "You are a careful university examiner working in stages. "
-        "Assess only the supplied section of the student's submission. "
-        "Use only the section task, the section-specific scoring criteria, and the section text."
+        "Score only the unit defined in the payload. Do not use any information outside the payload. Output exactly one valid JSON object. Do not include markdown, code fences, or any text before or after the JSON."
     )
     user = (
-        "You are assessing one section of a student's script.\n\n"
-        f"STUDENT FILE NAME: {filename}\n"
-        f"SECTION LABEL: {part.label}\n"
-        f"SECTION MAX MARK: {max_mark_text}\n"
-        f"SECTION TASK: {task_text}\n\n"
-        "SCORING CRITERIA:\n"
-        f"{criteria_block}\n\n"
-        "SECTION TEXT:\n"
-        f"\"\"\"{part.section_text or part.focus_hint or part.label}\"\"\"\n\n"
-        "Return only one JSON object with exactly these keys:\n"
-        '- "section_label": string\n'
-        f"{score_key}"
-        '- "grade_band": string\n'
-        '- "within_band_position": string\n'
-        '- "band_confidence_0_to_100": number\n'
-        '- "strengths": array of strings\n'
-        '- "weaknesses": array of strings\n'
-        '- "evidence": array of strings\n'
-        '- "coverage_comment": string\n\n'
-        "Rules:\n"
-        + "\n".join(scoring_rule_lines)
-        + "\n"
-        + "6. strengths must contain at least 2 concrete items.\n"
-        + "7. weaknesses must contain at least 2 concrete items.\n"
-        + "8. evidence must contain concrete references to the section content.\n"
-        + "9. coverage_comment must state the classification judgement for this section and why the mark sits where it does within the bracket.\n"
-        + "10. Do not include markdown fences or any text outside the JSON object."
+        "scoring_payload:\n"
+        f"{json.dumps(payload, ensure_ascii=True, indent=2)}\n"
     )
     return [{"role": "system", "content": system}, {"role": "user", "content": user}]
+
+
+def _part_scoring_method(part: SubmissionPart) -> str:
+    if part.task_type in {
+        "critique_and_revision",
+        "evaluative_discussion",
+        "synthesis_across_sources",
+        "whole_submission_holistic",
+    }:
+        return "classification_then_score"
+    return "criterion_evaluation"
+
+
+def _build_prompt_criteria(part: SubmissionPart) -> list[dict[str, str]]:
+    criteria = _extract_prompt_criteria(part.marking_guidance)
+    if not criteria:
+        criteria = _default_prompt_criteria(_build_part_task_text(part))
+    criteria = _enrich_prompt_criteria(part, criteria)
+    payload: list[dict[str, str]] = []
+    for index, criterion in enumerate(criteria, start=1):
+        weak_anchor, strong_anchor = _criterion_anchors(criterion)
+        payload.append(
+            {
+                "criterion_name": f"criterion_{index}",
+                "check": criterion,
+                "weak_anchor": weak_anchor,
+                "strong_anchor": strong_anchor,
+            }
+        )
+    return payload
+
+
+def _enrich_prompt_criteria(part: SubmissionPart, criteria: list[str]) -> list[str]:
+    normalized: set[str] = set()
+    enriched: list[str] = []
+    for criterion in criteria:
+        cleaned = " ".join(str(criterion).split())
+        key = cleaned.lower().rstrip(".")
+        if not cleaned or key in normalized:
+            continue
+        normalized.add(key)
+        enriched.append(cleaned)
+        if len(enriched) >= 5:
+            return enriched
+
+    for criterion in _supplemental_prompt_criteria(part):
+        cleaned = " ".join(str(criterion).split())
+        key = cleaned.lower().rstrip(".")
+        if not cleaned or key in normalized:
+            continue
+        normalized.add(key)
+        enriched.append(cleaned)
+        if len(enriched) >= 5:
+            break
+    return enriched
+
+
+def _supplemental_prompt_criteria(part: SubmissionPart) -> list[str]:
+    common_structured = [
+        "Evaluate whether the answer covers the required steps or components without material gaps.",
+        "Evaluate whether the stated result is supported by enough method, working, or explanation to justify credit.",
+        "Evaluate whether the response stays focused on the requested task instead of drifting into loosely related material.",
+        "Evaluate whether the most important point is made clearly rather than being left implicit or buried.",
+    ]
+    task_type = part.task_type or ""
+    if task_type == "critique_and_revision":
+        return [
+            "Evaluate whether the response prioritizes the most important errors or omissions instead of making scattered minor edits.",
+            "Evaluate whether the revision stays aligned with the original task after the corrections are made.",
+            *common_structured,
+        ]
+    if task_type in {"evaluative_discussion", "synthesis_across_sources"}:
+        return [
+            "Evaluate whether the response prioritizes the most relevant points instead of padding with lower-value material.",
+            "Evaluate whether the conclusion stays proportionate to the support given in the section.",
+            "Evaluate whether the argument keeps a clear line of judgement rather than a list of disconnected points.",
+            *common_structured,
+        ]
+    if task_type in {"measurement_and_data_design", "causal_identification", "regression_specification"}:
+        return [
+            "Evaluate whether the answer covers the required components without leaving a material gap in the setup.",
+            "Evaluate whether the proposed approach fits the stated question instead of a nearby but different one.",
+            "Evaluate whether key terms, variables, or assumptions are explicit enough to be usable.",
+            *common_structured,
+        ]
+    if _part_scoring_method(part) == "classification_then_score":
+        return [
+            "Evaluate whether the response prioritizes the most relevant points instead of padding with lower-value material.",
+            "Evaluate whether the conclusion stays proportionate to the support given in the section.",
+            "Evaluate whether the argument keeps a clear line of judgement rather than a list of disconnected points.",
+            *common_structured,
+        ]
+    return common_structured
+
+
+def _criterion_anchors(criterion: str) -> tuple[str, str]:
+    lowered = criterion.lower()
+    if any(term in lowered for term in ("evidence", "reference", "page", "source", "support", "quote", "cited")):
+        return (
+            "Support is missing, vague, or not tied to the point.",
+            "Support is specific and linked to the point being made.",
+        )
+    if any(term in lowered for term in ("judgement", "tradeoff", "qualification", "counterargument", "appraisal", "proportionate")):
+        return (
+            "Discussion stays descriptive or one-sided.",
+            "Judgement is clear, balanced, and appropriately qualified.",
+        )
+    if any(term in lowered for term in ("working", "algebra", "derivation", "equation", "specification", "variable", "method")):
+        return (
+            "Method is incomplete or materially wrong.",
+            "Method is complete, consistent, and materially correct.",
+        )
+    if any(term in lowered for term in ("interpret", "explain", "reasoning", "mechanism", "why", "comparison")):
+        return (
+            "Explanation is vague or does not follow from the setup.",
+            "Explanation is clear and follows from the setup.",
+        )
+    if any(term in lowered for term in ("covers", "complete", "components", "steps", "gap")):
+        return (
+            "Required parts are missing or only partly attempted.",
+            "Required parts are covered without material gaps.",
+        )
+    if any(term in lowered for term in ("addresses", "states", "defines", "identifies", "response")):
+        return (
+            "Misses the task or treats it only loosely.",
+            "Directly addresses the task in the way asked.",
+        )
+    return (
+        "Performance on this criterion is weak or incomplete.",
+        "Performance on this criterion is secure and well supported.",
+    )
+
+
+def _question_text_for_model(question_text: str) -> str:
+    raw = question_text.strip()
+    if not raw:
+        return ""
+    cleaned = re.sub(r"(\w)-\s+(\w)", r"\1\2", raw)
+    cleaned = " ".join(cleaned.split())
+    cleaned = re.sub(r"\[\s*suggested\s+word\s+count\s*:[^\]]*\]", "", cleaned, flags=re.IGNORECASE).strip()
+    cleaned = re.sub(
+        r"^(?:part|question|section)\s+[a-z0-9ivx]+(?:\s+q[a-z0-9ivx]+)?\s*(?:\(\d+(?:\.\d+)?\s*marks?\))?\s*",
+        "",
+        cleaned,
+        flags=re.IGNORECASE,
+    ).strip()
+    return _trim_goal_fragment(cleaned, max_chars=650)
+
+
+def _task_goal_for_model(task_goal: str, question_text: str) -> str:
+    cleaned_goal = _question_text_for_model(task_goal)
+    cleaned_question = _question_text_for_model(question_text)
+    if not cleaned_goal:
+        return ""
+    if len(cleaned_goal) < 24 and cleaned_goal.endswith(("(", "[", ":", ";", ",")):
+        return ""
+    goal_key = re.sub(r"\s+", " ", cleaned_goal.lower()).strip(" .")
+    question_key = re.sub(r"\s+", " ", cleaned_question.lower()).strip(" .")
+    if goal_key and question_key:
+        if goal_key == question_key:
+            return ""
+        if goal_key in question_key and len(goal_key) >= max(20, int(len(question_key) * 0.45)):
+            return ""
+    return cleaned_goal
 
 
 def _build_part_task_text(part: SubmissionPart) -> str:
@@ -576,8 +765,6 @@ def _default_prompt_criteria(task_text: str) -> list[str]:
 def _extract_prompt_scoring_rules(marking_guidance: str, max_mark: float | None) -> list[str]:
     rules: list[str] = []
     guidance_text = marking_guidance.lower()
-    if max_mark is not None:
-        rules.append(f"Use the full score range from 0 to {_format_number(max_mark)}.")
     if any(band in guidance_text for band in ("first", "2:1", "2:2", "third/pass", "missing/unfinished", "fail")):
         rules.append("Choose the quality band first, then place the score within that band using the evidence in this section.")
     if any(term in guidance_text for term in ("partial credit", "algebra", "equation", "deriv", "method", "interpretation")):
@@ -590,33 +777,100 @@ def _extract_prompt_scoring_rules(marking_guidance: str, max_mark: float | None)
 
 
 def _task_goal_from_task_type(task_type: str, question_text: str) -> str:
+    derived_goal = _derive_task_goal_from_question(task_type, question_text)
+    if derived_goal:
+        return derived_goal
     if task_type == "critique_and_revision":
-        return "generate, audit, and correct an AI-produced answer using supporting sources"
+        return "complete the requested draft, audit, and revision steps using the supplied materials"
     if task_type == "model_specification":
-        return "state the required formal specification and explain what each term means in context"
+        return "state the required formal specification and explain what each term means"
+    if task_type == "comparative_statics":
+        return "explain how parameter changes shift the likelihood or direction of the relevant outcomes"
     if task_type == "deterministic_derivation":
         return "derive the required conditions and justify why they produce the stated scenario"
     if task_type == "explanation_interpretation":
-        return "explain the model logic, parameter effects, or interpretation required by the question"
+        return "explain the required mechanism, parameter effects, or interpretation"
     if task_type == "welfare_reasoning":
         return "explain the welfare implications, relevant conditions, and effects on the affected parties"
     if task_type == "evaluative_discussion":
-        return "make a justified evaluative judgement using the model or course concepts"
+        return "make and justify an evaluative judgement using the relevant analysis or concepts"
     if task_type == "prediction_generation":
-        return "state the model's testable predictions clearly and correctly"
+        return "state the requested predictions or implications clearly and correctly"
     if task_type == "measurement_and_data_design":
-        return "show how the theoretical variables could be measured and linked to real data sources"
+        return "show how the relevant variables or constructs could be measured and linked to suitable data"
     if task_type == "regression_specification":
         return "write the regression equation, define its terms, and state the testable hypothesis"
     if task_type == "causal_identification":
         return "explain the endogeneity risks and propose feasible remedies"
     if task_type == "synthesis_across_sources":
-        return "use theory and evidence to evaluate source claims and explain what the model misses"
+        return "use the relevant framework and materials to evaluate claims, omissions, and possible extensions"
     normalized = " ".join(question_text.split()).strip()
     if not normalized:
         return ""
     first_sentence = re.split(r"(?<=[.!?])\s+", normalized, maxsplit=1)[0].strip()
     return first_sentence[:220].rstrip()
+
+
+def _derive_task_goal_from_question(task_type: str, question_text: str) -> str:
+    cleaned = _clean_question_text_for_goal(question_text)
+    if not cleaned:
+        return ""
+    numbered_items = _extract_numbered_goal_items(cleaned)
+    if task_type == "critique_and_revision" and numbered_items:
+        selected = [
+            _trim_goal_fragment(item, max_chars=90)
+            for item in numbered_items[:3]
+            if item.strip()
+        ]
+        return "; ".join(fragment for fragment in selected if fragment)
+    if numbered_items:
+        lead_item = _trim_goal_fragment(numbered_items[0], max_chars=170)
+        if lead_item:
+            return lead_item
+    cleaned_without_numbering = _trim_goal_fragment(cleaned, max_chars=max(len(cleaned), 200))
+    first_sentence = re.split(r"(?<=[.!?])\s+", cleaned_without_numbering, maxsplit=1)[0].strip()
+    return _trim_goal_fragment(first_sentence, max_chars=170)
+
+
+def _clean_question_text_for_goal(question_text: str) -> str:
+    text = " ".join(question_text.split()).strip()
+    if not text:
+        return ""
+    patterns = (
+        r"^(?:part|question|section)\s+[a-z0-9ivx]+(?:\s+q[a-z0-9ivx]+)?\s*(?:\(\d+(?:\.\d+)?\s*marks?\))?\s*",
+    )
+    changed = True
+    while changed:
+        changed = False
+        for pattern in patterns:
+            updated = re.sub(pattern, "", text, flags=re.IGNORECASE).strip()
+            if updated != text:
+                text = updated
+                changed = True
+    return text
+
+
+def _extract_numbered_goal_items(question_text: str) -> list[str]:
+    matches = list(re.finditer(r"(?:^|\s)(\d+)\.\s+", question_text))
+    if len(matches) < 2:
+        return []
+    items: list[str] = []
+    for index, match in enumerate(matches):
+        start = match.end()
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(question_text)
+        item = question_text[start:end].strip(" ;.")
+        if item:
+            items.append(item)
+    return items
+
+
+def _trim_goal_fragment(text: str, max_chars: int) -> str:
+    normalized = re.sub(r"^\d+\.\s*(?:\[\d+(?:\.\d+)?\s*marks?\])?\s*", "", text.strip(), flags=re.IGNORECASE)
+    normalized = normalized.rstrip(".")
+    if len(normalized) <= max_chars:
+        return normalized
+    trimmed = normalized[: max_chars - 3].rstrip(" ,;:")
+    return trimmed + "..."
 
 
 def build_structure_messages(script_text: str, filename: str) -> list[dict[str, str]]:
@@ -1852,6 +2106,17 @@ def infer_task_type(label: str, question_text: str) -> str:
         and any(term in text for term in ("payoff function", "utility function", "objective function", "formal model", "formal specification"))
     ):
         return "model_specification"
+    if (
+        any(term in text for term in ("parameter", "parameters"))
+        and any(term in text for term in ("more likely", "less likely", "increases", "decreases", "higher", "lower"))
+        and any(term in text for term in ("scenario", "outcome", "equilibrium"))
+    ):
+        return "comparative_statics"
+    if (
+        any(term in text for term in ("regression equation", "empirical specification", "estimating equation", "econometric specification"))
+        and any(term in text for term in ("write down", "state", "specify", "formulate"))
+    ):
+        return "regression_specification"
     if any(term in text for term in ("derive", "show that", "solve for", "prove that")) and any(term in text for term in ("condition", "equilibrium", "solution")):
         return "deterministic_derivation"
     if any(term in text for term in ("welfare", "well-being", "wellbeing", "efficiency")) and any(term in text for term in ("condition", "implication", "effect", "impact")):
@@ -1864,21 +2129,24 @@ def infer_task_type(label: str, question_text: str) -> str:
     ):
         return "measurement_and_data_design"
     if (
-        any(term in text for term in ("regression equation", "empirical specification", "estimating equation", "econometric specification"))
-        and any(term in text for term in ("write down", "state", "specify", "formulate"))
+        any(term in text for term in ("endogeneity", "omitted variable", "reverse causality", "selection bias", "simultaneity", "confounding"))
     ):
-        return "regression_specification"
-    if any(term in text for term in ("endogeneity", "omitted variable", "reverse causality", "selection bias", "simultaneity", "confounding")):
         return "causal_identification"
     if (
-        any(term in text for term in ("source", "sources", "article", "articles", "video", "videos", "text", "texts", "evidence"))
-        and any(term in text for term in ("claim", "claims", "argument", "arguments", "compare", "contrast", "synthes", "missing from", "omission", "limitations", "shed light on"))
+        (
+            any(term in text for term in ("source", "sources", "material", "materials", "article", "articles", "video", "videos", "case", "cases"))
+            and any(term in text for term in ("claim", "claims", "argument", "arguments", "compare", "contrast", "synthes", "shed light on"))
+        )
+        or (
+            any(term in text for term in ("model", "framework", "theory"))
+            and any(term in text for term in ("missing from", "omission", "omissions", "limitations", "extend", "extension"))
+        )
     ):
         return "synthesis_across_sources"
+    if any(term in text for term in ("discuss", "evaluate", "comment on whether", "whether you think", "critically assess", "good idea")):
+        return "evaluative_discussion"
     if any(phrase in text for phrase in ("explain how changing", "explain carefully why", "discuss the intuition", "explain how each term", "explain how each variable", "interpret the coefficient", "interpret the result", "explain the mechanism")):
         return "explanation_interpretation"
-    if any(term in text for term in ("discuss", "evaluate", "comment on whether", "whether you think", "critically assess")):
-        return "evaluative_discussion"
     if any(term in text for term in ("summary", "overview", "comment", "assess")):
         return "evaluative_discussion"
     return "deterministic_derivation"
@@ -1891,10 +2159,13 @@ def _matches_all(text: str, *terms: str) -> bool:
 def infer_grading_mode(label: str, marking_guidance: str, task_type: str = "") -> str:
     if task_type in {
         "critique_and_revision",
+        "comparative_statics",
         "evaluative_discussion",
         "synthesis_across_sources",
         "whole_submission_holistic",
     }:
+        if task_type == "comparative_statics":
+            return "deterministic"
         return "analytical"
     if task_type in {
         "model_specification",
@@ -2159,6 +2430,13 @@ def _criteria_for_task_type(unit: AssessmentUnit) -> list[str]:
             "Evaluate whether the explanation makes clear what each part of the specification means in context.",
             "Evaluate whether any interpretation follows from the stated model rather than from unsupported commentary.",
         ]
+    if task_type == "comparative_statics":
+        return [
+            f"Evaluate whether the response explains {focus} correctly.",
+            "Evaluate whether the answer identifies the direction of the effect of changing each relevant parameter.",
+            "Evaluate whether the explanation links parameter changes to the comparison between the relevant scenarios or outcomes.",
+            "Evaluate whether the reasoning follows from the model rather than from unsupported intuition alone.",
+        ]
     if task_type == "deterministic_derivation":
         return [
             f"Evaluate whether the attempt sets up and answers {focus} correctly.",
@@ -2227,9 +2505,11 @@ def _criteria_for_task_type(unit: AssessmentUnit) -> list[str]:
 
 def _build_task_focus(unit: AssessmentUnit) -> str:
     if unit.task_type == "critique_and_revision":
-        return "the required AI-generated summary, source-based accuracy audit, and corrected rewrite"
+        return "the required draft, accuracy audit, and corrected revision"
     if unit.task_type == "model_specification":
         return "the required payoff function and explanation of its terms"
+    if unit.task_type == "comparative_statics":
+        return "the required comparative-statics explanation of how parameter changes affect the relevant outcomes"
     if unit.task_type == "deterministic_derivation":
         return "the required derivation and resulting conditions"
     if unit.task_type == "explanation_interpretation":
@@ -2239,7 +2519,7 @@ def _build_task_focus(unit: AssessmentUnit) -> str:
     if unit.task_type == "evaluative_discussion":
         return "the required evaluative discussion"
     if unit.task_type == "prediction_generation":
-        return "the model's predictions"
+        return "the requested predictions or implications"
     if unit.task_type == "measurement_and_data_design":
         return "the required measurement choices and data-source mapping"
     if unit.task_type == "regression_specification":
@@ -2247,7 +2527,7 @@ def _build_task_focus(unit: AssessmentUnit) -> str:
     if unit.task_type == "causal_identification":
         return "the endogeneity concerns and feasible solutions"
     if unit.task_type == "synthesis_across_sources":
-        return "the required synthesis of theory, evidence, and source claims"
+        return "the required synthesis of framework, evidence, and material claims"
     text = unit.marking_guidance.lower()
     if unit.grading_mode == "analytical":
         if any(term in text for term in ("comment", "evaluate", "discuss", "good idea")):
@@ -2270,6 +2550,7 @@ def _build_task_focus(unit: AssessmentUnit) -> str:
 
 def normalize_part_analysis(data: dict[str, Any], part: SubmissionPart) -> dict[str, Any]:
     expected_label = part.label
+    expected_criteria = _build_prompt_criteria(part)
     score = data.get("provisional_score")
     score_field = "provisional_score"
     if score is None:
@@ -2283,6 +2564,11 @@ def normalize_part_analysis(data: dict[str, Any], part: SubmissionPart) -> dict[
     if score_field == "provisional_score_0_to_100" and normalized_score > 100:
         raise ValueError(f"Model returned a provisional score outside 0-100 for {expected_label}: {data}")
 
+    criterion_notes = _normalize_criterion_notes(
+        data.get("criterion_notes"),
+        expected_criteria=expected_criteria,
+        expected_label=expected_label,
+    )
     strengths = _normalize_string_list(data.get("strengths"), "strengths", expected_label, minimum=2)
     weaknesses = _normalize_string_list(data.get("weaknesses"), "weaknesses", expected_label, minimum=2)
     evidence = _normalize_string_list(data.get("evidence"), "evidence", expected_label, minimum=1)
@@ -2320,6 +2606,7 @@ def normalize_part_analysis(data: dict[str, Any], part: SubmissionPart) -> dict[
         "grade_band": grade_band,
         "within_band_position": within_band_position,
         "band_confidence_0_to_100": band_confidence_value,
+        "criterion_notes": criterion_notes,
         "strengths": strengths,
         "weaknesses": weaknesses,
         "evidence": evidence,
@@ -2356,6 +2643,7 @@ def _run_part_analysis_with_retry(
 
 def build_missing_part_analysis(part: SubmissionPart) -> dict[str, Any]:
     guidance = part.marking_guidance
+    criteria = _build_prompt_criteria(part)
     zero_score = 0.0
     grade_band = _normalize_grade_band(
         value="missing/unfinished",
@@ -2376,6 +2664,14 @@ def build_missing_part_analysis(part: SubmissionPart) -> dict[str, Any]:
         "grade_band": grade_band,
         "within_band_position": within_band_position,
         "band_confidence_0_to_100": 95.0,
+        "criterion_notes": [
+            {
+                "criterion_name": criterion["criterion_name"],
+                "status": "missed",
+                "note": "no usable response",
+            }
+            for criterion in criteria
+        ],
         "strengths": [
             "No creditable response was identified for this section.",
             "The section remains available for explicit zero-credit accounting in the final arithmetic.",
@@ -3359,6 +3655,7 @@ def _should_retry_final_result(exc: ValueError) -> bool:
 def _should_retry_part_analysis(exc: ValueError) -> bool:
     message = str(exc)
     retryable_patterns = (
+        "criterion_notes",
         "too few items for strengths",
         "too few items for weaknesses",
         "too few items for evidence",
@@ -3521,8 +3818,8 @@ def _build_part_analysis_retry_messages(
 ) -> list[dict[str, str]]:
     retry_note = (
         f"Previous attempt for {part.label} failed validation: {exc}. "
-        "Retry now and return at least 2 concrete strengths, at least 2 concrete weaknesses, at least 1 concrete evidence item, "
-        "and a non-empty coverage_comment. Return only the required JSON object."
+        "Retry now and return one short criterion_notes item per criterion, at least 2 concrete strengths, at least 2 concrete weaknesses, "
+        "at least 1 concrete evidence item, and a non-empty coverage_comment. Return only the required JSON object."
     )
     return [*messages, {"role": "user", "content": retry_note}]
 
@@ -3555,6 +3852,69 @@ def _normalize_string_list(value: Any, field_name: str, label: str, minimum: int
     if len(normalized) < minimum:
         raise ValueError(f"Model returned too few items for {field_name} in {label}: {value}")
     return normalized
+
+
+def _normalize_criterion_notes(
+    value: Any,
+    expected_criteria: list[dict[str, str]],
+    expected_label: str,
+) -> list[dict[str, str]]:
+    if not isinstance(value, list):
+        raise ValueError(f"Model did not return a list for criterion_notes in {expected_label}: {value}")
+    expected_names = [str(item.get("criterion_name", "")).strip() for item in expected_criteria]
+    if not all(expected_names):
+        raise ValueError(f"Expected criteria were not fully defined for {expected_label}.")
+    by_name: dict[str, dict[str, str]] = {}
+    for item in value:
+        if not isinstance(item, dict):
+            raise ValueError(f"Model returned invalid criterion_notes entries for {expected_label}: {value}")
+        criterion_name = str(item.get("criterion_name", "")).strip()
+        if criterion_name not in expected_names or criterion_name in by_name:
+            raise ValueError(f"Model returned invalid criterion_notes names for {expected_label}: {value}")
+        status = _normalize_criterion_note_status(item.get("status"))
+        if status not in {"met", "partial", "missed"}:
+            raise ValueError(f"Model returned invalid criterion_notes status for {expected_label}: {value}")
+        note = _normalize_criterion_note_text(item.get("note"))
+        if not note:
+            raise ValueError(f"Model returned empty criterion_notes note for {expected_label}: {value}")
+        by_name[criterion_name] = {
+            "criterion_name": criterion_name,
+            "status": status,
+            "note": note,
+        }
+    if len(by_name) != len(expected_names):
+        raise ValueError(f"Model returned incomplete criterion_notes for {expected_label}: {value}")
+    return [by_name[name] for name in expected_names]
+
+
+def _normalize_criterion_note_status(value: Any) -> str:
+    text = str(value).strip().lower()
+    mapping = {
+        "met": "met",
+        "meets": "met",
+        "strong": "met",
+        "strong_anchor": "met",
+        "partial": "partial",
+        "partly": "partial",
+        "mixed": "partial",
+        "missed": "missed",
+        "weak": "missed",
+        "weak_anchor": "missed",
+        "absent": "missed",
+    }
+    return mapping.get(text, text)
+
+
+def _normalize_criterion_note_text(value: Any) -> str:
+    text = " ".join(str(value).strip().split())
+    if not text:
+        return ""
+    text = re.sub(r"[.;:,]+$", "", text)
+    words = text.split()
+    if len(words) > 5:
+        words = words[:5]
+    normalized = " ".join(words).strip()
+    return normalized[:48].strip()
 
 
 def _has_major_weaknesses(weaknesses: list[str], feedback: str) -> bool:

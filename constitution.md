@@ -71,3 +71,14 @@ In debug mode:
 - raw model contract failures should remain visible;
 - exported artifacts should preserve the exact rubric used;
 - classification errors should be investigated at the part level before changing presentation logic.
+
+### 6. General Assessment Policy
+
+The grading pipeline must be written for general assessment use, not for a single sample assessment.
+
+This means:
+- task typing, criteria generation, and dependency logic should be driven by general instruction patterns and assessment constructs, not topic nouns from one course or exam;
+- implementation choices should prefer cross-assessment validity over sample-specific benchmark gains;
+- any sample used during development is evidence for failure modes, not a template to hard-code;
+- when a heuristic is added, it should be justified in terms of assessment archetypes that can recur elsewhere;
+- inspection exports and model-facing payloads should be checked against multiple task shapes whenever possible.

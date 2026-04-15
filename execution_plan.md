@@ -10,6 +10,15 @@ Current extraction note:
 - If future work changes PDF extraction again, preserve this split unless a replacement backend clearly beats the current extractor on both structure recovery and equation retention in end-to-end tests.
 
 Next steps in this area:
+- Scoring payload efficiency now needs its own focused pass:
+  - anchored 5-criterion payloads improved the 1-script EC3040 benchmark materially on mark error (`abs_total_delta` about `22.0 -> 15.7`)
+  - but they also increased scoring latency sharply (`scoring_total_seconds` about `248s -> 402s`)
+  - the next sensible move is to keep the quality gain while removing repeated prompt burden
+- Immediate next scoring-payload move:
+  - inspect the exported anchored payload workbook and identify repeated criterion/anchor wording across the 12 part calls
+  - compress shared anchors into shorter status semantics or shorter criterion phrasing instead of repeating long weak/strong anchor text on every criterion
+  - preserve the extra task-specific criterion and terse `criterion_notes`, since those appear to help scoring quality
+  - rerun the same fixed 1-script benchmark after each compression step so quality and latency can be compared directly
 - Promote this branch as the new baseline for ongoing work. The assessment-preparation cache refactor, Qwen/Qwen policy, PDF hybrid, and DOCX hybrid are a better default than the prior branch state.
 - Run a small end-to-end benchmark against human marks for both PDF and DOCX:
   - reuse one prepared assessment map per assessment

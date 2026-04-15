@@ -8,6 +8,10 @@ from unittest.mock import Mock, patch
 from marking_pipeline.core import (
     build_missing_part_analysis,
     _run_part_analysis_with_retry,
+    _task_goal_for_model,
+    _task_goal_from_task_type,
+    _question_text_for_model,
+    normalize_part_analysis,
     AssessmentMap,
     PreparedAssessmentMap,
     AssessmentUnit,
@@ -126,6 +130,20 @@ class TaskTypeInferenceTests(unittest.TestCase):
             infer_task_type("Causality", "Explain why the estimate may suffer from endogeneity and propose practical solutions."),
             "causal_identification",
         )
+        self.assertEqual(
+            infer_task_type(
+                "Policy",
+                "Discuss carefully whether you think the proposed reform is a good idea and justify your conclusion.",
+            ),
+            "evaluative_discussion",
+        )
+        self.assertEqual(
+            infer_task_type(
+                "Scenario effects",
+                "Explain how changing each parameter makes scenario 1 more likely than scenario 2.",
+            ),
+            "comparative_statics",
+        )
 
     def test_supports_broader_instruction_variants_beyond_exact_sample_phrases(self) -> None:
         self.assertEqual(
@@ -145,8 +163,90 @@ class TaskTypeInferenceTests(unittest.TestCase):
             "synthesis_across_sources",
         )
         self.assertEqual(
+            infer_task_type("Materials", "Compare the source materials and framework, assess the main claims, and propose extensions."),
+            "synthesis_across_sources",
+        )
+        self.assertEqual(
+            infer_task_type(
+                "Evaluation",
+                "Discuss whether the reform is a good idea, use the theoretical model to illustrate your argument, and refer to course concepts where relevant.",
+            ),
+            "evaluative_discussion",
+        )
+        self.assertEqual(
             infer_task_type("Bias", "Explain the likely sources of selection bias and confounding, then propose remedies."),
             "causal_identification",
+        )
+
+    def test_prior_prediction_reference_does_not_override_regression_task(self) -> None:
+        self.assertEqual(
+            infer_task_type(
+                "Part 3 Q3",
+                (
+                    "Choose one of the theory's predictions from your earlier answer and write down the regression "
+                    "equation that would allow you to test it, define each term, and state the hypothesis."
+                ),
+            ),
+            "regression_specification",
+        )
+
+    def test_builds_assessment_map_audit_sensitive_task_types_for_ec3040_shapes(self) -> None:
+        context = prepare_marking_context(
+            rubric_text=(
+                "Part 2 (40 marks)\n"
+                "4. [5 marks] Explain how changing each of the parameters makes scenario 1 more likely than scenario 2.\n"
+                "6. [10 marks] Discuss carefully, in your own words, whether you think the introduction of VAT is a good idea.\n"
+                "out of 40\n"
+            ),
+            brief_text="",
+            marking_scheme_text="",
+            graded_sample_text="",
+            other_context_text="",
+        )
+        assessment_map = build_assessment_map(context)
+        unit_by_label = {unit.label: unit for unit in assessment_map.units}
+        self.assertEqual(unit_by_label["Part 2 Q4"].task_type, "comparative_statics")
+        self.assertEqual(unit_by_label["Part 2 Q4"].grading_mode, "deterministic")
+        self.assertEqual(unit_by_label["Part 2 Q6"].task_type, "evaluative_discussion")
+        self.assertEqual(unit_by_label["Part 2 Q6"].grading_mode, "analytical")
+
+    def test_task_goals_use_assessment_generic_wording(self) -> None:
+        self.assertNotIn("AI-produced", _task_goal_from_task_type("critique_and_revision", ""))
+        self.assertNotIn("source claims", _task_goal_from_task_type("synthesis_across_sources", ""))
+        self.assertNotIn("real data sources", _task_goal_from_task_type("measurement_and_data_design", ""))
+        self.assertEqual(
+            _task_goal_from_task_type(
+                "regression_specification",
+                "3. [7.5 marks] Write down the regression equation, define each term, and state the hypothesis.",
+            ),
+            "Write down the regression equation, define each term, and state the hypothesis",
+        )
+        self.assertIn(
+            "Using a publicly available generative AI platform",
+            _task_goal_from_task_type(
+                "critique_and_revision",
+                (
+                    "Part 1 (15 marks) 1. Using a publicly available generative AI platform of your choice, generate a 300 word summary. "
+                    "2. Using the course material provided, comment on whether the output seems accurate. "
+                    "3. Edit the output to correct any mistakes and rewrite it in your own tone."
+                ),
+            ),
+        )
+        self.assertEqual(
+            _question_text_for_model("Part 2 Q4 (5 marks) Explain how changing each parameter makes scenario 1 more likely than scenario 2."),
+            "Explain how changing each parameter makes scenario 1 more likely than scenario 2",
+        )
+        self.assertEqual(
+            _question_text_for_model("Part 2 (15 marks)\nDiscuss the reform in your own words."),
+            "Discuss the reform in your own words",
+        )
+        self.assertEqual(_task_goal_for_model("Evaluate the policy.", "Evaluate the policy."), "")
+        self.assertEqual(
+            _task_goal_for_model(
+                "Discuss carefully whether the reform is justified and support your answer.",
+                "Discuss carefully whether the reform is justified and support your answer with the supplied evidence.",
+            ),
+            "",
         )
 
 
@@ -809,7 +909,7 @@ class SubmissionStructureTests(unittest.TestCase):
         self.assertEqual(unit_by_label["Part 4"].task_type, "synthesis_across_sources")
         self.assertEqual(unit_by_label["Part 4"].grading_mode, "analytical")
         self.assertIn("theoretical model from Part 2", unit_by_label["Part 4"].question_text_exact)
-        self.assertIn("the required synthesis of theory, evidence, and source claims", unit_by_label["Part 4"].rubric_text)
+        self.assertIn("the required synthesis of framework, evidence, and material claims", unit_by_label["Part 4"].rubric_text)
 
     def test_rubric_generation_avoids_raw_task_prose_as_criterion(self) -> None:
         context = prepare_marking_context(
@@ -905,11 +1005,31 @@ class SubmissionStructureTests(unittest.TestCase):
             marking_guidance="Evaluate whether the response directly addresses the required evaluative discussion.",
         )
         messages = build_part_messages(part, context, "student.docx")
+        system = messages[0]["content"]
         user = messages[1]["content"]
-        self.assertIn("SECTION TASK: Evaluate the policy.", user)
-        self.assertIn("SCORING CRITERIA:", user)
+        self.assertIn("Score only the unit defined in the payload.", system)
+        self.assertIn("Output exactly one valid JSON object.", system)
+        self.assertIn("Do not include markdown, code fences, or any text before or after the JSON.", system)
+        self.assertIn("scoring_payload:", user)
+        self.assertIn('"section_id": "Part 1"', user)
+        self.assertNotIn("student_file_name:", user)
+        self.assertIn('"text": "Evaluate the policy"', user)
+        self.assertNotIn('"task_goal"', user)
+        self.assertIn('"method": "criterion_evaluation"', user)
+        self.assertIn('"criteria"', user)
+        self.assertIn('"criterion_name": "criterion_5"', user)
+        self.assertIn('"weak_anchor"', user)
+        self.assertIn('"strong_anchor"', user)
         self.assertIn("Evaluate whether the response directly addresses the required evaluative discussion.", user)
-        self.assertIn("Use the full score range from 0 to 15.", user)
+        self.assertIn('"provisional_score must be between 0 and 15."', user)
+        self.assertNotIn("Use the full score range from 0 to 15.", user)
+        self.assertIn('"return_json_keys"', user)
+        self.assertIn('"criterion_notes"', user)
+        self.assertIn('"criterion_notes_format"', user)
+        self.assertIn('"status_allowed_values"', user)
+        self.assertIn('Do not copy the criterion text, weak_anchor, or strong_anchor.', user)
+        self.assertIn('"optional_json_keys"', user)
+        self.assertNotIn('"band_confidence_0_to_100"', user)
         self.assertNotIn("STRUCTURE AND MARKS HINTS:", user)
         self.assertNotIn("LOCAL ASSIGNMENT BRIEF SUPPORT:", user)
         self.assertNotIn("RELEVANT MARKING-SCHEME EXCERPT:", user)
@@ -970,6 +1090,7 @@ class SubmissionStructureTests(unittest.TestCase):
             {
                 "section_label": "Question 1",
                 "provisional_score": 10,
+                "criterion_notes": [],
                 "strengths": ["one"],
                 "weaknesses": ["weak one", "weak two"],
                 "evidence": ["line 1"],
@@ -978,6 +1099,13 @@ class SubmissionStructureTests(unittest.TestCase):
             {
                 "section_label": "Question 1",
                 "provisional_score": 10,
+                "criterion_notes": [
+                    {"criterion_name": "criterion_1", "status": "met", "note": "direct answer"},
+                    {"criterion_name": "criterion_2", "status": "partial", "note": "accuracy uneven"},
+                    {"criterion_name": "criterion_3", "status": "partial", "note": "support limited"},
+                    {"criterion_name": "criterion_4", "status": "partial", "note": "judgement basic"},
+                    {"criterion_name": "criterion_5", "status": "met", "note": "coverage mostly complete"},
+                ],
                 "strengths": ["strong one", "strong two"],
                 "weaknesses": ["weak one", "weak two"],
                 "evidence": ["line 1"],
@@ -994,6 +1122,30 @@ class SubmissionStructureTests(unittest.TestCase):
         )
         self.assertEqual(result["provisional_score"], 10.0)
         self.assertEqual(mock_call.call_count, 2)
+
+    def test_normalize_part_analysis_coerces_anchor_status_and_shortens_notes(self) -> None:
+        part = SubmissionPart(label="Question 1", section_text="Student answer text", max_mark=20.0)
+        result = normalize_part_analysis(
+            {
+                "section_label": "Question 1",
+                "provisional_score": 10,
+                "criterion_notes": [
+                    {"criterion_name": "criterion_1", "status": "strong_anchor", "note": "Directly addresses the task in the way asked."},
+                    {"criterion_name": "criterion_2", "status": "partial", "note": "Explanation is clear but could be more detailed."},
+                    {"criterion_name": "criterion_3", "status": "weak_anchor", "note": "Support is missing, vague, or not tied to the point."},
+                    {"criterion_name": "criterion_4", "status": "met", "note": "Required parts are covered without material gaps."},
+                    {"criterion_name": "criterion_5", "status": "partial", "note": "Most important point is somewhat buried in the response."},
+                ],
+                "strengths": ["strong one", "strong two"],
+                "weaknesses": ["weak one", "weak two"],
+                "evidence": ["line 1"],
+                "coverage_comment": "Covers the section.",
+            },
+            part=part,
+        )
+        self.assertEqual(result["criterion_notes"][0]["status"], "met")
+        self.assertEqual(result["criterion_notes"][2]["status"], "missed")
+        self.assertLessEqual(len(result["criterion_notes"][1]["note"].split()), 5)
 
     @patch("marking_pipeline.core._call_ollama_json")
     def test_rubric_verifier_fails_soft_and_keeps_original_rubric(self, mock_call: Mock) -> None:
@@ -1301,6 +1453,8 @@ class SubmissionStructureTests(unittest.TestCase):
         self.assertEqual(analysis["section_label"], "Part 3 Q4")
         self.assertEqual(analysis["provisional_score"], 0.0)
         self.assertIsNone(analysis["provisional_score_0_to_100"])
+        self.assertEqual(len(analysis["criterion_notes"]), 5)
+        self.assertTrue(all(item["status"] == "missed" for item in analysis["criterion_notes"]))
         self.assertIn("zero", analysis["coverage_comment"].lower())
 
 
@@ -1606,14 +1760,14 @@ class CallOllamaTests(unittest.TestCase):
         part_one = Mock()
         part_one.json.return_value = {
             "message": {
-                "content": '{"section_label": "Question 1", "provisional_score_0_to_100": 90, "strengths": ["good explanation", "relevant evidence"], "weaknesses": ["limited depth", "minor omission"], "evidence": ["mentions VAT incidence"], "coverage_comment": "Covers Question 1 clearly."}'
+                "content": '{"section_label": "Question 1", "provisional_score_0_to_100": 90, "criterion_notes": [{"criterion_name": "criterion_1", "status": "met", "note": "task addressed"}, {"criterion_name": "criterion_2", "status": "met", "note": "accuracy secure"}, {"criterion_name": "criterion_3", "status": "met", "note": "evidence used"}, {"criterion_name": "criterion_4", "status": "partial", "note": "judgement limited"}, {"criterion_name": "criterion_5", "status": "met", "note": "coverage complete"}], "strengths": ["good explanation", "relevant evidence"], "weaknesses": ["limited depth", "minor omission"], "evidence": ["mentions VAT incidence"], "coverage_comment": "Covers Question 1 clearly."}'
             }
         }
         part_one.raise_for_status.return_value = None
         part_two = Mock()
         part_two.json.return_value = {
             "message": {
-                "content": '{"section_label": "Question 2", "provisional_score_0_to_100": 100, "strengths": ["clear reasoning", "good structure"], "weaknesses": ["small omission", "limited precision"], "evidence": ["mentions elasticity"], "coverage_comment": "Covers Question 2 clearly."}'
+                "content": '{"section_label": "Question 2", "provisional_score_0_to_100": 100, "criterion_notes": [{"criterion_name": "criterion_1", "status": "met", "note": "task addressed"}, {"criterion_name": "criterion_2", "status": "met", "note": "accuracy secure"}, {"criterion_name": "criterion_3", "status": "met", "note": "evidence used"}, {"criterion_name": "criterion_4", "status": "met", "note": "judgement clear"}, {"criterion_name": "criterion_5", "status": "met", "note": "coverage complete"}], "strengths": ["clear reasoning", "good structure"], "weaknesses": ["small omission", "limited precision"], "evidence": ["mentions elasticity"], "coverage_comment": "Covers Question 2 clearly."}'
             }
         }
         part_two.raise_for_status.return_value = None
@@ -1663,14 +1817,14 @@ class CallOllamaTests(unittest.TestCase):
         part_one = Mock()
         part_one.json.return_value = {
             "message": {
-                "content": '{"section_label": "Question 1", "provisional_score": 8, "strengths": ["good explanation", "relevant evidence"], "weaknesses": ["limited depth", "minor omission"], "evidence": ["mentions VAT incidence"], "coverage_comment": "Covers Question 1 clearly."}'
+                "content": '{"section_label": "Question 1", "provisional_score": 8, "criterion_notes": [{"criterion_name": "criterion_1", "status": "met", "note": "task addressed"}, {"criterion_name": "criterion_2", "status": "met", "note": "accuracy secure"}, {"criterion_name": "criterion_3", "status": "met", "note": "evidence used"}, {"criterion_name": "criterion_4", "status": "partial", "note": "judgement limited"}, {"criterion_name": "criterion_5", "status": "met", "note": "coverage complete"}], "strengths": ["good explanation", "relevant evidence"], "weaknesses": ["limited depth", "minor omission"], "evidence": ["mentions VAT incidence"], "coverage_comment": "Covers Question 1 clearly."}'
             }
         }
         part_one.raise_for_status.return_value = None
         part_two = Mock()
         part_two.json.return_value = {
             "message": {
-                "content": '{"section_label": "Question 2", "provisional_score": 8, "strengths": ["clear reasoning", "good structure"], "weaknesses": ["small omission", "limited precision"], "evidence": ["mentions elasticity"], "coverage_comment": "Covers Question 2 clearly."}'
+                "content": '{"section_label": "Question 2", "provisional_score": 8, "criterion_notes": [{"criterion_name": "criterion_1", "status": "met", "note": "task addressed"}, {"criterion_name": "criterion_2", "status": "met", "note": "accuracy secure"}, {"criterion_name": "criterion_3", "status": "met", "note": "evidence used"}, {"criterion_name": "criterion_4", "status": "met", "note": "judgement clear"}, {"criterion_name": "criterion_5", "status": "met", "note": "coverage complete"}], "strengths": ["clear reasoning", "good structure"], "weaknesses": ["small omission", "limited precision"], "evidence": ["mentions elasticity"], "coverage_comment": "Covers Question 2 clearly."}'
             }
         }
         part_two.raise_for_status.return_value = None
@@ -1687,6 +1841,7 @@ class CallOllamaTests(unittest.TestCase):
         self.assertEqual(result["total_mark"], 16)
         self.assertEqual(mock_post.call_count, 2)
 
+    @patch("marking_pipeline.core._call_ollama_json")
     @patch("marking_pipeline.core.build_local_final_result")
     @patch("marking_pipeline.core.build_submission_diagnostics")
     @patch("marking_pipeline.core.apply_assessment_map_to_submission_parts")
@@ -1701,6 +1856,7 @@ class CallOllamaTests(unittest.TestCase):
         mock_apply_assessment_map_to_submission_parts: Mock,
         mock_build_submission_diagnostics: Mock,
         mock_build_local_final_result: Mock,
+        mock_call_ollama_json: Mock,
     ) -> None:
         context = prepare_marking_context("Question 1 (10 marks)\nQuestion 2 (10 marks)\nMaximum mark: 20", "", "", "", "")
         prepared_map = PreparedAssessmentMap(
@@ -1715,6 +1871,21 @@ class CallOllamaTests(unittest.TestCase):
         mock_refine_submission_granularity.return_value = segmented_parts
         mock_apply_assessment_map_to_submission_parts.return_value = segmented_parts
         mock_build_submission_diagnostics.return_value = build_submission_diagnostics("current scoring text", segmented_parts)
+        mock_call_ollama_json.return_value = {
+            "section_label": "Whole Submission",
+            "provisional_score": 12.0,
+            "criterion_notes": [
+                {"criterion_name": "criterion_1", "status": "met", "note": "task addressed"},
+                {"criterion_name": "criterion_2", "status": "partial", "note": "detail uneven"},
+                {"criterion_name": "criterion_3", "status": "met", "note": "coverage secure"},
+                {"criterion_name": "criterion_4", "status": "partial", "note": "steps partly missing"},
+                {"criterion_name": "criterion_5", "status": "partial", "note": "support not specific"},
+            ],
+            "strengths": ["clear explanation", "good structure"],
+            "weaknesses": ["limited depth", "missing precision"],
+            "evidence": ["current scoring text"],
+            "coverage_comment": "Covers the whole submission clearly.",
+        }
         mock_build_local_final_result.return_value = {
             "total_mark": 12.0,
             "max_mark": 20.0,

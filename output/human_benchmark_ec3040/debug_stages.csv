@@ -1,21 +1,21 @@
 stage,seconds,detail
-extract_submission_text,1.46,"scoring_words=3835, structure_words=3835"
+extract_submission_text,1.99,"scoring_words=3835, structure_words=3835"
 detect_submission_parts,0.0,"mode=context_fast_path, detected_parts=4"
 segment_submission_parts,0.0,segmented_parts=4
 refine_submission_granularity,0.0,refined_parts=12
 apply_assessment_artifact,0.0,variant=prepared_artifact_enriched
 build_submission_diagnostics,0.0,detected_part_count=12
-part_analysis_model,24.73,1/12 Part 1
-part_analysis_model,20.33,2/12 Part 2 Q1
-part_analysis_model,20.35,3/12 Part 2 Q2
-part_analysis_model,21.36,4/12 Part 2 Q3
-part_analysis_model,18.88,5/12 Part 2 Q4
-part_analysis_model,19.06,6/12 Part 2 Q5
-part_analysis_model,22.05,7/12 Part 2 Q6
-part_analysis_model,23.13,8/12 Part 3 Q1
-part_analysis_model,19.7,9/12 Part 3 Q2
-part_analysis_model,27.33,10/12 Part 3 Q3
-part_analysis_model,21.42,11/12 Part 3 Q4
-part_analysis_model,25.15,12/12 Part 4
-moderate_linked_part_analyses,30.19,part 2=insufficient_group_size; part 3=eligible
+part_analysis_model,33.44,1/12 Part 1
+part_analysis_model,33.68,2/12 Part 2 Q1
+part_analysis_model,32.07,3/12 Part 2 Q2
+part_analysis_model,35.05,4/12 Part 2 Q3
+part_analysis_model,34.15,5/12 Part 2 Q4
+part_analysis_model,32.13,6/12 Part 2 Q5
+part_analysis_model,30.82,7/12 Part 2 Q6
+part_analysis_model,34.51,8/12 Part 3 Q1
+part_analysis_model,33.76,9/12 Part 3 Q2
+part_analysis_model,35.02,10/12 Part 3 Q3
+part_analysis_model,34.12,11/12 Part 3 Q4
+part_analysis_model,32.94,12/12 Part 4
+moderate_linked_part_analyses,0.0,part 2=insufficient_group_size; part 3=wide_score_spread:17.34
 build_local_final_result,0.0,
