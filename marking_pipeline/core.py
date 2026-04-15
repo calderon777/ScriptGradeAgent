@@ -593,13 +593,13 @@ def _task_goal_from_task_type(task_type: str, question_text: str) -> str:
     if task_type == "critique_and_revision":
         return "generate, audit, and correct an AI-produced answer using supporting sources"
     if task_type == "model_specification":
-        return "write out the payoff function and explain how each term maps to the policy analysis"
+        return "state the required formal specification and explain what each term means in context"
     if task_type == "deterministic_derivation":
         return "derive the required conditions and justify why they produce the stated scenario"
     if task_type == "explanation_interpretation":
         return "explain the model logic, parameter effects, or interpretation required by the question"
     if task_type == "welfare_reasoning":
-        return "explain when VAT increases or decreases social welfare and how each family's utility changes"
+        return "explain the welfare implications, relevant conditions, and effects on the affected parties"
     if task_type == "evaluative_discussion":
         return "make a justified evaluative judgement using the model or course concepts"
     if task_type == "prediction_generation":
@@ -1068,6 +1068,9 @@ def detect_submission_parts(
     context: MarkingContext | None = None,
     ollama_url: str = DEFAULT_OLLAMA_URL,
 ) -> list[SubmissionPart]:
+    context_fast_path = _detect_submission_parts_from_context(script_text, context)
+    if context_fast_path is not None:
+        return context_fast_path
     structure_guidance = extract_structure_guidance(context) if context is not None else ""
     data = _call_ollama_json(
         model_name=model_name,
@@ -1075,6 +1078,44 @@ def detect_submission_parts(
         ollama_url=ollama_url,
     )
     return reconcile_detected_parts(normalize_detected_parts(data), context)
+
+
+def describe_structure_detection_mode(
+    script_text: str,
+    context: MarkingContext | None,
+) -> dict[str, Any]:
+    context_fast_path = _detect_submission_parts_from_context(script_text, context)
+    expected_parts = extract_expected_parts_from_context(context) if context is not None else []
+    if context_fast_path is not None:
+        return {
+            "mode": "context_fast_path",
+            "expected_part_count": len(expected_parts),
+            "detected_part_count": len(context_fast_path),
+        }
+    return {
+        "mode": "model_call",
+        "expected_part_count": len(expected_parts),
+        "detected_part_count": None,
+    }
+
+
+def _detect_submission_parts_from_context(
+    script_text: str,
+    context: MarkingContext | None,
+) -> list[SubmissionPart] | None:
+    if context is None:
+        return None
+    expected_parts = extract_expected_parts_from_context(context)
+    if not expected_parts:
+        return None
+    if len(expected_parts) == 1:
+        return expected_parts
+
+    normalized_text = script_text.replace("\r\n", "\n")
+    anchored_count = sum(1 for part in expected_parts if _find_part_anchor_position(normalized_text, part) != -1)
+    if anchored_count >= max(2, len(expected_parts) // 2):
+        return expected_parts
+    return None
 
 
 def normalize_detected_parts(data: dict[str, Any]) -> list[SubmissionPart]:
@@ -1799,34 +1840,52 @@ def verify_assessment_rubrics(
 
 
 def infer_task_type(label: str, question_text: str) -> str:
-    text = f"{label}\n{question_text}".lower()
-    if any(term in text for term in ("generative ai", "rewrite it in your own tone", "edit the output", "hallucinating", "correct any mistakes")):
+    text = " ".join(f"{label}\n{question_text}".lower().split())
+    if (
+        any(term in text for term in ("generate", "draft", "produce"))
+        and any(term in text for term in ("summary", "answer", "response"))
+        and any(term in text for term in ("comment on whether", "review", "critique", "evaluate accuracy", "rewrite", "revise", "edit", "correct"))
+    ):
         return "critique_and_revision"
-    if "summary" in text and any(term in text for term in ("cost", "benefit", "policy")):
-        return "evaluative_discussion"
-    if any(term in text for term in ("cost", "benefit")) and any(term in text for term in ("policy", "overview", "broad overview")):
-        return "evaluative_discussion"
-    if any(term in text for term in ("theoretical model from part 2", "shed light on", "youtube", "video", "not included in the model", "change the model")):
-        return "synthesis_across_sources"
-    if "social welfare" in text or "utility of each family" in text:
-        return "welfare_reasoning"
-    if any(term in text for term in ("regression equation", "coefficient of interest", "what hypothesis you would test")):
-        return "regression_specification"
-    if "endogeneity" in text:
-        return "causal_identification"
-    if any(term in text for term in ("data source", "data sources", "measured in the real world", "which variable or combination of variables")):
-        return "measurement_and_data_design"
-    if any(term in text for term in ("list some predictions", "theory makes about the relationship between variables", "prediction is a statement")):
-        return "prediction_generation"
-    if any(term in text for term in ("derive conditions", "what you should report are inequalities", "equilibrium")):
-        return "deterministic_derivation"
-    if "write out the payoff function" in text:
+    if (
+        any(term in text for term in ("write out", "write down", "state", "specify", "formulate"))
+        and any(term in text for term in ("payoff function", "utility function", "objective function", "formal model", "formal specification"))
+    ):
         return "model_specification"
-    if any(term in text for term in ("explain how changing", "explain carefully why", "discuss the intuition")):
+    if any(term in text for term in ("derive", "show that", "solve for", "prove that")) and any(term in text for term in ("condition", "equilibrium", "solution")):
+        return "deterministic_derivation"
+    if any(term in text for term in ("welfare", "well-being", "wellbeing", "efficiency")) and any(term in text for term in ("condition", "implication", "effect", "impact")):
+        return "welfare_reasoning"
+    if any(term in text for term in ("list", "state", "give", "identify")) and any(term in text for term in ("prediction", "predictions", "implication", "implications", "testable hypothesis")):
+        return "prediction_generation"
+    if (
+        any(term in text for term in ("measure", "measured", "measurement", "operationalise", "operationalize", "indicator", "observable", "observed"))
+        and any(term in text for term in ("data source", "data sources", "dataset", "datasets", "real world", "practice", "in practice"))
+    ):
+        return "measurement_and_data_design"
+    if (
+        any(term in text for term in ("regression equation", "empirical specification", "estimating equation", "econometric specification"))
+        and any(term in text for term in ("write down", "state", "specify", "formulate"))
+    ):
+        return "regression_specification"
+    if any(term in text for term in ("endogeneity", "omitted variable", "reverse causality", "selection bias", "simultaneity", "confounding")):
+        return "causal_identification"
+    if (
+        any(term in text for term in ("source", "sources", "article", "articles", "video", "videos", "text", "texts", "evidence"))
+        and any(term in text for term in ("claim", "claims", "argument", "arguments", "compare", "contrast", "synthes", "missing from", "omission", "limitations", "shed light on"))
+    ):
+        return "synthesis_across_sources"
+    if any(phrase in text for phrase in ("explain how changing", "explain carefully why", "discuss the intuition", "explain how each term", "explain how each variable", "interpret the coefficient", "interpret the result", "explain the mechanism")):
         return "explanation_interpretation"
-    if any(term in text for term in ("discuss carefully", "whether you think", "good idea", "evaluate", "comment on whether")):
+    if any(term in text for term in ("discuss", "evaluate", "comment on whether", "whether you think", "critically assess")):
+        return "evaluative_discussion"
+    if any(term in text for term in ("summary", "overview", "comment", "assess")):
         return "evaluative_discussion"
     return "deterministic_derivation"
+
+
+def _matches_all(text: str, *terms: str) -> bool:
+    return all(term in text for term in terms)
 
 
 def infer_grading_mode(label: str, marking_guidance: str, task_type: str = "") -> str:
@@ -1856,11 +1915,10 @@ def infer_grading_mode(label: str, marking_guidance: str, task_type: str = "") -
         "commentary",
         "in your own words",
         "good idea",
-        "benefit",
-        "cost",
-        "fairness",
-        "equity",
-        "efficiency",
+        "critically assess",
+        "justify your conclusion",
+        "comment on whether",
+        "compare and contrast",
     )
     deterministic_patterns = (
         "derive",
@@ -1883,18 +1941,20 @@ def infer_grading_mode(label: str, marking_guidance: str, task_type: str = "") -
 
 
 def infer_dependency_group(label: str, marking_guidance: str, parent_label: str = "") -> str:
-    text = marking_guidance.lower()
-    if any(
-        phrase in text
-        for phrase in (
-            "question 1 above",
-            "question 2 above",
-            "part 2",
-            "using the theoretical model",
-            "prediction from your answer",
-            "from the model above",
-        )
-    ):
+    text = " ".join(marking_guidance.lower().split())
+    direct_reference_patterns = (
+        r"\busing\s+(?:your|the|previous|earlier)\s+(?:answer|result|results|work|analysis|model|derivation|prediction|predictions|evidence)\b",
+        r"\busing\s+the\s+\w+\s+(?:model|results|answer|analysis)\s+from\s+(?:question|part|section)\s+\w+\b",
+        r"\bfrom\s+(?:your|the|previous|earlier)\s+(?:answer|result|results|work|analysis|model|derivation|prediction|predictions|evidence)\b",
+        r"\bbased on\s+(?:your|the|previous|earlier)\s+(?:answer|result|results|work|analysis|model|derivation|prediction|predictions|evidence)\b",
+        r"\bgiven\s+(?:your|the)\s+(?:answer|result|results|work|analysis|model|derivation)\b",
+        r"\bas\s+(?:shown|derived|established)\s+in\s+(?:your|the)\s+(?:answer|work|analysis)\b",
+        r"\b(question|part|section)\s+\w+\s+(?:above|earlier|previously)\b",
+        r"\byour\s+(?:answer|result|results|work|analysis)\s+to\s+(?:question|part|section)\s+\w+\b",
+        r"\bprediction[s]?\s+from\s+your\s+answer\b",
+        r"\bfrom\s+the\s+model\s+above\b",
+    )
+    if any(re.search(pattern, text) for pattern in direct_reference_patterns):
         return _normalize_label_key(parent_label or label)
     return ""
 
@@ -2035,6 +2095,9 @@ def _default_classification_criteria(unit: AssessmentUnit) -> list[str]:
 
 
 def _build_analytical_criteria(unit: AssessmentUnit) -> list[str]:
+    task_type_criteria = _criteria_for_task_type(unit)
+    if task_type_criteria:
+        return task_type_criteria[:5]
     text = unit.marking_guidance.lower()
     focus = _build_task_focus(unit)
     criteria = [
@@ -2051,6 +2114,9 @@ def _build_analytical_criteria(unit: AssessmentUnit) -> list[str]:
 
 
 def _build_deterministic_criteria(unit: AssessmentUnit) -> list[str]:
+    task_type_criteria = _criteria_for_task_type(unit)
+    if task_type_criteria:
+        return task_type_criteria[:5]
     text = unit.marking_guidance.lower()
     focus = _build_task_focus(unit)
     criteria = [
@@ -2076,6 +2142,89 @@ def _build_ranking_rule(unit: AssessmentUnit) -> str:
     return "Group attempts by correctness band first, then rank them within the band by method accuracy, completeness of working, and interpretation."
 
 
+def _criteria_for_task_type(unit: AssessmentUnit) -> list[str]:
+    focus = _build_task_focus(unit)
+    task_type = unit.task_type
+    if task_type == "critique_and_revision":
+        return [
+            f"Evaluate whether the response completes {focus}.",
+            "Evaluate whether the answer identifies substantive mistakes, omissions, or distortions rather than offering generic criticism.",
+            "Evaluate whether the critique is grounded in the supplied source, prompt, or task requirements.",
+            "Evaluate whether the revised version is clearer, more accurate, and appropriately rewritten rather than lightly edited.",
+        ]
+    if task_type == "model_specification":
+        return [
+            f"Evaluate whether the response states {focus} correctly.",
+            "Evaluate whether symbols, terms, and relationships are defined accurately and consistently.",
+            "Evaluate whether the explanation makes clear what each part of the specification means in context.",
+            "Evaluate whether any interpretation follows from the stated model rather than from unsupported commentary.",
+        ]
+    if task_type == "deterministic_derivation":
+        return [
+            f"Evaluate whether the attempt sets up and answers {focus} correctly.",
+            "Evaluate whether the working is complete enough to justify the result, not just whether a final answer is stated.",
+            "Evaluate whether derivation steps, algebra, notation, and conditions are accurate.",
+            "Evaluate whether any interpretation follows correctly from the method and result.",
+        ]
+    if task_type == "explanation_interpretation":
+        return [
+            f"Evaluate whether the response explains {focus} clearly and accurately.",
+            "Evaluate whether the explanation identifies the relevant mechanism, direction, or relationship instead of describing outcomes vaguely.",
+            "Evaluate whether the interpretation matches the underlying model, evidence, or setup.",
+            "Evaluate whether the reasoning is complete enough to show why the conclusion follows.",
+        ]
+    if task_type == "welfare_reasoning":
+        return [
+            f"Evaluate whether the response addresses {focus} using the relevant conditions or assumptions.",
+            "Evaluate whether the answer distinguishes effects on the relevant parties, components, or margins rather than collapsing them into a single claim.",
+            "Evaluate whether the welfare reasoning is internally consistent and follows from the setup.",
+            "Evaluate whether the conclusion is qualified appropriately when conditions or tradeoffs matter.",
+        ]
+    if task_type == "evaluative_discussion":
+        return [
+            f"Evaluate whether the response directly addresses {focus}.",
+            "Evaluate whether the answer makes a defensible judgement rather than offering only description or summary.",
+            "Evaluate whether the reasoning is supported with relevant evidence, examples, or concepts where the task requires them.",
+            "Evaluate whether the discussion acknowledges tradeoffs, limits, counterarguments, or qualifications where they matter.",
+        ]
+    if task_type == "prediction_generation":
+        return [
+            f"Evaluate whether the response states {focus} that follow from the setup.",
+            "Evaluate whether each prediction is directionally clear and not merely a repetition of the question.",
+            "Evaluate whether the predictions are tied to the stated model, assumptions, or mechanism.",
+            "Evaluate whether the answer distinguishes strong predictions from conditional or qualified ones where necessary.",
+        ]
+    if task_type == "measurement_and_data_design":
+        return [
+            f"Evaluate whether the response defines {focus} clearly.",
+            "Evaluate whether the answer maps concepts to observable variables or indicators in a plausible way.",
+            "Evaluate whether proposed data sources are suitable for the measures being discussed.",
+            "Evaluate whether the response explains how the source or measure captures the intended concept and notes material limitations where relevant.",
+        ]
+    if task_type == "regression_specification":
+        return [
+            f"Evaluate whether the response states {focus} correctly.",
+            "Evaluate whether variables, terms, and functional relationships are defined clearly and consistently.",
+            "Evaluate whether the coefficient, comparison, or hypothesis of interest is identified correctly.",
+            "Evaluate whether the specification matches the stated empirical question rather than a different one.",
+        ]
+    if task_type == "causal_identification":
+        return [
+            f"Evaluate whether the response identifies {focus} correctly.",
+            "Evaluate whether the answer explains the mechanism behind the identification problem rather than naming it only.",
+            "Evaluate whether proposed remedies are relevant, feasible, and connected to the stated problem.",
+            "Evaluate whether the response distinguishes stronger and weaker solutions or remaining limitations where relevant.",
+        ]
+    if task_type == "synthesis_across_sources":
+        return [
+            f"Evaluate whether the response completes {focus}.",
+            "Evaluate whether the answer identifies the main claims, assumptions, or omissions across the relevant sources or materials.",
+            "Evaluate whether theory, evidence, and source content are integrated rather than discussed in isolation.",
+            "Evaluate whether the response explains what the model or framework can and cannot account for.",
+        ]
+    return []
+
+
 def _build_task_focus(unit: AssessmentUnit) -> str:
     if unit.task_type == "critique_and_revision":
         return "the required AI-generated summary, source-based accuracy audit, and corrected rewrite"
@@ -2086,7 +2235,7 @@ def _build_task_focus(unit: AssessmentUnit) -> str:
     if unit.task_type == "explanation_interpretation":
         return "the required explanation and interpretation"
     if unit.task_type == "welfare_reasoning":
-        return "the welfare conditions and family-level utility effects"
+        return "the relevant welfare conditions and effects on the affected parties"
     if unit.task_type == "evaluative_discussion":
         return "the required evaluative discussion"
     if unit.task_type == "prediction_generation":
@@ -2101,8 +2250,6 @@ def _build_task_focus(unit: AssessmentUnit) -> str:
         return "the required synthesis of theory, evidence, and source claims"
     text = unit.marking_guidance.lower()
     if unit.grading_mode == "analytical":
-        if "summary" in text and ("cost" in text or "benefit" in text):
-            return "the required policy summary and evaluation of costs and benefits"
         if any(term in text for term in ("comment", "evaluate", "discuss", "good idea")):
             return "the required evaluative discussion"
         if any(term in text for term in ("rewrite", "own tone", "own words")):
@@ -2291,6 +2438,9 @@ def moderate_linked_part_analyses(
             continue
         grouped_parts = [parts[index] for index in indexes]
         grouped_analyses = [updated[index] for index in indexes]
+        should_moderate, _ = _moderation_group_decision(grouped_parts, grouped_analyses)
+        if not should_moderate:
+            continue
         moderated = moderate_part_analyses_across_submission(
             script_text=script_text,
             context=context,
@@ -2303,6 +2453,100 @@ def moderate_linked_part_analyses(
         for index, moderated_item in zip(indexes, moderated):
             updated[index] = moderated_item
     return updated
+
+
+def _should_moderate_group(
+    parts: list[SubmissionPart],
+    part_analyses: list[dict[str, Any]],
+) -> bool:
+    return _moderation_group_decision(parts, part_analyses)[0]
+
+
+def describe_moderation_plan(
+    parts: list[SubmissionPart],
+    part_analyses: list[dict[str, Any]],
+    assessment_map: AssessmentMap,
+) -> list[dict[str, Any]]:
+    unit_by_key = {_normalize_label_key(unit.label): unit for unit in assessment_map.units}
+    groups: dict[str, list[int]] = {}
+    for index, part in enumerate(parts):
+        unit = unit_by_key.get(_normalize_label_key(part.label))
+        if unit is None or not unit.dependency_group:
+            continue
+        groups.setdefault(unit.dependency_group, []).append(index)
+    plan: list[dict[str, Any]] = []
+    for group_name, indexes in groups.items():
+        grouped_parts = [parts[index] for index in indexes]
+        grouped_analyses = [part_analyses[index] for index in indexes]
+        should_moderate, reason = _moderation_group_decision(grouped_parts, grouped_analyses)
+        plan.append(
+            {
+                "dependency_group": group_name,
+                "part_labels": [part.label for part in grouped_parts],
+                "should_moderate": should_moderate,
+                "reason": reason,
+            }
+        )
+    return plan
+
+
+def _moderation_group_decision(
+    parts: list[SubmissionPart],
+    part_analyses: list[dict[str, Any]],
+) -> tuple[bool, str]:
+    if len(parts) < 2 or len(parts) != len(part_analyses):
+        return False, "insufficient_group_size"
+    normalized_scores: list[float] = []
+    band_levels: list[int] = []
+    for part, analysis in zip(parts, part_analyses):
+        if not part.section_text.strip():
+            return False, f"missing_section_text:{part.label}"
+        score_pct = _analysis_score_pct(part, analysis)
+        if score_pct is None:
+            return False, f"missing_score:{part.label}"
+        normalized_scores.append(score_pct)
+        band_level = _band_level(str(analysis.get("grade_band", "")).strip())
+        if band_level is not None:
+            band_levels.append(band_level)
+    spread = max(normalized_scores) - min(normalized_scores)
+    if spread > 15.0:
+        return False, f"wide_score_spread:{spread:.2f}"
+    if band_levels and (max(band_levels) - min(band_levels)) > 1:
+        return False, "wide_band_gap"
+    return True, "eligible"
+
+
+def _analysis_score_pct(part: SubmissionPart, analysis: dict[str, Any]) -> float | None:
+    score = analysis.get("provisional_score")
+    if score is not None:
+        if part.max_mark is None or float(part.max_mark) <= 0:
+            return None
+        return round((float(score) / float(part.max_mark)) * 100.0, 2)
+    score_pct = analysis.get("provisional_score_0_to_100")
+    if score_pct is None:
+        return None
+    return round(float(score_pct), 2)
+
+
+def _band_level(grade_band: str) -> int | None:
+    if not grade_band:
+        return None
+    order = {
+        "Missing/unfinished": 0,
+        "Missing": 0,
+        "Fail": 1,
+        "Weak": 1,
+        "Third/Pass": 2,
+        "Developing": 2,
+        "2:2": 3,
+        "Adequate": 3,
+        "2:1": 4,
+        "Secure": 4,
+        "First": 5,
+        "Strong": 5,
+        "Excellent": 6,
+    }
+    return order.get(grade_band)
 
 
 def normalize_moderated_part_scores(

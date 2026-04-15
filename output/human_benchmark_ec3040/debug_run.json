@@ -1,0 +1,270 @@
+{
+  "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Sadik Ulusow_1494125_assignsubmission_file\\Economics and Society Coursework (60^L1) (Final).pdf",
+  "participant_id": "1494125",
+  "full_name": "Participant 1494125 (Sadik Ulusow)",
+  "variant": "prepared_artifact_enriched",
+  "preparation_seconds": 0.0,
+  "extraction_seconds": 1.46,
+  "structure_detect_seconds": 0.0,
+  "structure_detection_mode": {
+    "mode": "context_fast_path",
+    "expected_part_count": 4,
+    "detected_part_count": 4
+  },
+  "segment_seconds": 0.0,
+  "refine_seconds": 0.0,
+  "apply_artifact_seconds": 0.0,
+  "diagnostics_seconds": 0.0,
+  "moderation_seconds": 30.19,
+  "finalize_seconds": 0.0,
+  "scoring_total_seconds": 293.69,
+  "total_wall_seconds": 295.15,
+  "detected_part_labels": [
+    "Part 1",
+    "Part 2 Q1",
+    "Part 2 Q2",
+    "Part 2 Q3",
+    "Part 2 Q4",
+    "Part 2 Q5",
+    "Part 2 Q6",
+    "Part 3 Q1",
+    "Part 3 Q2",
+    "Part 3 Q3",
+    "Part 3 Q4",
+    "Part 4"
+  ],
+  "human_total": 64.0,
+  "model_total": 77.1,
+  "abs_total_delta": 13.1,
+  "part_abs_delta_sum": 16.1,
+  "part_abs_delta_mean": 1.34,
+  "validation_notes": [
+    "part_score_spread=9.00",
+    "part_moderation_max_delta=0.00",
+    "math_total_used"
+  ],
+  "part_debug_rows": [
+    {
+      "index": 1,
+      "label": "Part 1",
+      "seconds": 24.73,
+      "word_count": 920,
+      "score": 12.0,
+      "score_pct": null
+    },
+    {
+      "index": 2,
+      "label": "Part 2 Q1",
+      "seconds": 20.33,
+      "word_count": 304,
+      "score": 4.0,
+      "score_pct": null
+    },
+    {
+      "index": 3,
+      "label": "Part 2 Q2",
+      "seconds": 20.35,
+      "word_count": 362,
+      "score": 5.5,
+      "score_pct": null
+    },
+    {
+      "index": 4,
+      "label": "Part 2 Q3",
+      "seconds": 21.36,
+      "word_count": 309,
+      "score": 6.5,
+      "score_pct": null
+    },
+    {
+      "index": 5,
+      "label": "Part 2 Q4",
+      "seconds": 18.88,
+      "word_count": 306,
+      "score": 3.0,
+      "score_pct": null
+    },
+    {
+      "index": 6,
+      "label": "Part 2 Q5",
+      "seconds": 19.06,
+      "word_count": 200,
+      "score": 4.0,
+      "score_pct": null
+    },
+    {
+      "index": 7,
+      "label": "Part 2 Q6",
+      "seconds": 22.05,
+      "word_count": 341,
+      "score": 8.0,
+      "score_pct": null
+    },
+    {
+      "index": 8,
+      "label": "Part 3 Q1",
+      "seconds": 23.13,
+      "word_count": 168,
+      "score": 5.2,
+      "score_pct": null
+    },
+    {
+      "index": 9,
+      "label": "Part 3 Q2",
+      "seconds": 19.7,
+      "word_count": 135,
+      "score": 6.5,
+      "score_pct": null
+    },
+    {
+      "index": 10,
+      "label": "Part 3 Q3",
+      "seconds": 27.33,
+      "word_count": 192,
+      "score": 5.2,
+      "score_pct": null
+    },
+    {
+      "index": 11,
+      "label": "Part 3 Q4",
+      "seconds": 21.42,
+      "word_count": 172,
+      "score": 5.2,
+      "score_pct": null
+    },
+    {
+      "index": 12,
+      "label": "Part 4",
+      "seconds": 25.15,
+      "word_count": 418,
+      "score": 12.0,
+      "score_pct": null
+    }
+  ],
+  "moderation_debug_rows": [
+    {
+      "seconds": 30.19,
+      "part_count": 12,
+      "dependency_group": "part 2",
+      "part_labels": [
+        "Part 2 Q6"
+      ],
+      "should_moderate": false,
+      "reason": "insufficient_group_size"
+    },
+    {
+      "seconds": 30.19,
+      "part_count": 12,
+      "dependency_group": "part 3",
+      "part_labels": [
+        "Part 3 Q1",
+        "Part 3 Q3",
+        "Part 3 Q4"
+      ],
+      "should_moderate": true,
+      "reason": "eligible"
+    }
+  ],
+  "debug_stages": [
+    {
+      "stage": "extract_submission_text",
+      "seconds": 1.46,
+      "detail": "scoring_words=3835, structure_words=3835"
+    },
+    {
+      "stage": "detect_submission_parts",
+      "seconds": 0.0,
+      "detail": "mode=context_fast_path, detected_parts=4"
+    },
+    {
+      "stage": "segment_submission_parts",
+      "seconds": 0.0,
+      "detail": "segmented_parts=4"
+    },
+    {
+      "stage": "refine_submission_granularity",
+      "seconds": 0.0,
+      "detail": "refined_parts=12"
+    },
+    {
+      "stage": "apply_assessment_artifact",
+      "seconds": 0.0,
+      "detail": "variant=prepared_artifact_enriched"
+    },
+    {
+      "stage": "build_submission_diagnostics",
+      "seconds": 0.0,
+      "detail": "detected_part_count=12"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 24.73,
+      "detail": "1/12 Part 1"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 20.33,
+      "detail": "2/12 Part 2 Q1"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 20.35,
+      "detail": "3/12 Part 2 Q2"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 21.36,
+      "detail": "4/12 Part 2 Q3"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 18.88,
+      "detail": "5/12 Part 2 Q4"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 19.06,
+      "detail": "6/12 Part 2 Q5"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 22.05,
+      "detail": "7/12 Part 2 Q6"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 23.13,
+      "detail": "8/12 Part 3 Q1"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 19.7,
+      "detail": "9/12 Part 3 Q2"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 27.33,
+      "detail": "10/12 Part 3 Q3"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 21.42,
+      "detail": "11/12 Part 3 Q4"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 25.15,
+      "detail": "12/12 Part 4"
+    },
+    {
+      "stage": "moderate_linked_part_analyses",
+      "seconds": 30.19,
+      "detail": "part 2=insufficient_group_size; part 3=eligible"
+    },
+    {
+      "stage": "build_local_final_result",
+      "seconds": 0.0,
+      "detail": ""
+    }
+  ]
+}

@@ -24,6 +24,8 @@ from marking_pipeline.core import (  # noqa: E402
     build_submission_texts_from_path,
     clear_prepared_assessment_map_cache,
     detect_submission_parts,
+    describe_moderation_plan,
+    describe_structure_detection_mode,
     moderate_linked_part_analyses,
     prepare_assessment_map,
     read_path_text,
@@ -363,6 +365,7 @@ def run_single_submission_debug(
     structure_input_text = structure_text or script_text
 
     scoring_started = time.perf_counter()
+    structure_detection_mode = describe_structure_detection_mode(structure_input_text, context)
 
     started = time.perf_counter()
     detected_parts = detect_submission_parts(
@@ -376,7 +379,7 @@ def run_single_submission_debug(
         debug_records,
         "detect_submission_parts",
         started,
-        f"detected_parts={len(detected_parts)}",
+        f"mode={structure_detection_mode['mode']}, detected_parts={len(detected_parts)}",
     )
 
     started = time.perf_counter()
@@ -456,6 +459,7 @@ def run_single_submission_debug(
     moderation_debug_rows: list[dict[str, Any]] = []
     started = time.perf_counter()
     if len(part_analyses) > 1:
+        moderation_plan = describe_moderation_plan(parts, part_analyses, prepared_assessment_map.prepared_map)
         grouped_started = time.perf_counter()
         moderated = moderate_linked_part_analyses(
             script_text=script_text,
@@ -471,14 +475,22 @@ def run_single_submission_debug(
             debug_records,
             "moderate_linked_part_analyses",
             grouped_started,
-            "full moderation pass",
+            "; ".join(
+                f"{item['dependency_group']}={item['reason']}"
+                for item in moderation_plan
+            ) or "no_linked_groups",
         )
-        moderation_debug_rows.append(
-            {
-                "seconds": moderation_seconds,
-                "part_count": len(parts),
-            }
-        )
+        for item in moderation_plan:
+            moderation_debug_rows.append(
+                {
+                    "seconds": moderation_seconds,
+                    "part_count": len(parts),
+                    "dependency_group": item["dependency_group"],
+                    "part_labels": item["part_labels"],
+                    "should_moderate": item["should_moderate"],
+                    "reason": item["reason"],
+                }
+            )
         part_analyses = moderated
     else:
         moderation_seconds = log_debug_stage(debug_records, "moderate_linked_part_analyses", started, "skipped")
@@ -504,6 +516,7 @@ def run_single_submission_debug(
         "preparation_seconds": preparation_seconds,
         "extraction_seconds": extraction_seconds,
         "structure_detect_seconds": structure_detect_seconds,
+        "structure_detection_mode": structure_detection_mode,
         "segment_seconds": segment_seconds,
         "refine_seconds": refine_seconds,
         "apply_artifact_seconds": apply_seconds,

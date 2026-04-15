@@ -13,8 +13,10 @@ from marking_pipeline.core import (
     AssessmentUnit,
     build_submission_texts_from_upload,
     build_marking_context_from_bundle,
+    build_analytical_rubric_text,
     build_assessment_map,
     build_assessment_map_cache_key,
+    build_deterministic_rubric_text,
     build_part_messages,
     cleanup_pymupdf4llm_text,
     _docx_heading_marker,
@@ -30,8 +32,13 @@ from marking_pipeline.core import (
     call_ollama,
     choose_docx_scoring_text,
     compute_total_mark_from_part_scores,
+    detect_submission_parts,
+    describe_moderation_plan,
+    describe_structure_detection_mode,
     discover_assessment_bundles,
     infer_max_mark_from_texts,
+    infer_dependency_group,
+    infer_task_type,
     normalize_detected_parts,
     normalize_marking_result,
     normalize_verified_rubric,
@@ -79,6 +86,127 @@ class ParseJsonTests(unittest.TestCase):
         content = '```json\n{"total_mark": 17, "max_mark": 20, "overall_feedback": "Clear answer with one weakness."}\n```'
         data = parse_json_object(content)
         self.assertEqual(data["total_mark"], 17)
+
+
+class TaskTypeInferenceTests(unittest.TestCase):
+    def test_infers_task_type_from_instruction_patterns_not_topic_words(self) -> None:
+        self.assertEqual(
+            infer_task_type("Part 2 Q1", "Write out the payoff function and explain how each term should be interpreted."),
+            "model_specification",
+        )
+        self.assertEqual(
+            infer_task_type("Part 3 Q3", "Write down the regression equation, define each term, and state the hypothesis."),
+            "regression_specification",
+        )
+        self.assertEqual(
+            infer_task_type("Part 4", "Discuss how the model and the evidence shed light on the claims and what is missing from the model."),
+            "synthesis_across_sources",
+        )
+
+    def test_does_not_treat_topic_words_alone_as_task_type(self) -> None:
+        self.assertEqual(
+            infer_task_type("Essay 1", "Provide a short summary of the costs and benefits mentioned in the case."),
+            "evaluative_discussion",
+        )
+        self.assertEqual(
+            infer_task_type("Essay 2", "Critically assess the policy and justify your conclusion."),
+            "evaluative_discussion",
+        )
+
+    def test_supports_non_ec3040_task_shapes(self) -> None:
+        self.assertEqual(
+            infer_task_type("Presentation", "Identify the critical incident, apply a reflective model, and evaluate your actions."),
+            "evaluative_discussion",
+        )
+        self.assertEqual(
+            infer_task_type("Methods", "Explain how each construct could be measured in practice and identify suitable data sources."),
+            "measurement_and_data_design",
+        )
+        self.assertEqual(
+            infer_task_type("Causality", "Explain why the estimate may suffer from endogeneity and propose practical solutions."),
+            "causal_identification",
+        )
+
+    def test_supports_broader_instruction_variants_beyond_exact_sample_phrases(self) -> None:
+        self.assertEqual(
+            infer_task_type("Model", "State the utility function and explain what each term means in context."),
+            "model_specification",
+        )
+        self.assertEqual(
+            infer_task_type("Predictions", "Identify two implications of the framework for observed behaviour."),
+            "prediction_generation",
+        )
+        self.assertEqual(
+            infer_task_type("Specification", "Formulate the empirical specification and identify the coefficient of interest."),
+            "regression_specification",
+        )
+        self.assertEqual(
+            infer_task_type("Sources", "Compare the article and the case evidence, explain the main claims, and note what the framework leaves out."),
+            "synthesis_across_sources",
+        )
+        self.assertEqual(
+            infer_task_type("Bias", "Explain the likely sources of selection bias and confounding, then propose remedies."),
+            "causal_identification",
+        )
+
+
+class DependencyAndCriteriaTests(unittest.TestCase):
+    def test_dependency_inference_requires_actual_backward_reference(self) -> None:
+        self.assertEqual(
+            infer_dependency_group(
+                "Part 3",
+                "Part 2 carries more marks than this section, but answer this question on its own terms.",
+                parent_label="Part 3",
+            ),
+            "",
+        )
+        self.assertEqual(
+            infer_dependency_group(
+                "Part 3",
+                "Using your answer to Part 2 above, explain what follows for the later case.",
+                parent_label="Part 2",
+            ),
+            "part 2",
+        )
+
+    def test_analytical_rubric_criteria_follow_task_shape_not_topic_words(self) -> None:
+        rubric_text = build_analytical_rubric_text(
+            AssessmentUnit(
+                label="Reflection",
+                max_mark=20.0,
+                grading_mode="analytical",
+                task_type="evaluative_discussion",
+                marking_guidance="Critically assess the leadership decision and justify your conclusion.",
+            )
+        )
+        self.assertIn("defensible judgement", rubric_text)
+        self.assertIn("tradeoffs, limits, counterarguments, or qualifications", rubric_text)
+
+    def test_deterministic_rubric_criteria_follow_general_task_types(self) -> None:
+        rubric_text = build_deterministic_rubric_text(
+            AssessmentUnit(
+                label="Methods",
+                max_mark=20.0,
+                grading_mode="deterministic",
+                task_type="regression_specification",
+                marking_guidance="Write down the regression equation, define each term, and state the hypothesis.",
+            )
+        )
+        self.assertIn("coefficient, comparison, or hypothesis of interest", rubric_text)
+        self.assertIn("matches the stated empirical question", rubric_text)
+
+    def test_synthesis_focus_avoids_sample_specific_domain_language(self) -> None:
+        rubric_text = build_analytical_rubric_text(
+            AssessmentUnit(
+                label="Portfolio",
+                max_mark=25.0,
+                grading_mode="analytical",
+                task_type="synthesis_across_sources",
+                marking_guidance="Compare the case study, the framework, and the external commentary.",
+            )
+        )
+        self.assertIn("integrated rather than discussed in isolation", rubric_text)
+        self.assertNotIn("costs and benefits", rubric_text)
 
     def test_parses_json_with_braces_inside_string(self) -> None:
         content = 'prefix {"total_mark": 18, "max_mark": 20, "overall_feedback": "Mentions {elasticity} correctly."} suffix'
@@ -344,6 +472,78 @@ class NormalizationTests(unittest.TestCase):
         self.assertEqual(moderated[1]["provisional_score"], 24.0)
         self.assertEqual(moderated[1]["moderation_delta"], 0.0)
 
+    @patch("marking_pipeline.core._call_ollama_json")
+    def test_detect_submission_parts_uses_context_fast_path_when_anchors_are_clear(self, mock_call: Mock) -> None:
+        context = prepare_marking_context(
+            rubric_text=(
+                "Part 1 (15 marks)\nDiscuss the first issue.\n"
+                "Part 2 (10 marks)\nDiscuss the second issue.\nout of 25"
+            ),
+            brief_text="",
+            marking_scheme_text="",
+            graded_sample_text="",
+            other_context_text="",
+        )
+
+        parts = detect_submission_parts(
+            "Part 1\nStudent answer one.\n\nPart 2\nStudent answer two.",
+            "student.txt",
+            "qwen2:7b",
+            context=context,
+        )
+
+        self.assertEqual([part.label for part in parts], ["Part 1", "Part 2"])
+        mock_call.assert_not_called()
+
+    @patch("marking_pipeline.core._call_ollama_json")
+    def test_detect_submission_parts_falls_back_to_model_when_context_anchors_are_missing(self, mock_call: Mock) -> None:
+        context = prepare_marking_context(
+            rubric_text=(
+                "Part 1 (15 marks)\nDiscuss the first issue.\n"
+                "Part 2 (10 marks)\nDiscuss the second issue.\nout of 25"
+            ),
+            brief_text="",
+            marking_scheme_text="",
+            graded_sample_text="",
+            other_context_text="",
+        )
+        mock_call.return_value = {
+            "sections": [
+                {"label": "Part 1", "focus_hint": "First issue", "anchor_text": "Part 1"},
+                {"label": "Part 2", "focus_hint": "Second issue", "anchor_text": "Part 2"},
+            ]
+        }
+
+        parts = detect_submission_parts(
+            "Student answer with no visible section headings.",
+            "student.txt",
+            "qwen2:7b",
+            context=context,
+        )
+
+        self.assertEqual([part.label for part in parts], ["Part 1", "Part 2"])
+        mock_call.assert_called_once()
+
+    def test_describe_structure_detection_mode_reports_fast_path(self) -> None:
+        context = prepare_marking_context(
+            rubric_text=(
+                "Part 1 (15 marks)\nDiscuss the first issue.\n"
+                "Part 2 (10 marks)\nDiscuss the second issue.\nout of 25"
+            ),
+            brief_text="",
+            marking_scheme_text="",
+            graded_sample_text="",
+            other_context_text="",
+        )
+
+        mode = describe_structure_detection_mode(
+            "Part 1\nStudent answer one.\n\nPart 2\nStudent answer two.",
+            context,
+        )
+
+        self.assertEqual(mode["mode"], "context_fast_path")
+        self.assertEqual(mode["detected_part_count"], 2)
+
     @patch("marking_pipeline.core.moderate_part_analyses_across_submission")
     def test_moderates_only_linked_groups(self, mock_moderate: Mock) -> None:
         mock_moderate.side_effect = lambda **kwargs: kwargs["part_analyses"]
@@ -356,13 +556,13 @@ class NormalizationTests(unittest.TestCase):
         })()
         parts = [
             SubmissionPart(label="Part 1", max_mark=15.0),
-            SubmissionPart(label="Part 2 Q1", max_mark=5.0),
-            SubmissionPart(label="Part 2 Q2", max_mark=7.5),
+            SubmissionPart(label="Part 2 Q1", max_mark=5.0, section_text="Answer for Q1"),
+            SubmissionPart(label="Part 2 Q2", max_mark=7.5, section_text="Answer for Q2"),
         ]
         analyses = [
-            {"section_label": "Part 1", "provisional_score": 10.0, "provisional_score_0_to_100": None},
-            {"section_label": "Part 2 Q1", "provisional_score": 4.0, "provisional_score_0_to_100": None},
-            {"section_label": "Part 2 Q2", "provisional_score": 6.0, "provisional_score_0_to_100": None},
+            {"section_label": "Part 1", "provisional_score": 10.0, "provisional_score_0_to_100": None, "grade_band": "2:1"},
+            {"section_label": "Part 2 Q1", "provisional_score": 4.0, "provisional_score_0_to_100": None, "grade_band": "2:1"},
+            {"section_label": "Part 2 Q2", "provisional_score": 6.0, "provisional_score_0_to_100": None, "grade_band": "First"},
         ]
         moderate_linked_part_analyses(
             script_text="Student answer",
@@ -376,6 +576,89 @@ class NormalizationTests(unittest.TestCase):
         self.assertEqual(mock_moderate.call_count, 1)
         call_kwargs = mock_moderate.call_args.kwargs
         self.assertEqual([part.label for part in call_kwargs["parts"]], ["Part 2 Q1", "Part 2 Q2"])
+
+    @patch("marking_pipeline.core.moderate_part_analyses_across_submission")
+    def test_skips_moderation_for_linked_groups_with_missing_sections(self, mock_moderate: Mock) -> None:
+        assessment_map = type("Map", (), {
+            "units": (
+                type("Unit", (), {"label": "Part 2 Q1", "dependency_group": "part 2"})(),
+                type("Unit", (), {"label": "Part 2 Q2", "dependency_group": "part 2"})(),
+            )
+        })()
+        parts = [
+            SubmissionPart(label="Part 2 Q1", max_mark=5.0, section_text=""),
+            SubmissionPart(label="Part 2 Q2", max_mark=7.5, section_text="Answer for Q2"),
+        ]
+        analyses = [
+            {"section_label": "Part 2 Q1", "provisional_score": 0.0, "provisional_score_0_to_100": None, "grade_band": "Missing/unfinished"},
+            {"section_label": "Part 2 Q2", "provisional_score": 6.0, "provisional_score_0_to_100": None, "grade_band": "First"},
+        ]
+
+        moderated = moderate_linked_part_analyses(
+            script_text="Student answer",
+            context=prepare_marking_context("Maximum mark: 20", "", "", "", ""),
+            filename="student.docx",
+            parts=parts,
+            part_analyses=analyses,
+            assessment_map=assessment_map,
+            model_name="qwen2:7b",
+        )
+
+        self.assertEqual(moderated, analyses)
+        mock_moderate.assert_not_called()
+
+    @patch("marking_pipeline.core.moderate_part_analyses_across_submission")
+    def test_skips_moderation_for_linked_groups_with_wide_score_spread(self, mock_moderate: Mock) -> None:
+        assessment_map = type("Map", (), {
+            "units": (
+                type("Unit", (), {"label": "Part 2 Q1", "dependency_group": "part 2"})(),
+                type("Unit", (), {"label": "Part 2 Q2", "dependency_group": "part 2"})(),
+            )
+        })()
+        parts = [
+            SubmissionPart(label="Part 2 Q1", max_mark=5.0, section_text="Answer for Q1"),
+            SubmissionPart(label="Part 2 Q2", max_mark=7.5, section_text="Answer for Q2"),
+        ]
+        analyses = [
+            {"section_label": "Part 2 Q1", "provisional_score": 1.0, "provisional_score_0_to_100": None, "grade_band": "Fail"},
+            {"section_label": "Part 2 Q2", "provisional_score": 7.0, "provisional_score_0_to_100": None, "grade_band": "First"},
+        ]
+
+        moderated = moderate_linked_part_analyses(
+            script_text="Student answer",
+            context=prepare_marking_context("Maximum mark: 20", "", "", "", ""),
+            filename="student.docx",
+            parts=parts,
+            part_analyses=analyses,
+            assessment_map=assessment_map,
+            model_name="qwen2:7b",
+        )
+
+        self.assertEqual(moderated, analyses)
+        mock_moderate.assert_not_called()
+
+    def test_describe_moderation_plan_reports_skip_reason(self) -> None:
+        assessment_map = type("Map", (), {
+            "units": (
+                type("Unit", (), {"label": "Part 2 Q1", "dependency_group": "part 2"})(),
+                type("Unit", (), {"label": "Part 2 Q2", "dependency_group": "part 2"})(),
+            )
+        })()
+        parts = [
+            SubmissionPart(label="Part 2 Q1", max_mark=5.0, section_text="Answer for Q1"),
+            SubmissionPart(label="Part 2 Q2", max_mark=7.5, section_text="Answer for Q2"),
+        ]
+        analyses = [
+            {"section_label": "Part 2 Q1", "provisional_score": 1.0, "provisional_score_0_to_100": None, "grade_band": "Fail"},
+            {"section_label": "Part 2 Q2", "provisional_score": 7.0, "provisional_score_0_to_100": None, "grade_band": "First"},
+        ]
+
+        plan = describe_moderation_plan(parts, analyses, assessment_map)
+
+        self.assertEqual(len(plan), 1)
+        self.assertEqual(plan[0]["dependency_group"], "part 2")
+        self.assertFalse(plan[0]["should_moderate"])
+        self.assertTrue(plan[0]["reason"].startswith("wide_score_spread:"))
 
 class SubmissionStructureTests(unittest.TestCase):
     def test_normalizes_detected_parts(self) -> None:
@@ -1320,13 +1603,6 @@ class CallOllamaTests(unittest.TestCase):
     @patch("marking_pipeline.core.requests.post")
     def test_call_ollama_normalizes_percentage_scale(self, mock_post: Mock) -> None:
         context = prepare_marking_context("Question 1 (10 marks)\nQuestion 2 (10 marks)\nMaximum mark: 20", "", "", "", "")
-        structure = Mock()
-        structure.json.return_value = {
-            "message": {
-                "content": '{"sections": [{"label": "Question 1", "focus_hint": "First answer", "anchor_text": "Question 1"}, {"label": "Question 2", "focus_hint": "Second answer", "anchor_text": "Question 2"}]}'
-            }
-        }
-        structure.raise_for_status.return_value = None
         part_one = Mock()
         part_one.json.return_value = {
             "message": {
@@ -1348,13 +1624,14 @@ class CallOllamaTests(unittest.TestCase):
             }
         }
         synthesis.raise_for_status.return_value = None
-        mock_post.side_effect = [structure, part_one, part_two, synthesis]
+        mock_post.side_effect = [part_one, part_two]
 
         result = call_ollama("Question 1\nStudent answer text\nQuestion 2\nMore answer text", context, "student1.pdf", "llama3.1:8b")
 
         self.assertEqual(result["total_mark"], 19)
         self.assertEqual(result["max_mark"], 20)
         self.assertEqual(result["detected_part_count"], 2)
+        self.assertEqual(mock_post.call_count, 2)
 
     @patch("marking_pipeline.core.requests.post")
     def test_call_ollama_rejects_missing_message_content(self, mock_post: Mock) -> None:
@@ -1383,13 +1660,6 @@ class CallOllamaTests(unittest.TestCase):
         )
         mock_prepare_assessment_map.side_effect = AssertionError("prepare_assessment_map should not be called")
 
-        structure = Mock()
-        structure.json.return_value = {
-            "message": {
-                "content": '{"sections": [{"label": "Question 1", "focus_hint": "First answer", "anchor_text": "Question 1"}, {"label": "Question 2", "focus_hint": "Second answer", "anchor_text": "Question 2"}]}'
-            }
-        }
-        structure.raise_for_status.return_value = None
         part_one = Mock()
         part_one.json.return_value = {
             "message": {
@@ -1404,7 +1674,7 @@ class CallOllamaTests(unittest.TestCase):
             }
         }
         part_two.raise_for_status.return_value = None
-        mock_post.side_effect = [structure, part_one, part_two]
+        mock_post.side_effect = [part_one, part_two]
 
         result = call_ollama(
             "Question 1\nStudent answer text\nQuestion 2\nMore answer text",
@@ -1415,6 +1685,7 @@ class CallOllamaTests(unittest.TestCase):
         )
 
         self.assertEqual(result["total_mark"], 16)
+        self.assertEqual(mock_post.call_count, 2)
 
     @patch("marking_pipeline.core.build_local_final_result")
     @patch("marking_pipeline.core.build_submission_diagnostics")
