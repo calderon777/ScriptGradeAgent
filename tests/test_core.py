@@ -11,6 +11,9 @@ from marking_pipeline.core import (
     _task_goal_for_model,
     _task_goal_from_task_type,
     _question_text_for_model,
+    _looks_damaged_question_text,
+    _question_needs_richer_local_context,
+    _section_text_looks_damaged_or_incomplete,
     normalize_part_analysis,
     AssessmentMap,
     PreparedAssessmentMap,
@@ -341,6 +344,112 @@ class TaskTypeInferenceTests(unittest.TestCase):
         self.assertFalse(
             result.endswith("..."),
             f"task_goal must not end with '...', got: {result!r}",
+        )
+
+
+class DamagedTextDetectionTests(unittest.TestCase):
+    def test_damaged_fires_on_camel_case_merged_words(self) -> None:
+        # Two or more camelCase merges (lowercase run into uppercase) signal damage.
+        # This is a general pattern independent of subject domain.
+        self.assertTrue(
+            _looks_damaged_question_text("Explain how settingTheParameter and changingItFurther affects the outcome."),
+            "two camelCase merges must be detected as damaged",
+        )
+
+    def test_damaged_fires_on_long_all_lowercase_run(self) -> None:
+        # A run of 16+ consecutive lowercase chars indicates merged words.
+        # "deriveconditionsonthe" comes from PDF-extracted text like
+        # "Derive conditions on the" with all spaces dropped.
+        self.assertTrue(
+            _looks_damaged_question_text("deriveconditionsonthe parameters."),
+            "16+ char all-lowercase run must be detected as damaged",
+        )
+
+    def test_damaged_fires_on_ellipsis(self) -> None:
+        self.assertTrue(
+            _looks_damaged_question_text("Explain the model... and derive the result."),
+            "text containing '...' must be detected as damaged",
+        )
+
+    def test_damaged_does_not_fire_on_clean_text(self) -> None:
+        clean = (
+            "Derive conditions on the model parameters such that only the low-income "
+            "household chooses the public option. Give an example of numerical values "
+            "satisfying those conditions and explain your reasoning carefully."
+        )
+        self.assertFalse(
+            _looks_damaged_question_text(clean),
+            "clean well-spaced text must not be detected as damaged",
+        )
+
+    def test_damaged_does_not_require_ec3040_topic_words(self) -> None:
+        # Confirms the old EC3040-specific strings no longer drive detection.
+        # These words appear in EC3040 questions but are not inherently damaged.
+        ec3040_phrases = "inequilibrium in private school, decreasing them further"
+        # After normalization: "inequilibrium" is 13 chars (below 16 threshold),
+        # no camelCase merges.  Must not be flagged as damaged.
+        self.assertFalse(
+            _looks_damaged_question_text(ec3040_phrases),
+            "EC3040 topic phrases without structural damage must not fire",
+        )
+
+    def test_richer_context_fires_on_numbered_multi_part_question(self) -> None:
+        q = "1. Derive the equilibrium conditions. 2. Give an example of parameter values."
+        self.assertTrue(
+            _question_needs_richer_local_context(q),
+            "question with two numbered items must request richer context",
+        )
+
+    def test_richer_context_fires_on_generic_trigger_phrases(self) -> None:
+        for phrase, example in [
+            ("for each", "State the result for each type of household."),
+            ("give an example", "Give an example of a valid parameterisation."),
+            ("explain why", "Explain why the inequality must hold."),
+            ("define each", "Define each term in the equation."),
+            ("state the hypothesis", "State the hypothesis being tested."),
+        ]:
+            with self.subTest(phrase=phrase):
+                self.assertTrue(
+                    _question_needs_richer_local_context(example),
+                    f"phrase {phrase!r} must trigger richer context",
+                )
+
+    def test_richer_context_does_not_fire_on_simple_question(self) -> None:
+        self.assertFalse(
+            _question_needs_richer_local_context("Discuss the welfare implications of the policy."),
+            "single simple question must not request richer context",
+        )
+
+    def test_richer_context_does_not_depend_on_removed_ec3040_phrases(self) -> None:
+        # "change its decision" and "other families are doing" were removed
+        # because they are EC3040-specific.  Neither should trigger activation.
+        self.assertFalse(
+            _question_needs_richer_local_context(
+                "Check whether the family would like to change its decision "
+                "given what the other families are doing."
+            ),
+            "removed EC3040-specific phrases must not trigger richer context",
+        )
+
+    def test_section_damaged_fires_on_short_section_text(self) -> None:
+        # A section text under 120 chars is treated as incomplete.
+        self.assertTrue(
+            _section_text_looks_damaged_or_incomplete("Derive the conditions."),
+            "section text under 120 chars must be treated as incomplete",
+        )
+
+    def test_section_damaged_does_not_fire_on_complete_clean_section(self) -> None:
+        # A clean section text with enough content and no damage signals.
+        long_clean = (
+            "The student is expected to derive the equilibrium conditions carefully, "
+            "justify each inequality, provide a worked numerical example, and explain "
+            "why the chosen parameter values satisfy the required scenario. Marks are "
+            "awarded for mathematical rigour and quality of explanation."
+        )
+        self.assertGreater(len(long_clean), 120)
+        self.assertFalse(
+            _section_text_looks_damaged_or_incomplete(long_clean),
+            "complete clean section text must not be flagged as damaged",
         )
 
 

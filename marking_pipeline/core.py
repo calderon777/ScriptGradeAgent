@@ -2216,18 +2216,16 @@ def _looks_header_only_question_text(text: str) -> bool:
 
 def _looks_damaged_question_text(text: str) -> bool:
     normalized = " ".join(text.split())
-    damage_patterns = (
-        "outputgenerated",
-        "deriveconditions",
-        "inequilibrium",
-        "inprivate",
-        "decreasingthem",
-        "...",
-    )
-    if any(pattern in normalized.lower() for pattern in damage_patterns):
+    if "..." in normalized:
         return True
-    merged_word_hits = re.findall(r"[a-z]{6,}[A-Z][a-z]+", normalized)
-    return len(merged_word_hits) >= 2
+    # CamelCase merges: e.g. "conditionsOnThe" — two or more hits indicates
+    # words from different case contexts have been joined by the extractor.
+    if len(re.findall(r"[a-z]{6,}[A-Z][a-z]+", normalized)) >= 2:
+        return True
+    # All-lowercase merges: a run of 16+ consecutive lowercase characters
+    # typically means two or more words have been joined without a space.
+    # Threshold at 16 avoids most valid single English words.
+    return bool(re.search(r"[a-z]{16,}", normalized))
 
 
 def _question_needs_richer_local_context(question_text: str) -> bool:
@@ -2244,8 +2242,6 @@ def _question_needs_richer_local_context(question_text: str) -> bool:
         "explain why",
         "define each",
         "state the hypothesis",
-        "change its decision",
-        "other families are doing",
         "more likely than",
     )
     return any(phrase in lowered for phrase in phrases)
