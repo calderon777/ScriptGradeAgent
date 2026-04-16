@@ -1,0 +1,6 @@
+variant,sample_count,repeat_count,mean_abs_total_delta,mean_abs_part_delta,mean_model_total,mean_human_total,mean_extraction_seconds,mean_script_latency_seconds,mean_preparation_seconds,amortized_batch_size,amortized_total_seconds_per_script
+prepared_artifact_enriched,1,1,15.7,2.31,79.7,64.0,1.51,386.7,0.01,1,388.22
+prepared_artifact_enriched,1,1,15.7,2.31,79.7,64.0,1.51,386.7,0.01,5,388.21
+prepared_artifact_enriched,1,1,15.7,2.31,79.7,64.0,1.51,386.7,0.01,10,388.21
+prepared_artifact_enriched,1,1,15.7,2.31,79.7,64.0,1.51,386.7,0.01,25,388.21
+prepared_artifact_enriched,1,1,15.7,2.31,79.7,64.0,1.51,386.7,0.01,50,388.21

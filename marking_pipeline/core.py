@@ -69,6 +69,7 @@ class SubmissionPart:
     marking_guidance: str = ""
     question_text_exact: str = ""
     task_type: str = ""
+    criterion_mode: str = ""
 
 
 @dataclass(frozen=True)
@@ -101,6 +102,7 @@ class AssessmentUnit:
     parent_label: str = ""
     grading_mode: str = "deterministic"
     task_type: str = ""
+    criterion_mode: str = ""
     dependency_group: str = ""
     question_text_exact: str = ""
     marking_guidance: str = ""
@@ -450,6 +452,7 @@ def build_part_messages(
     part: SubmissionPart,
     context: MarkingContext,
     filename: str,
+    model_name: str | None = None,
 ) -> list[dict[str, str]]:
     max_mark_text = _format_number(part.max_mark) if part.max_mark is not None else "100"
     score_field = "provisional_score"
@@ -458,10 +461,21 @@ def build_part_messages(
         score_field = "provisional_score_0_to_100"
         score_rule = f"{score_field} must be between 0 and 100."
     task_text = _build_part_task_text(part)
-    question_text = _question_text_for_model(part.question_text_exact or part.focus_hint or part.label)
+    question_text = _question_text_for_model(
+        part.question_text_exact or part.focus_hint or part.label,
+        max_chars=_question_text_limit_for_part(part),
+    )
     task_goal = _task_goal_for_model(task_text, question_text)
     required_steps = _extract_required_steps_for_model(part)
     criteria = _build_prompt_criteria(part)
+    scale_type, scale_labels = _criterion_scale_for_part(part)
+    payload_criteria = [
+        {
+            "criterion_name": criterion["criterion_name"],
+            "check": criterion["check"],
+        }
+        for criterion in criteria
+    ]
     scoring_rules = _extract_prompt_scoring_rules(part.marking_guidance, part.max_mark)
     question_payload: dict[str, Any] = {
         "text": question_text,
@@ -477,58 +491,98 @@ def build_part_messages(
         "question": question_payload,
         "scoring": {
             "method": _part_scoring_method(part),
-            "criteria": criteria,
-            "rules": [
-                score_rule,
-                "Use only this section text and these section criteria.",
-                *scoring_rules,
-            ],
+            "scale": {
+                "type": scale_type,
+                "labels": list(scale_labels),
+            },
+            "criteria": payload_criteria,
         },
         "student_response": {
             "text": part.section_text or part.focus_hint or part.label,
         },
-        "output_contract": {
-            "return_json_keys": [
-                "section_label",
-                score_field,
-                "criterion_notes",
-                "strengths",
-                "weaknesses",
-                "evidence",
-                "coverage_comment",
-            ],
-            "optional_json_keys": [
-                "grade_band",
-                "within_band_position",
-            ],
-            "criterion_notes_format": {
-                "status_allowed_values": ["met", "partial", "missed"],
-                "note_rule": "Use 2 to 5 words only. Do not copy the criterion text, weak_anchor, or strong_anchor.",
-                "example": {
-                    "criterion_name": "criterion_1",
-                    "status": "partial",
-                    "note": "support too vague",
-                },
-            },
-            "constraints": [
-                "criterion_notes must contain one item per criterion with criterion_name, status, and note.",
-                "criterion_notes.status must be met, partial, or missed.",
-                "criterion_notes.note must be 2 to 5 words, not a full sentence.",
-                "strengths must contain at least 2 concrete items.",
-                "weaknesses must contain at least 2 concrete items.",
-                "evidence must contain at least 1 concrete reference to the section content.",
-                "coverage_comment must justify the score placement for this section.",
-            ],
-        },
     }
-    system = (
-        "Score only the unit defined in the payload. Do not use any information outside the payload. Output exactly one valid JSON object. Do not include markdown, code fences, or any text before or after the JSON."
-    )
+    if _use_qwen_scoring_scaffold(model_name):
+        # Qwen-specific scoring scaffold: local probes showed that Qwen-family models
+        # are more reliable when scope, decision, and typing rules are separated into
+        # short local blocks instead of being implied by repeated prose.
+        payload["scoring"]["rules"] = scoring_rules
+        payload["scoring"]["scope_block"] = _build_qwen_scope_block()
+        payload["scoring"]["decision_block"] = _build_qwen_decision_block(part, score_rule, scale_labels)
+        payload["scoring"]["output_block"] = _build_qwen_output_block(score_field, scale_labels)
+        system = (
+            "Score only this section from the payload. Use no outside information. "
+            "Follow the scope_block, decision_block, and output_block exactly. Return one JSON object only."
+        )
+    else:
+        payload["scoring"]["rules"] = [
+            score_rule,
+            "Use only this section.",
+            *scoring_rules,
+        ]
+        payload["output_contract"] = [
+            f"Return keys: section_label, {score_field}, criterion_notes, strengths, weaknesses, evidence, coverage_comment.",
+            "criterion_notes: list of {criterion_name, status, note}.",
+            f"status values: {', '.join(scale_labels)}.",
+            "note: 2 to 5 words; do not copy criterion text.",
+            "strengths and weaknesses: lists with at least 2 items each.",
+            "evidence: list with at least 1 item.",
+            "coverage_comment: required.",
+        ]
+        system = (
+            "Grade only this section from the payload. Use no outside information. Return one JSON object only."
+        )
     user = (
         "scoring_payload:\n"
         f"{json.dumps(payload, ensure_ascii=True, indent=2)}\n"
     )
     return [{"role": "system", "content": system}, {"role": "user", "content": user}]
+
+
+def _use_qwen_scoring_scaffold(model_name: str | None) -> bool:
+    return "qwen" in (model_name or "").strip().lower()
+
+
+def _build_qwen_scope_block() -> list[str]:
+    return [
+        "Score only this section.",
+        "Use only the question, criteria, scoring rules, and student response in this payload.",
+        "Do not import requirements from other questions or from outside knowledge.",
+    ]
+
+
+def _build_qwen_decision_block(
+    part: SubmissionPart,
+    score_rule: str,
+    scale_labels: tuple[str, ...],
+) -> list[str]:
+    mode = _criterion_mode_for_part(part)
+    top_label = scale_labels[-1]
+    support_rule = (
+        "Do not award high marks to broad but weakly supported discussion."
+        if mode == "abstract"
+        else "Do not award marks for unsupported steps, missing components, or incorrect claims."
+    )
+    return [
+        f"Task mode: {mode}.",
+        f"For each criterion, choose one status only from: {', '.join(scale_labels)}.",
+        "First assign the criterion statuses. Then assign the numeric score.",
+        f"If a required element is missing, do not use {top_label} for that criterion and do not award a top score.",
+        support_rule,
+        score_rule,
+        "Make the numeric score match the criterion statuses and the visible evidence.",
+    ]
+
+
+def _build_qwen_output_block(score_field: str, scale_labels: tuple[str, ...]) -> list[str]:
+    return [
+        f"Return one JSON object with exactly these keys: section_label, {score_field}, criterion_notes, strengths, weaknesses, evidence, coverage_comment.",
+        "criterion_notes must be a list of {criterion_name, status, note}.",
+        f"criterion_notes.status must be one of: {', '.join(scale_labels)}.",
+        "criterion_notes.note must be 2 to 5 words and must not copy the criterion text.",
+        "strengths and weaknesses must each contain at least 2 items.",
+        "evidence must contain at least 1 item.",
+        "coverage_comment is required.",
+    ]
 
 
 def _part_scoring_method(part: SubmissionPart) -> str:
@@ -542,18 +596,28 @@ def _part_scoring_method(part: SubmissionPart) -> str:
     return "criterion_evaluation"
 
 
+def _question_text_limit_for_part(part: SubmissionPart) -> int:
+    if _part_scoring_method(part) == "criterion_evaluation":
+        return 1800
+    return 650
+
+
 def _build_prompt_criteria(part: SubmissionPart) -> list[dict[str, str]]:
     criteria = _extract_prompt_criteria(part.marking_guidance)
     if not criteria:
-        criteria = _default_prompt_criteria(_build_part_task_text(part))
+        criteria = _default_prompt_criteria(part)
     criteria = _enrich_prompt_criteria(part, criteria)
     payload: list[dict[str, str]] = []
+    scale_type, scale_labels = _criterion_scale_for_part(part)
     for index, criterion in enumerate(criteria, start=1):
-        weak_anchor, strong_anchor = _criterion_anchors(criterion)
+        normalized_criterion = _normalize_prompt_criterion_text(part, criterion)
+        weak_anchor, strong_anchor = _criterion_anchors(normalized_criterion)
         payload.append(
             {
                 "criterion_name": f"criterion_{index}",
-                "check": criterion,
+                "check": normalized_criterion,
+                "scale_type": scale_type,
+                "scale_labels": ", ".join(scale_labels),
                 "weak_anchor": weak_anchor,
                 "strong_anchor": strong_anchor,
             }
@@ -564,8 +628,22 @@ def _build_prompt_criteria(part: SubmissionPart) -> list[dict[str, str]]:
 def _enrich_prompt_criteria(part: SubmissionPart, criteria: list[str]) -> list[str]:
     normalized: set[str] = set()
     enriched: list[str] = []
+    for criterion in _construct_criteria_for_task(
+        part.task_type,
+        part.question_text_exact,
+        part.marking_guidance,
+    ):
+        cleaned = _normalize_prompt_criterion_text(part, str(criterion))
+        key = cleaned.lower().rstrip(".")
+        if not cleaned or key in normalized:
+            continue
+        normalized.add(key)
+        enriched.append(cleaned)
+        if len(enriched) >= 5:
+            return enriched
+
     for criterion in criteria:
-        cleaned = " ".join(str(criterion).split())
+        cleaned = _normalize_prompt_criterion_text(part, str(criterion))
         key = cleaned.lower().rstrip(".")
         if not cleaned or key in normalized:
             continue
@@ -575,7 +653,7 @@ def _enrich_prompt_criteria(part: SubmissionPart, criteria: list[str]) -> list[s
             return enriched
 
     for criterion in _supplemental_prompt_criteria(part):
-        cleaned = " ".join(str(criterion).split())
+        cleaned = _normalize_prompt_criterion_text(part, str(criterion))
         key = cleaned.lower().rstrip(".")
         if not cleaned or key in normalized:
             continue
@@ -586,32 +664,101 @@ def _enrich_prompt_criteria(part: SubmissionPart, criteria: list[str]) -> list[s
     return enriched
 
 
+def _criterion_mode_for_part(part: SubmissionPart) -> str:
+    if part.criterion_mode in {"deterministic", "abstract"}:
+        return part.criterion_mode
+    if _part_scoring_method(part) == "classification_then_score":
+        return "abstract"
+    if part.task_type in {"critique_and_revision", "evaluative_discussion", "synthesis_across_sources", "whole_submission_holistic"}:
+        return "abstract"
+    return "deterministic"
+
+
+def _criterion_scale_for_part(part: SubmissionPart) -> tuple[str, tuple[str, ...]]:
+    if _criterion_mode_for_part(part) == "abstract":
+        return "likert_judgement", ("weak", "developing", "clear", "strong")
+    return "verification_check", ("missing_or_wrong", "partial", "secure")
+
+
+def _normalize_prompt_criterion_text(part: SubmissionPart, criterion: str) -> str:
+    cleaned = " ".join(str(criterion).split()).strip()
+    if not cleaned:
+        return ""
+    mode = _criterion_mode_for_part(part)
+    lowered = cleaned.lower()
+    if mode == "abstract":
+        starters = (
+            "evaluate whether ",
+            "assess whether ",
+            "determine whether ",
+            "identify whether ",
+            "check whether ",
+            "check that ",
+            "confirm that ",
+        )
+        for prefix in starters:
+            if lowered.startswith(prefix):
+                cleaned = "Judge how well " + cleaned[len(prefix):]
+                break
+        lowered = cleaned.lower()
+        if lowered.startswith("evaluate how "):
+            cleaned = "Judge how well " + cleaned[len("evaluate how "):]
+        elif lowered.startswith("assess how "):
+            cleaned = "Judge how well " + cleaned[len("assess how "):]
+        elif lowered.startswith("determine how "):
+            cleaned = "Judge how well " + cleaned[len("determine how "):]
+    else:
+        starters = (
+            ("evaluate whether ", "Check that "),
+            ("assess whether ", "Check that "),
+            ("determine whether ", "Check that "),
+            ("identify whether ", "Check that "),
+            ("check whether ", "Check that "),
+            ("check that ", "Check that "),
+            ("confirm that ", "Confirm that "),
+        )
+        for prefix, replacement in starters:
+            if lowered.startswith(prefix):
+                cleaned = replacement + cleaned[len(prefix):]
+                break
+    cleaned = cleaned[0].upper() + cleaned[1:] if cleaned else cleaned
+    return cleaned.rstrip(".") + "."
+
+
 def _supplemental_prompt_criteria(part: SubmissionPart) -> list[str]:
-    common_structured = [
-        "Evaluate whether the answer covers the required steps or components without material gaps.",
-        "Evaluate whether the stated result is supported by enough method, working, or explanation to justify credit.",
-        "Evaluate whether the response stays focused on the requested task instead of drifting into loosely related material.",
-        "Evaluate whether the most important point is made clearly rather than being left implicit or buried.",
-    ]
+    if _criterion_mode_for_part(part) == "abstract":
+        common_structured = [
+            "Judge how completely the answer covers the required steps or components.",
+            "Judge how well the section supports its score with relevant reasoning or evidence.",
+            "Judge how tightly the response stays focused on the requested task.",
+            "Judge how clearly the most important point is made.",
+        ]
+    else:
+        common_structured = [
+            "Confirm that the required steps or components are present without material gaps.",
+            "Confirm that the stated result is supported by enough method, working, or explanation to justify credit.",
+            "Confirm that the response stays focused on the requested task instead of drifting into loosely related material.",
+            "Confirm that the most important point is stated clearly rather than left implicit or buried.",
+        ]
     task_type = part.task_type or ""
     if task_type == "critique_and_revision":
         return [
-            "Evaluate whether the response prioritizes the most important errors or omissions instead of making scattered minor edits.",
-            "Evaluate whether the revision stays aligned with the original task after the corrections are made.",
+            "Judge how effectively the response prioritizes the most important errors or omissions.",
+            "Judge how well the revision stays aligned with the original task after the corrections are made.",
             *common_structured,
         ]
     if task_type in {"evaluative_discussion", "synthesis_across_sources"}:
         return [
-            "Evaluate whether the response prioritizes the most relevant points instead of padding with lower-value material.",
-            "Evaluate whether the conclusion stays proportionate to the support given in the section.",
-            "Evaluate whether the argument keeps a clear line of judgement rather than a list of disconnected points.",
+            "Judge how effectively the response prioritizes the most relevant points instead of lower-value material.",
+            "Judge how proportionate the conclusion is to the support given in the section.",
+            "Judge how clearly the argument maintains a line of judgement.",
             *common_structured,
         ]
     if task_type in {"measurement_and_data_design", "causal_identification", "regression_specification"}:
         return [
-            "Evaluate whether the answer covers the required components without leaving a material gap in the setup.",
-            "Evaluate whether the proposed approach fits the stated question instead of a nearby but different one.",
-            "Evaluate whether key terms, variables, or assumptions are explicit enough to be usable.",
+            "Confirm that the answer covers the required components without leaving a material gap in the setup.",
+            "Confirm that the proposed approach fits the stated question rather than a nearby but different one.",
+            "Confirm that key terms, variables, or assumptions are explicit enough to be usable.",
             *common_structured,
         ]
     if task_type == "deterministic_derivation":
@@ -619,11 +766,11 @@ def _supplemental_prompt_criteria(part: SubmissionPart) -> list[str]:
         question_text = part.question_text_exact.lower()
         if "inequalit" in question_text or "condition" in question_text:
             targeted.append(
-                "Evaluate whether the answer states the required inequalities or parameter conditions correctly."
+                "Confirm that the answer states the required inequalities or parameter conditions correctly."
             )
         if any(phrase in question_text for phrase in ("numerical values", "example", "give an example")):
             targeted.append(
-                "Evaluate whether any numerical example is valid and actually satisfies the required conditions."
+                "Confirm that any numerical example is valid and actually satisfies the required conditions."
             )
         if any(
             phrase in question_text
@@ -634,17 +781,152 @@ def _supplemental_prompt_criteria(part: SubmissionPart) -> list[str]:
             )
         ):
             targeted.append(
-                "Evaluate whether the derivation checks each required case or family decision rather than skipping a decisive step."
+                "Confirm that the derivation checks each required case or family decision rather than skipping a decisive step."
             )
         return [*targeted, *common_structured]
     if _part_scoring_method(part) == "classification_then_score":
         return [
-            "Evaluate whether the response prioritizes the most relevant points instead of padding with lower-value material.",
-            "Evaluate whether the conclusion stays proportionate to the support given in the section.",
-            "Evaluate whether the argument keeps a clear line of judgement rather than a list of disconnected points.",
+            "Judge how effectively the response prioritizes the most relevant points instead of lower-value material.",
+            "Judge how proportionate the conclusion is to the support given in the section.",
+            "Judge how clearly the argument maintains a line of judgement.",
             *common_structured,
         ]
     return common_structured
+
+
+def _merge_unique_criteria(*groups: list[str]) -> list[str]:
+    merged: list[str] = []
+    seen: set[str] = set()
+    for group in groups:
+        for item in group:
+            cleaned = " ".join(str(item).split()).strip()
+            key = cleaned.lower().rstrip(".")
+            if not cleaned or key in seen:
+                continue
+            seen.add(key)
+            merged.append(cleaned.rstrip(".") + ".")
+    return merged
+
+
+def _extract_parenthesized_goal_items(question_text: str) -> list[str]:
+    items: list[str] = []
+    for match in re.finditer(r"\((\d+)\)\s*([^()]+?)(?=(?:\s*\(\d+\)|$))", question_text):
+        item = " ".join(match.group(2).split()).strip(" ;,.")
+        if item:
+            items.append(item)
+    return items
+
+
+def _extract_task_constructs(task_type: str, question_text: str, marking_guidance: str) -> list[str]:
+    text = " ".join(question_text.split())
+    lowered = text.lower()
+    guidance = " ".join(marking_guidance.split()).lower()
+    constructs: list[str] = []
+
+    def add(item: str) -> None:
+        cleaned = " ".join(item.split()).strip(" ;,.")
+        if cleaned:
+            constructs.append(cleaned)
+
+    parenthesized_items = _extract_parenthesized_goal_items(text)
+    if parenthesized_items and any(term in lowered for term in ("your answer should contain", "answer should contain", "note:")):
+        for item in parenthesized_items[:4]:
+            add(f"includes {item}")
+    elif any(term in lowered for term in ("prompt", "output", "rewrite", "rewritten", "own tone", "own words")):
+        if "prompt" in lowered:
+            add("includes the original prompt")
+        if "output" in lowered:
+            add("includes the model output being audited")
+        if any(term in lowered for term in ("mistake", "inaccurac", "comment", "audit")):
+            add("identifies and explains substantive inaccuracies or weaknesses in the output")
+        if any(term in lowered for term in ("rewrite", "rewritten", "own tone", "own words", "edit the output")):
+            add("provides a corrected rewrite in the student's own tone")
+
+    if task_type == "critique_and_revision":
+        if any(term in lowered for term in ("quote", "quotes", "page number", "page numbers", "report", "lecture", "course material", "reference")):
+            add("supports the critique and corrections with specific source evidence or page references")
+    elif task_type == "measurement_and_data_design":
+        if "for each prediction" in lowered:
+            add("covers each prediction from the theory rather than only a subset")
+        add("maps each theoretical concept to an observable variable or indicator")
+        if any(term in lowered for term in ("data source", "data sources", "dataset", "source of data", "link to the source", "find some data sources")):
+            add("proposes suitable data sources for the measures being used")
+        if "link" in lowered and "source" in lowered:
+            add("provides a usable source link for the proposed data")
+        if any(term in lowered for term in ("which variable", "combination of variables", "dataset")):
+            add("identifies which dataset variable or variable combination would be used")
+    elif task_type == "regression_specification":
+        if any(term in lowered for term in ("choose one of the theory", "prediction from your answer")):
+            add("matches the regression specification to one stated theory prediction")
+        if any(term in lowered for term in ("data you identified", "question 2", "data identified in question 2")):
+            add("uses variables that are consistent with the measures or data identified earlier")
+        if any(term in lowered for term in ("explain carefully each term", "each term in your equation", "define each term")):
+            add("defines each term in the equation clearly")
+        if any(term in lowered for term in ("coefficient of interest", "main coefficient")):
+            add("identifies the main coefficient of interest")
+        if "hypothesis" in lowered:
+            add("states the hypothesis that would test the chosen prediction")
+    elif task_type == "welfare_reasoning":
+        if any(term in lowered for term in ("increase social welfare", "decrease social welfare", "under which conditions")):
+            add("states the conditions under which VAT increases social welfare and the conditions under which it decreases social welfare")
+        if any(term in lowered for term in ("utility of each family", "each family changes")):
+            add("shows how the utility of each relevant family changes when VAT increases")
+        add("distinguishes welfare effects across the relevant families or groups")
+    elif task_type == "synthesis_across_sources":
+        if any(term in lowered for term in ("main claims", "claims in the output")):
+            add("identifies the main claims being assessed across the relevant materials")
+        if any(term in lowered for term in ("support, qualify, or contradict", "support qualify", "contradict the claims")):
+            add("shows whether the relevant sources support, qualify, or contradict the claims")
+        if any(term in lowered for term in ("quote", "quotes", "page number", "page numbers")):
+            add("uses specific quotations or page references where the task asks for them")
+        if any(term in lowered for term in ("video", "videos", "youtube")):
+            add("covers the arguments raised in the relevant source materials rather than only one source")
+        if "not included in the model" in lowered or "not included in the framework" in lowered:
+            add("identifies arguments or factors raised in the sources that the model does not capture")
+        if any(term in lowered for term in ("change the model", "extend the model", "analyse these points")):
+            add("proposes concrete changes or extensions to the model to analyse the omitted points")
+    elif task_type == "evaluative_discussion":
+        if any(term in lowered for term in ("good idea", "whether you think")):
+            add("reaches a clear and justified overall judgement")
+        if any(term in lowered for term in ("use the results from the analysis", "lecture", "course concepts", "concept studied")):
+            add("uses the relevant model results, evidence, or course concepts to justify the judgement")
+        if any(term in lowered for term in ("which groups would benefit", "lose more", "costs and benefits")):
+            add("distinguishes who gains, who loses, and the main tradeoffs")
+        if any(term in lowered for term in ("prompt", "output")):
+            add("includes the required AI prompt and generated output")
+        if "main changes" in lowered:
+            add("covers the main changes introduced by the policy")
+    elif task_type == "deterministic_derivation":
+        if "condition" in lowered or "inequalit" in lowered:
+            add("states the required conditions or inequalities correctly")
+        if any(term in lowered for term in ("example", "numerical values")):
+            add("provides a valid numerical example when the task asks for one")
+        if any(term in lowered for term in ("for each family", "other families are doing", "change its decision")):
+            add("checks each required case or family decision rather than skipping a decisive step")
+    elif task_type == "comparative_statics":
+        if any(term in lowered for term in ("each parameter", "changing each")):
+            add("covers the effect of each relevant parameter rather than only a subset")
+        if any(term in lowered for term in ("more likely", "scenario", "outcome")):
+            add("links each parameter change to the stated scenario or outcome comparison")
+
+    if "parent marking instructions:" in guidance and any(term in guidance for term in ("quote", "page number", "reference", "source evidence")):
+        add("uses the source evidence required by the parent marking instructions")
+
+    normalized: list[str] = []
+    seen: set[str] = set()
+    for item in constructs:
+        key = item.lower()
+        if key not in seen:
+            normalized.append(item)
+            seen.add(key)
+    return normalized[:5]
+
+
+def _construct_criteria_for_task(task_type: str, question_text: str, marking_guidance: str) -> list[str]:
+    criteria: list[str] = []
+    for construct in _extract_task_constructs(task_type, question_text, marking_guidance):
+        criteria.append(f"Evaluate whether the response {construct}.")
+    return criteria[:5]
 
 
 def _extract_required_steps_for_model(part: SubmissionPart) -> list[str]:
@@ -724,7 +1006,7 @@ def _criterion_anchors(criterion: str) -> tuple[str, str]:
     )
 
 
-def _question_text_for_model(question_text: str) -> str:
+def _question_text_for_model(question_text: str, max_chars: int | None = 650) -> str:
     raw = question_text.strip()
     if not raw:
         return ""
@@ -737,7 +1019,9 @@ def _question_text_for_model(question_text: str) -> str:
         cleaned,
         flags=re.IGNORECASE,
     ).strip()
-    return _trim_goal_fragment(cleaned, max_chars=650)
+    if max_chars is None:
+        return cleaned.rstrip(".")
+    return _trim_goal_fragment(cleaned, max_chars=max_chars)
 
 
 def _task_goal_for_model(task_goal: str, question_text: str) -> str:
@@ -759,6 +1043,16 @@ def _task_goal_for_model(task_goal: str, question_text: str) -> str:
 
 def _build_part_task_text(part: SubmissionPart) -> str:
     task_from_type = _task_goal_from_task_type(part.task_type, part.question_text_exact)
+    if part.question_text_exact.strip():
+        fuller_question_task = _question_text_for_model(part.question_text_exact, max_chars=1200)
+        if part.task_type == "critique_and_revision" and fuller_question_task:
+            return fuller_question_task
+        if task_from_type and (
+            "..." in task_from_type
+            or len(task_from_type) < min(80, max(20, len(fuller_question_task) // 3))
+            or _looks_damaged_question_text(task_from_type)
+        ):
+            return fuller_question_task or task_from_type
     if task_from_type:
         return task_from_type
     focus = part.focus_hint.strip()
@@ -833,11 +1127,18 @@ def _extract_prompt_criteria(marking_guidance: str) -> list[str]:
     return criteria
 
 
-def _default_prompt_criteria(task_text: str) -> list[str]:
+def _default_prompt_criteria(part: SubmissionPart) -> list[str]:
+    task_text = _build_part_task_text(part).lower()
+    if _criterion_mode_for_part(part) == "abstract":
+        return [
+            f"Judge how directly the response addresses {task_text}.",
+            "Judge how clearly the reasoning supports the conclusion reached.",
+            "Judge how fully the section covers the task and justifies the score awarded.",
+        ]
     return [
-        f"Evaluate whether the response directly addresses {task_text.lower()}.",
-        "Evaluate whether the reasoning is accurate, relevant, and sufficiently explained.",
-        "Evaluate whether the response is complete enough to justify the score awarded.",
+        f"Confirm that the response directly addresses {task_text}.",
+        "Confirm that the reasoning, method, or explanation is accurate enough to justify credit.",
+        "Confirm that the required steps or components are present without a material gap.",
     ]
 
 
@@ -845,14 +1146,22 @@ def _extract_prompt_scoring_rules(marking_guidance: str, max_mark: float | None)
     rules: list[str] = []
     guidance_text = marking_guidance.lower()
     if any(band in guidance_text for band in ("first", "2:1", "2:2", "third/pass", "missing/unfinished", "fail")):
-        rules.append("Choose the quality band first, then place the score within that band using the evidence in this section.")
+        rules.append("Choose the quality band first, then place the score within it.")
     if any(term in guidance_text for term in ("partial credit", "algebra", "equation", "deriv", "method", "interpretation")):
-        rules.append("Award partial credit for correct setup, intermediate reasoning, and interpretation even when the final answer is incomplete.")
+        rules.append("Give partial credit for correct setup, method, or interpretation.")
     if any(term in guidance_text for term in ("reference", "references", "page number", "page numbers", "quote", "quotes")):
-        rules.append("Reward accurate use of specific references or page numbers when the task asks for them.")
+        rules.append("Reward specific references when the task asks for them.")
     if any(term in guidance_text for term in ("rewrite", "own tone", "own words", "correct any mistakes", "edit the output")):
-        rules.append("Reward correction of mistakes and rewriting in the student's own justified form when the task asks for it.")
-    return rules
+        rules.append("Reward justified correction and rewriting when asked.")
+    deduped: list[str] = []
+    seen: set[str] = set()
+    for rule in rules:
+        key = rule.lower().rstrip(".")
+        if key in seen:
+            continue
+        seen.add(key)
+        deduped.append(rule)
+    return deduped
 
 
 def _task_goal_from_task_type(task_type: str, question_text: str) -> str:
@@ -897,18 +1206,18 @@ def _derive_task_goal_from_question(task_type: str, question_text: str) -> str:
     numbered_items = _extract_numbered_goal_items(cleaned)
     if task_type == "critique_and_revision" and numbered_items:
         selected = [
-            _trim_goal_fragment(item, max_chars=90)
+            _trim_goal_fragment(item, max_chars=180)
             for item in numbered_items[:3]
             if item.strip()
         ]
         return "; ".join(fragment for fragment in selected if fragment)
     if numbered_items:
-        lead_item = _trim_goal_fragment(numbered_items[0], max_chars=170)
+        lead_item = _trim_goal_fragment(numbered_items[0], max_chars=260)
         if lead_item:
             return lead_item
-    cleaned_without_numbering = _trim_goal_fragment(cleaned, max_chars=max(len(cleaned), 200))
+    cleaned_without_numbering = _trim_goal_fragment(cleaned, max_chars=max(len(cleaned), 320))
     first_sentence = re.split(r"(?<=[.!?])\s+", cleaned_without_numbering, maxsplit=1)[0].strip()
-    return _trim_goal_fragment(first_sentence, max_chars=170)
+    return _trim_goal_fragment(first_sentence, max_chars=260)
 
 
 def _clean_question_text_for_goal(question_text: str) -> str:
@@ -1249,6 +1558,7 @@ def call_ollama(
     filename: str,
     model_name: str,
     rubric_verifier_model_name: str | None = None,
+    part_verifier_model_name: str | None = None,
     structure_script_text: str | None = None,
     prepared_assessment_map: PreparedAssessmentMap | None = None,
     ollama_url: str = DEFAULT_OLLAMA_URL,
@@ -1259,6 +1569,7 @@ def call_ollama(
         filename=filename,
         model_name=model_name,
         rubric_verifier_model_name=rubric_verifier_model_name,
+        part_verifier_model_name=part_verifier_model_name,
         structure_script_text=structure_script_text,
         prepared_assessment_map=prepared_assessment_map,
         ollama_url=ollama_url,
@@ -1271,6 +1582,7 @@ def call_ollama_comparative_first(
     filename: str,
     model_name: str,
     rubric_verifier_model_name: str | None = None,
+    part_verifier_model_name: str | None = None,
     structure_script_text: str | None = None,
     prepared_assessment_map: PreparedAssessmentMap | None = None,
     ollama_url: str = DEFAULT_OLLAMA_URL,
@@ -1321,15 +1633,24 @@ def call_ollama_comparative_first(
         if not part.section_text.strip():
             part_analyses.append(build_missing_part_analysis(part))
             continue
-        part_analyses.append(
-            _run_part_analysis_with_retry(
+        analysis = _run_part_analysis_with_retry(
+            part=part,
+            context=context,
+            filename=filename,
+            model_name=model_name,
+            ollama_url=ollama_url,
+        )
+        if part_verifier_model_name:
+            verifier_result = verify_part_analysis(
                 part=part,
                 context=context,
                 filename=filename,
-                model_name=model_name,
+                part_analysis=analysis,
+                model_name=part_verifier_model_name,
                 ollama_url=ollama_url,
             )
-        )
+            analysis = apply_part_verifier_result(analysis, verifier_result)
+        part_analyses.append(analysis)
     timings["part_analysis"] = round(time.perf_counter() - stage_started, 2)
 
     if len(part_analyses) > 1:
@@ -1542,7 +1863,12 @@ def segment_submission_parts(script_text: str, detected_parts: list[SubmissionPa
     segmented: list[SubmissionPart] = []
     for index, (start, part) in enumerate(anchors):
         end = anchors[index + 1][0] if index + 1 < len(anchors) else len(normalized_text)
-        section_text = normalized_text[start:end].strip()
+        section_text = _select_local_chunk_with_fallback(
+            normalized_text,
+            start,
+            end,
+            part.question_text_exact or part.focus_hint,
+        )
         segmented.append(
             SubmissionPart(
                 label=part.label,
@@ -1564,11 +1890,12 @@ def refine_submission_granularity(
     filename: str,
     model_name: str,
     ollama_url: str = DEFAULT_OLLAMA_URL,
+    include_unmarked_subparts: bool = False,
 ) -> list[SubmissionPart]:
     if context is None or not segmented_parts:
         return segmented_parts
 
-    child_map = extract_expected_subparts_from_context(context)
+    child_map = extract_expected_subparts_from_context(context, require_marks=not include_unmarked_subparts)
     if not child_map:
         return segmented_parts
 
@@ -1895,6 +2222,67 @@ def _looks_damaged_question_text(text: str) -> bool:
     return len(merged_word_hits) >= 2
 
 
+def _question_needs_richer_local_context(question_text: str) -> bool:
+    cleaned = _clean_question_text_for_goal(question_text)
+    if not cleaned:
+        return False
+    numbered_items = _extract_numbered_goal_items(cleaned)
+    if len(numbered_items) >= 2:
+        return True
+    lowered = cleaned.lower()
+    phrases = (
+        "for each",
+        "give an example",
+        "explain why",
+        "define each",
+        "state the hypothesis",
+        "change its decision",
+        "other families are doing",
+        "more likely than",
+    )
+    return any(phrase in lowered for phrase in phrases)
+
+
+def _section_text_looks_damaged_or_incomplete(section_text: str, question_text: str = "") -> bool:
+    normalized = " ".join(section_text.split())
+    if not normalized:
+        return True
+    if _looks_damaged_question_text(normalized):
+        return True
+    if len(normalized) < 120:
+        return True
+    if _question_needs_richer_local_context(question_text) and len(normalized) < 260:
+        return True
+    return False
+
+
+def _expand_local_chunk(source_text: str, start: int, end: int, question_text: str = "") -> str:
+    if not source_text:
+        return ""
+    base_padding = 260
+    if _question_needs_richer_local_context(question_text):
+        base_padding = 420
+    expanded_start = max(0, start - base_padding)
+    expanded_end = min(len(source_text), end + base_padding)
+    if expanded_start > 0:
+        newline_before = source_text.rfind("\n", expanded_start, start)
+        if newline_before != -1:
+            expanded_start = newline_before + 1
+    if expanded_end < len(source_text):
+        newline_after = source_text.find("\n", end, expanded_end)
+        if newline_after != -1:
+            expanded_end = newline_after
+    return source_text[expanded_start:expanded_end].strip()
+
+
+def _select_local_chunk_with_fallback(source_text: str, start: int, end: int, question_text: str = "") -> str:
+    section_text = source_text[start:end].strip()
+    if not _section_text_looks_damaged_or_incomplete(section_text, question_text):
+        return section_text
+    expanded = _expand_local_chunk(source_text, start, end, question_text)
+    return expanded or section_text
+
+
 def _merge_unique_text_items(
     existing: tuple[str, ...],
     incoming: tuple[str, ...],
@@ -2179,6 +2567,25 @@ def _build_structure_marking_guidance(
     if section.dependency_labels:
         lines.append(f"Dependency links: {', '.join(section.dependency_labels)}")
 
+    if not marking_text and parent is not None and section.question_text_exact.strip() and section.max_mark is None:
+        task_type = infer_task_type(section.label, section.question_text_exact)
+        grading_mode = infer_grading_mode(
+            section.label,
+            parent.marking_instructions_exact or section.question_text_exact,
+            task_type=task_type,
+        )
+        lines.append("Child-specific scoring guidance:")
+        lines.append(
+            build_unit_rubric_text(
+                label=section.label,
+                max_mark=section.max_mark,
+                grading_mode=grading_mode,
+                task_type=task_type,
+                question_text_exact=section.question_text_exact,
+                marking_guidance=section.question_text_exact,
+            )
+        )
+
     if not lines:
         if section.question_text_exact.strip():
             return section.question_text_exact.strip()
@@ -2186,6 +2593,39 @@ def _build_structure_marking_guidance(
             return parent.question_text_exact.strip()
         return ""
     return "\n".join(lines).strip()
+
+
+def _resolve_child_task_type(parent: AssessmentStructureSection, child: AssessmentStructureSection) -> str:
+    child_task_type = infer_task_type(child.label, child.question_text_exact or parent.question_text_exact)
+    parent_task_type = infer_task_type(parent.label, parent.question_text_exact or parent.marking_instructions_exact)
+    generic_child_types = {"evaluative_discussion", "deterministic_derivation", "whole_submission_holistic"}
+    if (
+        child_task_type in generic_child_types
+        and parent_task_type not in generic_child_types
+    ):
+        return parent_task_type
+    return child_task_type
+
+
+def _resolve_section_children_with_marks(section: AssessmentStructureSection) -> tuple[AssessmentStructureSection, ...]:
+    children = list(section.children)
+    if len(children) < 2 or section.max_mark is None:
+        return tuple(children)
+    marked_total = sum(float(child.max_mark) for child in children if child.max_mark is not None)
+    unresolved_children = [child for child in children if child.max_mark is None]
+    if not unresolved_children:
+        return tuple(children)
+    remaining = float(section.max_mark) - marked_total
+    if remaining <= 0:
+        return tuple(children)
+    per_child = round(remaining / len(unresolved_children), 2)
+    resolved: list[AssessmentStructureSection] = []
+    for child in children:
+        if child.max_mark is not None:
+            resolved.append(child)
+            continue
+        resolved.append(replace(child, max_mark=per_child))
+    return tuple(resolved)
 
 
 def extract_expected_parts_from_context(context: MarkingContext) -> list[SubmissionPart]:
@@ -2207,13 +2647,17 @@ def extract_expected_parts_from_context(context: MarkingContext) -> list[Submiss
     return parts
 
 
-def extract_expected_subparts_from_context(context: MarkingContext) -> dict[str, list[SubmissionPart]]:
+def extract_expected_subparts_from_context(
+    context: MarkingContext,
+    require_marks: bool = True,
+) -> dict[str, list[SubmissionPart]]:
     child_map: dict[str, list[SubmissionPart]] = {}
     for section in extract_assessment_structure(context):
+        resolved_children = _resolve_section_children_with_marks(section)
         safe_children = [
             child
-            for child in section.children
-            if child.max_mark is not None
+            for child in resolved_children
+            if (child.max_mark is not None) or not require_marks
         ]
         if len(safe_children) < 2:
             continue
@@ -2225,6 +2669,8 @@ def extract_expected_subparts_from_context(context: MarkingContext) -> dict[str,
                 max_mark=child.max_mark,
                 marking_guidance=_build_structure_marking_guidance(child, parent=section),
                 question_text_exact=child.question_text_exact,
+                task_type=_resolve_child_task_type(section, child),
+                criterion_mode=infer_criterion_mode(_resolve_child_task_type(section, child)),
             )
             for child in safe_children
         ]
@@ -2453,12 +2899,13 @@ def build_assessment_map(context: MarkingContext) -> AssessmentMap:
     units: list[AssessmentUnit] = []
     if sections:
         for section in sections:
-            marked_children = [child for child in section.children if child.max_mark is not None]
+            marked_children = [child for child in _resolve_section_children_with_marks(section) if child.max_mark is not None]
             if len(marked_children) >= 2:
                 for child in marked_children:
                     marking_guidance = _build_structure_marking_guidance(child, parent=section)
                     question_text = child.question_text_exact or section.question_text_exact or marking_guidance or child.label
                     task_type = infer_task_type(child.label, question_text)
+                    criterion_mode = infer_criterion_mode(task_type)
                     mode = infer_grading_mode(
                         child.label,
                         marking_guidance or section.marking_instructions_exact or section.question_text_exact or child.label,
@@ -2475,6 +2922,7 @@ def build_assessment_map(context: MarkingContext) -> AssessmentMap:
                             parent_label=section.label,
                             grading_mode=mode,
                             task_type=task_type,
+                            criterion_mode=criterion_mode,
                             dependency_group=dependency,
                             question_text_exact=question_text,
                             marking_guidance=marking_guidance,
@@ -2492,6 +2940,7 @@ def build_assessment_map(context: MarkingContext) -> AssessmentMap:
                 marking_guidance = _build_structure_marking_guidance(section)
                 question_text = section.question_text_exact or marking_guidance or section.label
                 task_type = infer_task_type(section.label, question_text)
+                criterion_mode = infer_criterion_mode(task_type)
                 mode = infer_grading_mode(section.label, marking_guidance or section.label, task_type=task_type)
                 dependency_source = "\n".join(text for text in (question_text, marking_guidance) if text.strip())
                 dependency = infer_dependency_group(section.label, dependency_source, parent_label=section.label)
@@ -2502,6 +2951,7 @@ def build_assessment_map(context: MarkingContext) -> AssessmentMap:
                         parent_label="",
                         grading_mode=mode,
                         task_type=task_type,
+                        criterion_mode=criterion_mode,
                         dependency_group=dependency,
                         question_text_exact=question_text,
                         marking_guidance=marking_guidance,
@@ -2523,6 +2973,7 @@ def build_assessment_map(context: MarkingContext) -> AssessmentMap:
                 max_mark=context.max_mark,
                 grading_mode="analytical",
                 task_type="whole_submission_holistic",
+                criterion_mode="abstract",
                 dependency_group="",
                 question_text_exact="Assess the full submission as one unit.",
                 marking_guidance="Assess the full submission as one unit.",
@@ -2739,6 +3190,91 @@ def infer_task_type(label: str, question_text: str) -> str:
     return "deterministic_derivation"
 
 
+def infer_criterion_mode(task_type: str) -> str:
+    if task_type in {
+        "critique_and_revision",
+        "evaluative_discussion",
+        "synthesis_across_sources",
+        "whole_submission_holistic",
+    }:
+        return "abstract"
+    return "deterministic"
+
+
+def _task_type_needs_model_refinement(part: SubmissionPart) -> bool:
+    if not part.question_text_exact.strip():
+        return False
+    if " Q" not in part.label:
+        return False
+    return part.task_type in {"", "evaluative_discussion", "deterministic_derivation", "whole_submission_holistic"}
+
+
+def _build_task_type_refinement_messages(part: SubmissionPart) -> list[dict[str, str]]:
+    allowed_task_types = [
+        "critique_and_revision",
+        "model_specification",
+        "comparative_statics",
+        "regression_specification",
+        "deterministic_derivation",
+        "welfare_reasoning",
+        "prediction_generation",
+        "measurement_and_data_design",
+        "causal_identification",
+        "synthesis_across_sources",
+        "evaluative_discussion",
+        "explanation_interpretation",
+        "whole_submission_holistic",
+    ]
+    system = (
+        "You are classifying one assessment subtask. "
+        "Return exactly one JSON object with keys "
+        '"task_type" and "reason". '
+        "Choose the single best task_type from the allowed list only."
+    )
+    user = (
+        f"Section label: {part.label}\n"
+        f"Current task_type guess: {part.task_type or '(none)'}\n"
+        f"Question text:\n{part.question_text_exact.strip()}\n\n"
+        f"Source guidance:\n{part.marking_guidance.strip() or '(none)'}\n\n"
+        "Allowed task_type values:\n"
+        + "\n".join(f"- {item}" for item in allowed_task_types)
+    )
+    return [{"role": "system", "content": system}, {"role": "user", "content": user}]
+
+
+def refine_part_task_types_with_model(
+    parts: list[SubmissionPart],
+    model_name: str,
+    ollama_url: str = DEFAULT_OLLAMA_URL,
+) -> list[SubmissionPart]:
+    refined: list[SubmissionPart] = []
+    for part in parts:
+        if not _task_type_needs_model_refinement(part):
+            refined.append(part)
+            continue
+        try:
+            data = _call_ollama_json(
+                model_name=model_name,
+                messages=_build_task_type_refinement_messages(part),
+                ollama_url=ollama_url,
+                profile="structure_extraction",
+            )
+            task_type = str(data.get("task_type", "")).strip()
+            if task_type:
+                refined.append(
+                    replace(
+                        part,
+                        task_type=task_type,
+                        criterion_mode=infer_criterion_mode(task_type),
+                    )
+                )
+                continue
+        except Exception:
+            pass
+        refined.append(part)
+    return refined
+
+
 def _matches_all(text: str, *terms: str) -> bool:
     return all(term in text for term in terms)
 
@@ -2830,6 +3366,7 @@ def build_unit_rubric_text(
         max_mark=max_mark,
         grading_mode=grading_mode,
         task_type=task_type,
+        criterion_mode=infer_criterion_mode(task_type),
         question_text_exact=question_text_exact,
         marking_guidance=marking_guidance,
     )
@@ -3003,13 +3540,21 @@ def _build_ranking_rule(unit: AssessmentUnit) -> str:
 def _criteria_for_task_type(unit: AssessmentUnit) -> list[str]:
     focus = _build_task_focus(unit)
     task_type = unit.task_type
+    construct_criteria = _construct_criteria_for_task(
+        task_type,
+        unit.question_text_exact,
+        unit.marking_guidance,
+    )
     if task_type == "critique_and_revision":
-        return [
-            f"Evaluate whether the response completes {focus}.",
-            "Evaluate whether the answer identifies substantive mistakes, omissions, or distortions rather than offering generic criticism.",
-            "Evaluate whether the critique is grounded in the supplied source, prompt, or task requirements.",
-            "Evaluate whether the revised version is clearer, more accurate, and appropriately rewritten rather than lightly edited.",
-        ]
+        return _merge_unique_criteria(
+            construct_criteria,
+            [
+                f"Evaluate whether the response completes {focus}.",
+                "Evaluate whether the answer identifies substantive mistakes, omissions, or distortions rather than offering generic criticism.",
+                "Evaluate whether the critique is grounded in the supplied source, prompt, or task requirements.",
+                "Evaluate whether the revised version is clearer, more accurate, and appropriately rewritten rather than lightly edited.",
+            ],
+        )[:5]
     if task_type == "model_specification":
         return [
             f"Evaluate whether the response states {focus} correctly.",
@@ -3018,19 +3563,25 @@ def _criteria_for_task_type(unit: AssessmentUnit) -> list[str]:
             "Evaluate whether any interpretation follows from the stated model rather than from unsupported commentary.",
         ]
     if task_type == "comparative_statics":
-        return [
-            f"Evaluate whether the response explains {focus} correctly.",
-            "Evaluate whether the answer identifies the direction of the effect of changing each relevant parameter.",
-            "Evaluate whether the explanation links parameter changes to the comparison between the relevant scenarios or outcomes.",
-            "Evaluate whether the reasoning follows from the model rather than from unsupported intuition alone.",
-        ]
+        return _merge_unique_criteria(
+            construct_criteria,
+            [
+                f"Evaluate whether the response explains {focus} correctly.",
+                "Evaluate whether the answer identifies the direction of the effect of changing each relevant parameter.",
+                "Evaluate whether the explanation links parameter changes to the comparison between the relevant scenarios or outcomes.",
+                "Evaluate whether the reasoning follows from the model rather than from unsupported intuition alone.",
+            ],
+        )[:5]
     if task_type == "deterministic_derivation":
-        return [
-            f"Evaluate whether the attempt sets up and answers {focus} correctly.",
-            "Evaluate whether the working is complete enough to justify the result, not just whether a final answer is stated.",
-            "Evaluate whether derivation steps, algebra, notation, and conditions are accurate.",
-            "Evaluate whether any interpretation follows correctly from the method and result.",
-        ]
+        return _merge_unique_criteria(
+            construct_criteria,
+            [
+                f"Evaluate whether the attempt sets up and answers {focus} correctly.",
+                "Evaluate whether the working is complete enough to justify the result, not just whether a final answer is stated.",
+                "Evaluate whether derivation steps, algebra, notation, and conditions are accurate.",
+                "Evaluate whether any interpretation follows correctly from the method and result.",
+            ],
+        )[:5]
     if task_type == "explanation_interpretation":
         return [
             f"Evaluate whether the response explains {focus} clearly and accurately.",
@@ -3039,19 +3590,25 @@ def _criteria_for_task_type(unit: AssessmentUnit) -> list[str]:
             "Evaluate whether the reasoning is complete enough to show why the conclusion follows.",
         ]
     if task_type == "welfare_reasoning":
-        return [
-            f"Evaluate whether the response addresses {focus} using the relevant conditions or assumptions.",
-            "Evaluate whether the answer distinguishes effects on the relevant parties, components, or margins rather than collapsing them into a single claim.",
-            "Evaluate whether the welfare reasoning is internally consistent and follows from the setup.",
-            "Evaluate whether the conclusion is qualified appropriately when conditions or tradeoffs matter.",
-        ]
+        return _merge_unique_criteria(
+            construct_criteria,
+            [
+                f"Evaluate whether the response addresses {focus} using the relevant conditions or assumptions.",
+                "Evaluate whether the answer distinguishes effects on the relevant parties, components, or margins rather than collapsing them into a single claim.",
+                "Evaluate whether the welfare reasoning is internally consistent and follows from the setup.",
+                "Evaluate whether the conclusion is qualified appropriately when conditions or tradeoffs matter.",
+            ],
+        )[:5]
     if task_type == "evaluative_discussion":
-        return [
-            f"Evaluate whether the response directly addresses {focus}.",
-            "Evaluate whether the answer makes a defensible judgement rather than offering only description or summary.",
-            "Evaluate whether the reasoning is supported with relevant evidence, examples, or concepts where the task requires them.",
-            "Evaluate whether the discussion acknowledges tradeoffs, limits, counterarguments, or qualifications where they matter.",
-        ]
+        return _merge_unique_criteria(
+            construct_criteria,
+            [
+                f"Evaluate whether the response directly addresses {focus}.",
+                "Evaluate whether the answer makes a defensible judgement rather than offering only description or summary.",
+                "Evaluate whether the reasoning is supported with relevant evidence, examples, or concepts where the task requires them.",
+                "Evaluate whether the discussion acknowledges tradeoffs, limits, counterarguments, or qualifications where they matter.",
+            ],
+        )[:5]
     if task_type == "prediction_generation":
         return [
             f"Evaluate whether the response states {focus} that follow from the setup.",
@@ -3060,19 +3617,25 @@ def _criteria_for_task_type(unit: AssessmentUnit) -> list[str]:
             "Evaluate whether the answer distinguishes strong predictions from conditional or qualified ones where necessary.",
         ]
     if task_type == "measurement_and_data_design":
-        return [
-            f"Evaluate whether the response defines {focus} clearly.",
-            "Evaluate whether the answer maps concepts to observable variables or indicators in a plausible way.",
-            "Evaluate whether proposed data sources are suitable for the measures being discussed.",
-            "Evaluate whether the response explains how the source or measure captures the intended concept and notes material limitations where relevant.",
-        ]
+        return _merge_unique_criteria(
+            construct_criteria,
+            [
+                f"Evaluate whether the response defines {focus} clearly.",
+                "Evaluate whether the answer maps concepts to observable variables or indicators in a plausible way.",
+                "Evaluate whether proposed data sources are suitable for the measures being discussed.",
+                "Evaluate whether the response explains how the source or measure captures the intended concept and notes material limitations where relevant.",
+            ],
+        )[:5]
     if task_type == "regression_specification":
-        return [
-            f"Evaluate whether the response states {focus} correctly.",
-            "Evaluate whether variables, terms, and functional relationships are defined clearly and consistently.",
-            "Evaluate whether the coefficient, comparison, or hypothesis of interest is identified correctly.",
-            "Evaluate whether the specification matches the stated empirical question rather than a different one.",
-        ]
+        return _merge_unique_criteria(
+            construct_criteria,
+            [
+                f"Evaluate whether the response states {focus} correctly.",
+                "Evaluate whether variables, terms, and functional relationships are defined clearly and consistently.",
+                "Evaluate whether the coefficient, comparison, or hypothesis of interest is identified correctly.",
+                "Evaluate whether the specification matches the stated empirical question rather than a different one.",
+            ],
+        )[:5]
     if task_type == "causal_identification":
         return [
             f"Evaluate whether the response identifies {focus} correctly.",
@@ -3081,12 +3644,15 @@ def _criteria_for_task_type(unit: AssessmentUnit) -> list[str]:
             "Evaluate whether the response distinguishes stronger and weaker solutions or remaining limitations where relevant.",
         ]
     if task_type == "synthesis_across_sources":
-        return [
-            f"Evaluate whether the response completes {focus}.",
-            "Evaluate whether the answer identifies the main claims, assumptions, or omissions across the relevant sources or materials.",
-            "Evaluate whether theory, evidence, and source content are integrated rather than discussed in isolation.",
-            "Evaluate whether the response explains what the model or framework can and cannot account for.",
-        ]
+        return _merge_unique_criteria(
+            construct_criteria,
+            [
+                f"Evaluate whether the response completes {focus}.",
+                "Evaluate whether the answer identifies the main claims, assumptions, or omissions across the relevant sources or materials.",
+                "Evaluate whether theory, evidence, and source content are integrated rather than discussed in isolation.",
+                "Evaluate whether the response explains what the model or framework can and cannot account for.",
+            ],
+        )[:5]
     return []
 
 
@@ -3208,7 +3774,7 @@ def _run_part_analysis_with_retry(
     model_name: str,
     ollama_url: str,
 ) -> dict[str, Any]:
-    messages = build_part_messages(part, context, filename)
+    messages = build_part_messages(part, context, filename, model_name=model_name)
     last_error: Exception | None = None
     for attempt in range(2):
         analysis = _call_ollama_json(
@@ -3227,6 +3793,151 @@ def _run_part_analysis_with_retry(
     if last_error is not None:
         raise last_error
     raise ValueError(f"Part analysis failed without a captured error for {part.label}.")
+
+
+def build_part_verification_messages(
+    part: SubmissionPart,
+    context: MarkingContext,
+    filename: str,
+    part_analysis: dict[str, Any],
+    model_name: str | None = None,
+) -> list[dict[str, str]]:
+    messages = build_part_messages(part, context, filename, model_name=model_name)
+    payload_text = messages[1]["content"]
+    analysis_summary = json.dumps(
+        {
+            "section_label": part_analysis.get("section_label"),
+            "provisional_score": part_analysis.get("provisional_score"),
+            "grade_band": part_analysis.get("grade_band"),
+            "within_band_position": part_analysis.get("within_band_position"),
+            "criterion_notes": part_analysis.get("criterion_notes", []),
+            "strengths": part_analysis.get("strengths", []),
+            "weaknesses": part_analysis.get("weaknesses", []),
+            "evidence": part_analysis.get("evidence", []),
+            "coverage_comment": part_analysis.get("coverage_comment", ""),
+        },
+        ensure_ascii=True,
+        indent=2,
+    )
+    max_mark_text = _format_number(part.max_mark) if part.max_mark is not None else "100"
+    system = (
+        "You are verifying one section-level grading payload and score. "
+        "Your job is to detect over-broad or over-generous criteria and scores that are too generous relative to the section evidence. "
+        "Do not diagnose hidden payload issues such as missing required constructs. "
+        "Instead, suggest tighter criterion refinements and moderate over-generous scoring."
+    )
+    user = (
+        f"STUDENT FILE NAME: {filename}\n\n"
+        "SECTION SCORING PAYLOAD:\n"
+        f"{payload_text}\n\n"
+        "PROPOSED SECTION ANALYSIS:\n"
+        f"{analysis_summary}\n\n"
+        "Return only one JSON object with exactly these keys:\n"
+        '- "agreement": string\n'
+        '- "confidence_0_to_100": number\n'
+        '- "criteria_adjustments": array of strings\n'
+        '- "overgenerous_criteria": array of strings\n'
+        '- "score_too_generous": boolean\n'
+        '- "max_reasonable_score": number\n'
+        '- "recommendation": string\n\n'
+        "Rules:\n"
+        "1. agreement must be one of: agree, minor_concern, major_concern.\n"
+        "2. criteria_adjustments must suggest tighter criterion wording only when the current criteria are too broad, too generic, or too generous.\n"
+        "3. overgenerous_criteria must identify any existing criteria that are rewarding too much for this section.\n"
+        "4. score_too_generous should be true only when the current score is materially too high given the section evidence.\n"
+        f"5. max_reasonable_score must be between 0 and {max_mark_text}.\n"
+        "6. recommendation should be one of: accept, lower_score, refine_criteria.\n"
+        "7. Do not include markdown fences or any text outside the JSON object."
+    )
+    return [{"role": "system", "content": system}, {"role": "user", "content": user}]
+
+
+def normalize_part_verification_result(data: dict[str, Any], max_mark: float | None) -> dict[str, Any]:
+    agreement = str(data.get("agreement", "")).strip()
+    if agreement not in {"agree", "minor_concern", "major_concern"}:
+        raise ValueError(f"Part verifier returned an invalid agreement value: {data}")
+    confidence = data.get("confidence_0_to_100")
+    if isinstance(confidence, bool) or not isinstance(confidence, (int, float)):
+        raise ValueError(f"Part verifier returned an invalid confidence score: {data}")
+    confidence_value = float(confidence)
+    if confidence_value < 0 or confidence_value > 100:
+        raise ValueError(f"Part verifier confidence is out of range: {data}")
+
+    def normalize_string_list_field(field_name: str) -> list[str]:
+        value = data.get(field_name, [])
+        if not isinstance(value, list):
+            raise ValueError(f"Part verifier returned invalid {field_name}: {data}")
+        return [str(item).strip() for item in value if str(item).strip()]
+
+    score_too_generous = data.get("score_too_generous")
+    if not isinstance(score_too_generous, bool):
+        raise ValueError(f"Part verifier returned invalid score_too_generous flag: {data}")
+    max_reasonable_score = data.get("max_reasonable_score")
+    if isinstance(max_reasonable_score, bool) or not isinstance(max_reasonable_score, (int, float)):
+        raise ValueError(f"Part verifier returned invalid max_reasonable_score: {data}")
+    max_reasonable_value = float(max_reasonable_score)
+    upper_bound = float(max_mark) if max_mark is not None else 100.0
+    if max_reasonable_value < 0 or max_reasonable_value > upper_bound:
+        raise ValueError(f"Part verifier max_reasonable_score is out of range: {data}")
+    recommendation = str(data.get("recommendation", "")).strip()
+    if recommendation not in {"accept", "lower_score", "refine_criteria"}:
+        raise ValueError(f"Part verifier returned invalid recommendation: {data}")
+    return {
+        "agreement": agreement,
+        "confidence_0_to_100": round(confidence_value, 2),
+        "criteria_adjustments": normalize_string_list_field("criteria_adjustments"),
+        "overgenerous_criteria": normalize_string_list_field("overgenerous_criteria"),
+        "score_too_generous": score_too_generous,
+        "max_reasonable_score": round(max_reasonable_value, 2),
+        "recommendation": recommendation,
+    }
+
+
+def verify_part_analysis(
+    part: SubmissionPart,
+    context: MarkingContext,
+    filename: str,
+    part_analysis: dict[str, Any],
+    model_name: str,
+    ollama_url: str = DEFAULT_OLLAMA_URL,
+) -> dict[str, Any]:
+    data = _call_ollama_json(
+        model_name=model_name,
+        messages=build_part_verification_messages(part, context, filename, part_analysis, model_name=model_name),
+        ollama_url=ollama_url,
+        profile="verification",
+    )
+    return normalize_part_verification_result(data, max_mark=part.max_mark)
+
+
+def apply_part_verifier_result(
+    part_analysis: dict[str, Any],
+    verifier_result: dict[str, Any],
+) -> dict[str, Any]:
+    adjusted = dict(part_analysis)
+    current_score = float(adjusted.get("provisional_score") or 0.0)
+    capped_score = min(current_score, float(verifier_result.get("max_reasonable_score", current_score)))
+    if (
+        verifier_result.get("score_too_generous")
+        and verifier_result.get("recommendation") == "lower_score"
+        and capped_score < current_score
+    ):
+        adjusted["provisional_score"] = round(capped_score, 2)
+        issue_text = "; ".join(
+            item
+            for item in (
+                list(verifier_result.get("overgenerous_criteria", []))
+                + list(verifier_result.get("criteria_adjustments", []))
+            )
+            if item
+        )
+        if issue_text:
+            adjusted["coverage_comment"] = (
+                f"{adjusted.get('coverage_comment', '').strip()} "
+                f"Verifier cap applied because the earlier score was too generous: {issue_text}."
+            ).strip()
+    adjusted["verifier_result"] = verifier_result
+    return adjusted
 
 
 def build_missing_part_analysis(part: SubmissionPart) -> dict[str, Any]:
@@ -3255,7 +3966,14 @@ def build_missing_part_analysis(part: SubmissionPart) -> dict[str, Any]:
         "criterion_notes": [
             {
                 "criterion_name": criterion["criterion_name"],
-                "status": "missed",
+                "status": "weak" if criterion.get("scale_type") == "likert_judgement" else "missing_or_wrong",
+                "normalized_status": "missed",
+                "scale_type": criterion.get("scale_type", ""),
+                "scale_labels": [
+                    label.strip()
+                    for label in str(criterion.get("scale_labels", "")).split(",")
+                    if label.strip()
+                ],
                 "note": "no usable response",
             }
             for criterion in criteria
@@ -4059,6 +4777,7 @@ def apply_assessment_map_to_submission_parts(parts: list[SubmissionPart], assess
                 marking_guidance=unit.rubric_text or unit.marking_guidance or part.marking_guidance,
                 question_text_exact=unit.question_text_exact or part.question_text_exact,
                 task_type=unit.task_type or part.task_type,
+                criterion_mode=unit.criterion_mode or part.criterion_mode,
             )
         )
     return enriched
@@ -4094,6 +4813,7 @@ def apply_prepared_artifact_to_submission_parts(
                 marking_guidance=merged_guidance,
                 question_text_exact=part.question_text_exact,
                 task_type=part.task_type,
+                criterion_mode=part.criterion_mode,
             )
         )
     return enriched
@@ -4433,10 +5153,12 @@ def _build_part_analysis_retry_messages(
     part: SubmissionPart,
     exc: ValueError,
 ) -> list[dict[str, str]]:
+    scale_labels = ", ".join(_criterion_scale_for_part(part)[1])
     retry_note = (
         f"Previous attempt for {part.label} failed validation: {exc}. "
         "Retry now and return one short criterion_notes item per criterion, at least 2 concrete strengths, at least 2 concrete weaknesses, "
-        "at least 1 concrete evidence item, and a non-empty coverage_comment. Return only the required JSON object."
+        f"at least 1 concrete evidence item, and a non-empty coverage_comment. Use criterion_notes.status values from this scale only: {scale_labels}. "
+        "Return only the required JSON object."
     )
     return [*messages, {"role": "user", "content": retry_note}]
 
@@ -4476,11 +5198,30 @@ def _normalize_criterion_notes(
     expected_criteria: list[dict[str, str]],
     expected_label: str,
 ) -> list[dict[str, str]]:
-    if not isinstance(value, list):
-        raise ValueError(f"Model did not return a list for criterion_notes in {expected_label}: {value}")
     expected_names = [str(item.get("criterion_name", "")).strip() for item in expected_criteria]
     if not all(expected_names):
         raise ValueError(f"Expected criteria were not fully defined for {expected_label}.")
+    expected_scale_type = str(expected_criteria[0].get("scale_type", "")).strip() if expected_criteria else ""
+    expected_scale_labels = tuple(
+        label.strip()
+        for label in str(expected_criteria[0].get("scale_labels", "")).split(",")
+        if label.strip()
+    ) if expected_criteria else ()
+    if isinstance(value, dict):
+        normalized_items: list[dict[str, Any]] = []
+        for criterion_name, item in value.items():
+            if not isinstance(item, dict):
+                raise ValueError(f"Model returned invalid criterion_notes entries for {expected_label}: {value}")
+            normalized_items.append(
+                {
+                    "criterion_name": str(criterion_name).strip(),
+                    "status": item.get("status"),
+                    "note": item.get("note"),
+                }
+            )
+        value = normalized_items
+    if not isinstance(value, list):
+        raise ValueError(f"Model did not return a list for criterion_notes in {expected_label}: {value}")
     by_name: dict[str, dict[str, str]] = {}
     for item in value:
         if not isinstance(item, dict):
@@ -4488,8 +5229,8 @@ def _normalize_criterion_notes(
         criterion_name = str(item.get("criterion_name", "")).strip()
         if criterion_name not in expected_names or criterion_name in by_name:
             raise ValueError(f"Model returned invalid criterion_notes names for {expected_label}: {value}")
-        status = _normalize_criterion_note_status(item.get("status"))
-        if status not in {"met", "partial", "missed"}:
+        status, normalized_status = _normalize_criterion_note_status(item.get("status"), expected_scale_type)
+        if expected_scale_labels and status not in expected_scale_labels:
             raise ValueError(f"Model returned invalid criterion_notes status for {expected_label}: {value}")
         note = _normalize_criterion_note_text(item.get("note"))
         if not note:
@@ -4497,6 +5238,9 @@ def _normalize_criterion_notes(
         by_name[criterion_name] = {
             "criterion_name": criterion_name,
             "status": status,
+            "normalized_status": normalized_status,
+            "scale_type": expected_scale_type,
+            "scale_labels": list(expected_scale_labels),
             "note": note,
         }
     if len(by_name) != len(expected_names):
@@ -4504,22 +5248,56 @@ def _normalize_criterion_notes(
     return [by_name[name] for name in expected_names]
 
 
-def _normalize_criterion_note_status(value: Any) -> str:
+def _normalize_criterion_note_status(value: Any, scale_type: str) -> tuple[str, str]:
     text = str(value).strip().lower()
-    mapping = {
-        "met": "met",
-        "meets": "met",
-        "strong": "met",
-        "strong_anchor": "met",
+    if scale_type == "likert_judgement":
+        native_mapping = {
+            "weak": "weak",
+            "developing": "developing",
+            "clear": "clear",
+            "strong": "strong",
+            "missed": "weak",
+            "met": "clear",
+            "meets": "clear",
+            "partial": "developing",
+            "partly": "developing",
+            "mixed": "developing",
+            "secure": "strong",
+            "strong_anchor": "strong",
+            "weak_anchor": "weak",
+            "absent": "weak",
+        }
+        normalized_mapping = {
+            "weak": "missed",
+            "developing": "partial",
+            "clear": "met",
+            "strong": "met",
+        }
+        native_status = native_mapping.get(text, text)
+        return native_status, normalized_mapping.get(native_status, native_status)
+    native_mapping = {
+        "missing_or_wrong": "missing_or_wrong",
         "partial": "partial",
         "partly": "partial",
         "mixed": "partial",
-        "missed": "missed",
-        "weak": "missed",
-        "weak_anchor": "missed",
-        "absent": "missed",
+        "secure": "secure",
+        "missed": "missing_or_wrong",
+        "met": "secure",
+        "meets": "secure",
+        "clear": "secure",
+        "strong": "secure",
+        "strong_anchor": "secure",
+        "weak": "missing_or_wrong",
+        "weak_anchor": "missing_or_wrong",
+        "absent": "missing_or_wrong",
     }
-    return mapping.get(text, text)
+    normalized_mapping = {
+        "missing_or_wrong": "missed",
+        "partial": "partial",
+        "secure": "met",
+    }
+    native_status = native_mapping.get(text, text)
+    return native_status, normalized_mapping.get(native_status, native_status)
 
 
 def _normalize_criterion_note_text(value: Any) -> str:
@@ -4617,7 +5395,12 @@ def _segment_subparts_within_section(parent_part: SubmissionPart, child_specs: l
     segmented: list[SubmissionPart] = []
     for index, (start, child) in enumerate(anchors):
         end = anchors[index + 1][0] if index + 1 < len(anchors) else len(section_text)
-        child_text = section_text[start:end].strip()
+        child_text = _select_local_chunk_with_fallback(
+            section_text,
+            start,
+            end,
+            child.question_text_exact or child.focus_hint,
+        )
         segmented.append(
             SubmissionPart(
                 label=child.label,
@@ -4639,10 +5422,55 @@ def _resolve_expected_child_parts(
     child_specs: list[SubmissionPart],
 ) -> list[SubmissionPart]:
     child_by_key = {_normalize_label_key(child.label): child for child in child_parts}
+    parent_section_text = parent_part.section_text
+    child_anchor_positions = {
+        _normalize_label_key(child.label): _find_subpart_anchor_position(parent_section_text, child)
+        for child in child_specs
+    }
     resolved: list[SubmissionPart] = []
     for expected in child_specs:
         matched = child_by_key.get(_normalize_label_key(expected.label))
-        section_text = matched.section_text if matched is not None else parent_part.section_text
+        section_text = matched.section_text if matched is not None else parent_section_text
+        if (
+            matched is not None
+            and parent_section_text.strip()
+            and _section_text_looks_damaged_or_incomplete(section_text, expected.question_text_exact or expected.focus_hint)
+        ):
+            fallback_start = child_anchor_positions.get(_normalize_label_key(expected.label), -1)
+            if fallback_start != -1:
+                following_positions = sorted(
+                    position
+                    for child in child_specs
+                    if _normalize_label_key(child.label) != _normalize_label_key(expected.label)
+                    for position in [child_anchor_positions.get(_normalize_label_key(child.label), -1)]
+                    if position > fallback_start
+                )
+                fallback_end = following_positions[0] if following_positions else len(parent_section_text)
+                section_text = _select_local_chunk_with_fallback(
+                    parent_section_text,
+                    fallback_start,
+                    fallback_end,
+                    expected.question_text_exact or expected.focus_hint,
+                )
+        if parent_section_text.strip() and expected.task_type == "critique_and_revision":
+            current_start = child_anchor_positions.get(_normalize_label_key(expected.label), -1)
+            if current_start != -1:
+                following_positions = sorted(
+                    position
+                    for child in child_specs
+                    if _normalize_label_key(child.label) != _normalize_label_key(expected.label)
+                    for position in [child_anchor_positions.get(_normalize_label_key(child.label), -1)]
+                    if position > current_start
+                )
+                cumulative_end = following_positions[0] if following_positions else len(parent_section_text)
+                cumulative_text = _select_local_chunk_with_fallback(
+                    parent_section_text,
+                    0,
+                    cumulative_end,
+                    expected.question_text_exact or expected.focus_hint,
+                )
+                if cumulative_text:
+                    section_text = cumulative_text
         resolved.append(
             SubmissionPart(
                 label=expected.label,
@@ -4653,6 +5481,7 @@ def _resolve_expected_child_parts(
                 marking_guidance=expected.marking_guidance,
                 question_text_exact=expected.question_text_exact,
                 task_type=expected.task_type,
+                criterion_mode=expected.criterion_mode,
             )
         )
     return resolved

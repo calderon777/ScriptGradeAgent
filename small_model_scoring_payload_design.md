@@ -87,6 +87,27 @@ This means the current priority is:
 
 5. Keep prompt fields because they change the decision, not because they are nice to have.
 
+6. Do not repeat contract scaffolding beyond a minimum scoring core.
+   - Repeated prompt content is allowed only when it materially changes the section decision.
+   - The minimum repeated scoring core is:
+     - `section_id`
+     - mark range
+     - task definition
+     - section criteria
+     - section response
+     - minimal output schema
+
+7. Do not allow cross-task construct leakage.
+   - Criteria for one task family must not be imported into another because of superficial wording overlap.
+   - Parent guidance may refine a child section only when it is explicitly relevant to that child task.
+   - A critique/revision section must not leak into an evaluative discussion.
+   - A derivation section must not inherit synthesis-style appraisal criteria.
+
+8. Keep scorer and verifier roles separate.
+   - The scorer grades the section against the current payload.
+   - The verifier is a separate compact pass for criterion refinement and score moderation.
+   - The verifier must not silently repair hidden payload defects during grading.
+
 ## What The Model Should Decide
 
 For each section, the model should answer only these questions:
@@ -210,6 +231,42 @@ Do not send these by default to a small model:
 - multiple overlapping versions of the same criterion,
 - background text that does not change the section judgement,
 - neutral scoring options unless the section is genuinely missing or unscorable.
+
+Also avoid:
+
+- repeating the same contract scaffolding on every section when a smaller core would do,
+- repeating long output instructions that do not change the section decision,
+- sending parent-level construct expectations into a child section unless the dependency is explicit,
+- using the verifier to compensate for scorer-payload defects that should remain visible in inspection.
+
+## Verifier Pass
+
+If a verifier is used, it should be a separate compact pass, not an extension of the scoring payload.
+
+Its purpose is narrow:
+
+1. identify criteria that are too broad or too generous,
+2. suggest tighter criterion wording,
+3. moderate section scores that are clearly too generous.
+
+Its purpose is not:
+
+- hidden payload repair,
+- discovering missing required constructs that should have been explicit in the scorer payload,
+- long-form narrative feedback,
+- regrading the section from scratch.
+
+Recommended verifier outputs:
+
+- `agreement`
+- `confidence_0_to_100`
+- `criteria_adjustments`
+- `overgenerous_criteria`
+- `score_too_generous`
+- `max_reasonable_score`
+- `recommendation`
+
+Verifier recommendations should stay compact and analytical. The verifier should act like a constrained reviewer, not a second essay-writing grader.
 
 ## Prompt Wording Recommendations
 
@@ -448,6 +505,9 @@ Trying to force both through the same generic rubric prose generator will reduce
    - criterion-matrix tasks.
 5. Remove unrelated whole-assessment context from section scoring prompts.
 6. Keep human-inspection exports, but separate them from model-facing payloads.
+7. Reduce repeated contract scaffolding to the minimum scoring core.
+8. Enforce task-local criteria generation so constructs do not leak across task families.
+9. Treat verifier prompts as a separate compact refinement/moderation path, not hidden payload repair.
 
 ## Success Criteria
 

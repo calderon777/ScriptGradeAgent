@@ -1,0 +1,22 @@
+RANKING:
+1. (4) if a required element is missing, cap the score.
+2. (5) first classify then score.
+3. (7) here is one short example of a good response shape.
+4. (6) do not use outside information.
+5. (8) keep note to 2 to 5 words.
+6. (1) exactly these keys.
+7. (3) choose from these allowed values only.
+8. (2) use only this section.
+
+MOST_LIKELY_MATCHES_CREATOR_STYLE:
+4, 5, 7: These instructions are clear and direct about what is expected in terms of structure or process, which aligns well with a structured and methodical approach to instruction following.
+
+6, 1: Instructions that specify exactly what keys to use or follow provide clear guidance on the content required, which matches an instructional style that values precision and specificity.
+
+2, 3: These instructions focus on limiting the scope of responses by specifying sections or value ranges, which is consistent with a creator's preference for guiding responses within predefined boundaries.
+
+LEAST_LIKELY_MATCHES_CREATOR_STYLE:
+8: This instruction might not align well as it lacks explicit structure; instead, it imposes constraints through word count rather than content or process guidance.
+
+WHY:
+The ranking reflects the degree to which each prompt pattern provides clear, structured guidance that aligns with a systematic approach to following instructions. Instructions that are more prescriptive (like those numbered 1-5) are likely to match better because they offer explicit rules and processes for response generation. Conversely, prompts like number 8 lack this level of specificity, making them less likely to match the style of an instruction-following AI if it prefers structured guidance over implicit or vague guidelines.

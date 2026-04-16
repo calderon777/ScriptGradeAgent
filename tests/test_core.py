@@ -22,6 +22,7 @@ from marking_pipeline.core import (
     build_assessment_map_cache_key,
     build_deterministic_rubric_text,
     build_part_messages,
+    build_unit_rubric_text,
     cleanup_pymupdf4llm_text,
     _docx_heading_marker,
     build_rubric_matrix_markdown,
@@ -45,11 +46,15 @@ from marking_pipeline.core import (
     discover_assessment_bundles,
     infer_max_mark_from_texts,
     infer_dependency_group,
+    infer_criterion_mode,
     infer_task_type,
+    refine_part_task_types_with_model,
     normalize_detected_parts,
     normalize_marking_result,
     normalize_verified_rubric,
+    normalize_part_verification_result,
     moderate_linked_part_analyses,
+    apply_part_verifier_result,
     normalize_moderated_part_scores,
     normalize_verification_result,
     parse_json_object,
@@ -60,6 +65,7 @@ from marking_pipeline.core import (
     refine_submission_granularity,
     segment_submission_parts,
     SubmissionPart,
+    verify_part_analysis,
     verify_assessment_rubrics,
     verify_marking_result,
 )
@@ -193,6 +199,12 @@ class TaskTypeInferenceTests(unittest.TestCase):
             "regression_specification",
         )
 
+    def test_infers_explicit_criterion_mode_from_task_type(self) -> None:
+        self.assertEqual(infer_criterion_mode("evaluative_discussion"), "abstract")
+        self.assertEqual(infer_criterion_mode("synthesis_across_sources"), "abstract")
+        self.assertEqual(infer_criterion_mode("deterministic_derivation"), "deterministic")
+        self.assertEqual(infer_criterion_mode("comparative_statics"), "deterministic")
+
     def test_builds_assessment_map_audit_sensitive_task_types_for_ec3040_shapes(self) -> None:
         context = prepare_marking_context(
             rubric_text=(
@@ -210,8 +222,10 @@ class TaskTypeInferenceTests(unittest.TestCase):
         unit_by_label = {unit.label: unit for unit in assessment_map.units}
         self.assertEqual(unit_by_label["Part 2 Q4"].task_type, "comparative_statics")
         self.assertEqual(unit_by_label["Part 2 Q4"].grading_mode, "deterministic")
+        self.assertEqual(unit_by_label["Part 2 Q4"].criterion_mode, "deterministic")
         self.assertEqual(unit_by_label["Part 2 Q6"].task_type, "evaluative_discussion")
         self.assertEqual(unit_by_label["Part 2 Q6"].grading_mode, "analytical")
+        self.assertEqual(unit_by_label["Part 2 Q6"].criterion_mode, "abstract")
 
     def test_task_goals_use_assessment_generic_wording(self) -> None:
         self.assertNotIn("AI-produced", _task_goal_from_task_type("critique_and_revision", ""))
@@ -235,6 +249,17 @@ class TaskTypeInferenceTests(unittest.TestCase):
                 ),
             ),
         )
+        self.assertIn(
+            "comment on whether the output seems accurate",
+            _task_goal_from_task_type(
+                "critique_and_revision",
+                (
+                    "Part 1 (15 marks) 1. Using a publicly available generative AI platform of your choice, generate a 300 word summary. "
+                    "2. Using the course material provided, comment on whether the output seems accurate. "
+                    "3. Edit the output to correct any mistakes and rewrite it in your own tone."
+                ),
+            ),
+        )
         self.assertEqual(
             _question_text_for_model("Part 2 Q4 (5 marks) Explain how changing each parameter makes scenario 1 more likely than scenario 2."),
             "Explain how changing each parameter makes scenario 1 more likely than scenario 2",
@@ -242,6 +267,17 @@ class TaskTypeInferenceTests(unittest.TestCase):
         self.assertEqual(
             _question_text_for_model("Part 2 (15 marks)\nDiscuss the reform in your own words."),
             "Discuss the reform in your own words",
+        )
+        self.assertIn(
+            "state whether the final comparison is robust to the alternative parameterization",
+            _question_text_for_model(
+                (
+                    "Part 2 Q4 (5 marks) Explain how changing each parameter makes scenario 1 more likely than scenario 2. "
+                    "Then identify the binding assumption in the setup, explain the family-by-family logic carefully, "
+                    "and state whether the final comparison is robust to the alternative parameterization."
+                ),
+                max_chars=1800,
+            ),
         )
         self.assertEqual(_task_goal_for_model("Evaluate the policy.", "Evaluate the policy."), "")
         self.assertEqual(
@@ -857,6 +893,31 @@ class SubmissionStructureTests(unittest.TestCase):
         )
         self.assertEqual(child_map["part 2"][0].max_mark, 5.0)
 
+    def test_extract_expected_subparts_from_context_can_include_unmarked_children(self) -> None:
+        context = prepare_marking_context(
+            rubric_text="",
+            brief_text=(
+                "Part 1 (15 marks)\n"
+                "1. Generate a 300 word summary of the policy.\n"
+                "2. Comment on whether the generated output is accurate using the provided material.\n"
+                "3. Edit the output to correct any mistakes and rewrite it in your own tone.\n"
+            ),
+            marking_scheme_text=(
+                "Part 1 (15 marks)\n"
+                "Answer:\n"
+                "Marks should be allocated for identifying inaccuracies and rewriting clearly.\n"
+                "out of 15\n"
+            ),
+            graded_sample_text="",
+            other_context_text="",
+        )
+        child_map = extract_expected_subparts_from_context(context, require_marks=False)
+        self.assertEqual([part.label for part in child_map["part 1"]], ["Part 1 Q1", "Part 1 Q2", "Part 1 Q3"])
+        self.assertTrue(all(part.max_mark == 5.0 for part in child_map["part 1"]))
+        self.assertEqual([part.task_type for part in child_map["part 1"]], ["critique_and_revision", "critique_and_revision", "critique_and_revision"])
+        self.assertEqual([part.criterion_mode for part in child_map["part 1"]], ["abstract", "abstract", "abstract"])
+        self.assertIn("Parent marking instructions:", child_map["part 1"][0].marking_guidance)
+
     def test_extract_assessment_structure_captures_unmarked_subparts_marking_and_anchors(self) -> None:
         context = prepare_marking_context(
             rubric_text="",
@@ -1010,7 +1071,7 @@ class SubmissionStructureTests(unittest.TestCase):
         self.assertIn("theoretical model from Part 2", unit_by_label["Part 4"].question_text_exact)
         self.assertIn("the required synthesis of framework, evidence, and material claims", unit_by_label["Part 4"].rubric_text)
 
-    def test_build_assessment_map_keeps_parent_unit_for_unmarked_subparts_and_uses_exact_marking_text(self) -> None:
+    def test_build_assessment_map_evenly_splits_parent_marks_across_unmarked_subparts(self) -> None:
         context = prepare_marking_context(
             rubric_text="",
             brief_text=(
@@ -1039,11 +1100,11 @@ class SubmissionStructureTests(unittest.TestCase):
         assessment_map = build_assessment_map(context)
         unit_by_label = {unit.label: unit for unit in assessment_map.units}
 
-        self.assertIn("Part 1", unit_by_label)
-        self.assertNotIn("Part 1 Q1", unit_by_label)
-        self.assertIn("1. Generate a short summary of the policy.", unit_by_label["Part 1"].question_text_exact)
-        self.assertIn("Marks should be allocated for clear rewriting", unit_by_label["Part 1"].marking_guidance)
-        self.assertIn("Evidence expectations:", unit_by_label["Part 1"].marking_guidance)
+        self.assertNotIn("Part 1", unit_by_label)
+        self.assertEqual([unit_by_label[f"Part 1 Q{i}"].max_mark for i in range(1, 4)], [5.0, 5.0, 5.0])
+        self.assertIn("1. Generate a short summary of the policy.", unit_by_label["Part 1 Q1"].question_text_exact)
+        self.assertIn("Marks should be allocated for clear rewriting", unit_by_label["Part 1 Q1"].marking_guidance)
+        self.assertIn("Parent marking instructions:", unit_by_label["Part 1 Q1"].marking_guidance)
         self.assertIn("Part 2 Q1", unit_by_label)
         self.assertIn("Full marks require the correct utility function and notation.", unit_by_label["Part 2 Q1"].marking_guidance)
 
@@ -1140,12 +1201,12 @@ class SubmissionStructureTests(unittest.TestCase):
             max_mark=15.0,
             marking_guidance="Evaluate whether the response directly addresses the required evaluative discussion.",
         )
-        messages = build_part_messages(part, context, "student.docx")
+        messages = build_part_messages(part, context, "student.docx", model_name="qwen2:7b")
         system = messages[0]["content"]
         user = messages[1]["content"]
-        self.assertIn("Score only the unit defined in the payload.", system)
-        self.assertIn("Output exactly one valid JSON object.", system)
-        self.assertIn("Do not include markdown, code fences, or any text before or after the JSON.", system)
+        self.assertIn("Score only this section from the payload.", system)
+        self.assertIn("Return one JSON object only.", system)
+        self.assertIn("Follow the scope_block, decision_block, and output_block exactly.", system)
         self.assertIn("scoring_payload:", user)
         self.assertIn('"section_id": "Part 1"', user)
         self.assertNotIn("student_file_name:", user)
@@ -1154,17 +1215,29 @@ class SubmissionStructureTests(unittest.TestCase):
         self.assertIn('"method": "criterion_evaluation"', user)
         self.assertIn('"criteria"', user)
         self.assertIn('"criterion_name": "criterion_5"', user)
-        self.assertIn('"weak_anchor"', user)
-        self.assertIn('"strong_anchor"', user)
-        self.assertIn("Evaluate whether the response directly addresses the required evaluative discussion.", user)
-        self.assertIn('"provisional_score must be between 0 and 15."', user)
-        self.assertNotIn("Use the full score range from 0 to 15.", user)
-        self.assertIn('"return_json_keys"', user)
-        self.assertIn('"criterion_notes"', user)
-        self.assertIn('"criterion_notes_format"', user)
-        self.assertIn('"status_allowed_values"', user)
-        self.assertIn('Do not copy the criterion text, weak_anchor, or strong_anchor.', user)
-        self.assertIn('"optional_json_keys"', user)
+        self.assertNotIn('"weak_anchor"', user)
+        self.assertNotIn('"strong_anchor"', user)
+        self.assertIn("Check that the response directly addresses the required evaluative discussion.", user)
+        self.assertIn('"scale"', user)
+        self.assertIn('"type": "verification_check"', user)
+        self.assertIn('"labels": [', user)
+        self.assertIn('"missing_or_wrong"', user)
+        self.assertNotIn("Evaluate whether", user)
+        self.assertNotIn(" whether ", user.lower())
+        self.assertIn('"scope_block"', user)
+        self.assertIn('"decision_block"', user)
+        self.assertIn('"output_block"', user)
+        self.assertIn('Task mode: deterministic.', user)
+        self.assertIn('For each criterion, choose one status only from: missing_or_wrong, partial, secure.', user)
+        self.assertIn('If a required element is missing, do not use secure for that criterion and do not award a top score.', user)
+        self.assertIn('provisional_score must be between 0 and 15.', user)
+        self.assertIn('Return one JSON object with exactly these keys: section_label, provisional_score, criterion_notes, strengths, weaknesses, evidence, coverage_comment.', user)
+        self.assertIn('criterion_notes must be a list of {criterion_name, status, note}.', user)
+        self.assertIn('criterion_notes.status must be one of: missing_or_wrong, partial, secure.', user)
+        self.assertIn('criterion_notes.note must be 2 to 5 words and must not copy the criterion text.', user)
+        self.assertIn('strengths and weaknesses must each contain at least 2 items.', user)
+        self.assertIn('evidence must contain at least 1 item.', user)
+        self.assertNotIn('"output_contract"', user)
         self.assertNotIn('"band_confidence_0_to_100"', user)
         self.assertNotIn("STRUCTURE AND MARKS HINTS:", user)
         self.assertNotIn("LOCAL ASSIGNMENT BRIEF SUPPORT:", user)
@@ -1194,12 +1267,173 @@ class SubmissionStructureTests(unittest.TestCase):
             task_type="deterministic_derivation",
         )
 
-        messages = build_part_messages(part, context, "student.docx")
+        messages = build_part_messages(part, context, "student.docx", model_name="qwen2:7b")
         user = messages[1]["content"]
         self.assertIn('"required_steps"', user)
         self.assertIn('state the required inequalities or parameter conditions', user)
         self.assertIn('check the relevant family-by-family deviation conditions', user)
         self.assertIn('give a numerical example that satisfies the stated conditions', user)
+        self.assertIn("Confirm that the answer states the required inequalities or parameter conditions correctly.", user)
+        self.assertIn('"type": "verification_check"', user)
+
+    def test_part_messages_keep_longer_exact_question_text_for_deterministic_sections(self) -> None:
+        context = prepare_marking_context("Maximum mark: 5", "", "", "", "")
+        part = SubmissionPart(
+            label="Part 2 Q4",
+            focus_hint="Scenario comparison.",
+            section_text="Student answer text.",
+            max_mark=5.0,
+            question_text_exact=(
+                "Part 2 Q4 (5 marks) Explain how changing each parameter makes scenario 1 more likely than scenario 2. "
+                "State the sign logic carefully for every parameter, identify the binding assumption, "
+                "and state whether the final comparison is robust to the alternative parameterization."
+            ),
+            marking_guidance="Evaluate whether the comparative statics are correct.",
+            task_type="comparative_statics",
+        )
+
+        messages = build_part_messages(part, context, "student.docx", model_name="qwen2:7b")
+        user = messages[1]["content"]
+        self.assertIn("state whether the final comparison is robust to the alternative parameterization", user)
+
+    def test_part_messages_use_abstract_judgement_language_for_discussion_sections(self) -> None:
+        context = prepare_marking_context("Maximum mark: 15", "", "", "", "")
+        part = SubmissionPart(
+            label="Part 4",
+            focus_hint="Judge the claims in the video.",
+            section_text="Student discussion text.",
+            max_mark=15.0,
+            question_text_exact="Discuss whether the claims in the video are justified using the model and evidence.",
+            marking_guidance="Evaluate whether the discussion reaches a justified judgement and uses relevant evidence.",
+            task_type="evaluative_discussion",
+        )
+
+        messages = build_part_messages(part, context, "student.docx", model_name="qwen2:7b")
+        user = messages[1]["content"]
+        self.assertIn("Judge how well the discussion reaches a justified judgement and uses relevant evidence.", user)
+        self.assertIn('"type": "likert_judgement"', user)
+        self.assertIn('"weak"', user)
+        self.assertIn('"strong"', user)
+
+    def test_part_messages_respect_explicit_criterion_mode_on_part(self) -> None:
+        context = prepare_marking_context("Maximum mark: 15", "", "", "", "")
+        part = SubmissionPart(
+            label="Part 4",
+            focus_hint="Judge the claims in the video.",
+            section_text="Student discussion text.",
+            max_mark=15.0,
+            marking_guidance="Evaluate whether the discussion reaches a justified judgement and uses relevant evidence.",
+            criterion_mode="abstract",
+        )
+
+        messages = build_part_messages(part, context, "student.docx", model_name="qwen2:7b")
+        user = messages[1]["content"]
+        self.assertIn("Judge how well the discussion reaches a justified judgement and uses relevant evidence.", user)
+        self.assertIn('"type": "likert_judgement"', user)
+
+    def test_part_messages_turn_critique_deliverables_into_explicit_checks(self) -> None:
+        context = prepare_marking_context("Maximum mark: 5", "", "", "", "")
+        part = SubmissionPart(
+            label="Part 1 Q3",
+            section_text="Student answer text.",
+            max_mark=5.0,
+            question_text_exact=(
+                "3. Edit the output to correct any mistakes or inaccuracies that you found, support it "
+                "with references from the article or lecture notes, and rewrite it in your own tone. "
+                "Note: your answer should contain four parts: (1) the prompt you submitted, "
+                "(2) the output from the generative AI platform, (3) your comments on the output, "
+                "(4) the re-written summary."
+            ),
+            marking_guidance="Parent marking instructions:\nIdentify inaccuracies and support corrections with evidence.",
+            task_type="critique_and_revision",
+            criterion_mode="abstract",
+        )
+
+        messages = build_part_messages(part, context, "student.docx", model_name="qwen2:7b")
+        user = messages[1]["content"]
+        self.assertIn("Judge how well the response includes the prompt you submitted.", user)
+        self.assertIn("Judge how well the response includes the output from the generative AI platform.", user)
+        self.assertIn("Judge how well the response includes your comments on the output.", user)
+        self.assertIn("Judge how well the response includes the re-written summary.", user)
+        self.assertIn("Judge how well the response supports the critique and corrections with specific source evidence or page references.", user)
+
+    def test_part_messages_turn_measurement_deliverables_into_explicit_checks(self) -> None:
+        context = prepare_marking_context("Maximum mark: 7.5", "", "", "", "")
+        part = SubmissionPart(
+            label="Part 3 Q2",
+            section_text="Student answer text.",
+            max_mark=7.5,
+            question_text_exact=(
+                "2. [7.5 marks] For each prediction from the theory, explain how each variable could be measured "
+                "in the real world. Find some data sources online that could be used to measure these variables. "
+                "Note: you do not need to download the data, just provide a link to the source of data and indicate "
+                "which variable or combination of variables in the dataset you would use."
+            ),
+            marking_guidance="Evaluate whether the response defines the required measurement choices and data-source mapping clearly.",
+            task_type="measurement_and_data_design",
+        )
+
+        messages = build_part_messages(part, context, "student.docx", model_name="qwen2:7b")
+        user = messages[1]["content"]
+        self.assertIn("Check that the response covers each prediction from the theory rather than only a subset.", user)
+        self.assertIn("Check that the response provides a usable source link for the proposed data.", user)
+        self.assertIn("Check that the response identifies which dataset variable or variable combination would be used.", user)
+
+    def test_part_messages_turn_regression_deliverables_into_explicit_checks(self) -> None:
+        context = prepare_marking_context("Maximum mark: 7.5", "", "", "", "")
+        part = SubmissionPart(
+            label="Part 3 Q3",
+            section_text="Student answer text.",
+            max_mark=7.5,
+            question_text_exact=(
+                "3. [7.5 marks] Choose one of the theory's prediction from your answer to question 1 above, "
+                "and write down the regression equation that would allow you to test the prediction using the "
+                "data you identified in question 2. Explain carefully each term in your equation, identify the "
+                "main coefficient of interest and describe what hypothesis you would test to check if the theory is correct."
+            ),
+            marking_guidance="Evaluate whether the response states the required regression equation, coefficient of interest, and hypothesis correctly.",
+            task_type="regression_specification",
+        )
+
+        messages = build_part_messages(part, context, "student.docx", model_name="qwen2:7b")
+        user = messages[1]["content"]
+        self.assertIn("Check that the response matches the regression specification to one stated theory prediction.", user)
+        self.assertIn("Check that the response uses variables that are consistent with the measures or data identified earlier.", user)
+        self.assertIn("Check that the response identifies the main coefficient of interest.", user)
+        self.assertIn("Check that the response states the hypothesis that would test the chosen prediction.", user)
+
+    def test_generated_unit_rubric_uses_source_specific_synthesis_constructs(self) -> None:
+        rubric = build_unit_rubric_text(
+            label="Part 4",
+            max_mark=15.0,
+            grading_mode="analytical",
+            task_type="synthesis_across_sources",
+            question_text_exact=(
+                "Discuss how the theoretical model and the evidence can shed light on the arguments in the two videos. "
+                "What arguments are brought up in the video but not included in the model? "
+                "How would you change the model to analyse these points?"
+            ),
+            marking_guidance="Discuss the videos using the model and evidence.",
+        )
+        self.assertIn("Evaluate whether the response covers the arguments raised in the relevant source materials rather than only one source.", rubric)
+        self.assertIn("Evaluate whether the response identifies arguments or factors raised in the sources that the model does not capture.", rubric)
+        self.assertIn("Evaluate whether the response proposes concrete changes or extensions to the model to analyse the omitted points.", rubric)
+
+    @patch("marking_pipeline.core._call_ollama_json")
+    def test_refine_part_task_types_with_model_updates_ambiguous_child_subparts(self, mock_call: Mock) -> None:
+        mock_call.return_value = {"task_type": "critique_and_revision", "reason": "Child step belongs to a multi-step critique and revision workflow."}
+        parts = [
+            SubmissionPart(
+                label="Part 1 Q2",
+                question_text_exact="Comment on whether the generated output is accurate using the provided material.",
+                marking_guidance="Parent marking instructions:\nIdentify inaccuracies and support corrections with evidence.",
+                task_type="evaluative_discussion",
+                criterion_mode="abstract",
+            )
+        ]
+        refined = refine_part_task_types_with_model(parts, "mistral:7b")
+        self.assertEqual(refined[0].task_type, "critique_and_revision")
+        self.assertEqual(refined[0].criterion_mode, "abstract")
 
     def test_normalizes_verified_rubric(self) -> None:
         unit = AssessmentUnit(label="Part 2 Q1", max_mark=5.0, grading_mode="deterministic")
@@ -1213,6 +1447,35 @@ class SubmissionStructureTests(unittest.TestCase):
         )
         self.assertEqual(normalized["confidence_0_to_100"], 88.0)
         self.assertEqual(normalized["issues"][0], "Added explicit algebra check.")
+
+    def test_normalize_part_analysis_accepts_keyed_criterion_notes_with_scale_labels(self) -> None:
+        part = SubmissionPart(
+            label="Part 4",
+            max_mark=15.0,
+            task_type="evaluative_discussion",
+            criterion_mode="abstract",
+            marking_guidance="Compact scoring criteria:\n- Determine whether the discussion reaches a justified judgement.",
+        )
+        normalized = normalize_part_analysis(
+            {
+                "section_label": "Part 4",
+                "provisional_score": 11,
+                "criterion_notes": {
+                    "criterion_1": {"status": "clear", "note": "judgement well supported"},
+                    "criterion_2": {"status": "developing", "note": "counterargument limited"},
+                    "criterion_3": {"status": "strong", "note": "stays on task"},
+                    "criterion_4": {"status": "weak", "note": "missing nuance"},
+                    "criterion_5": {"status": "clear", "note": "enough coverage shown"},
+                },
+                "strengths": ["Clear final judgement.", "Relevant evidence used."],
+                "weaknesses": ["Counterargument is thin.", "Nuance is limited."],
+                "evidence": ["Links model claims to evidence."],
+                "coverage_comment": "Covers the main evaluative task with some gaps in nuance.",
+            },
+            part=part,
+        )
+        self.assertEqual([item["status"] for item in normalized["criterion_notes"]], ["clear", "developing", "strong", "weak", "clear"])
+        self.assertEqual([item["normalized_status"] for item in normalized["criterion_notes"]], ["met", "partial", "met", "missed", "met"])
 
     @patch("marking_pipeline.core._call_ollama_json")
     def test_verifies_assessment_rubrics(self, mock_call: Mock) -> None:
@@ -1308,8 +1571,10 @@ class SubmissionStructureTests(unittest.TestCase):
             },
             part=part,
         )
-        self.assertEqual(result["criterion_notes"][0]["status"], "met")
-        self.assertEqual(result["criterion_notes"][2]["status"], "missed")
+        self.assertEqual(result["criterion_notes"][0]["status"], "secure")
+        self.assertEqual(result["criterion_notes"][0]["normalized_status"], "met")
+        self.assertEqual(result["criterion_notes"][2]["status"], "missing_or_wrong")
+        self.assertEqual(result["criterion_notes"][2]["normalized_status"], "missed")
         self.assertLessEqual(len(result["criterion_notes"][1]["note"].split()), 5)
 
     @patch("marking_pipeline.core._call_ollama_json")
@@ -1612,6 +1877,72 @@ class SubmissionStructureTests(unittest.TestCase):
         self.assertEqual([part.label for part in refined], ["Part 3 Q1", "Part 3 Q2", "Part 3 Q3", "Part 3 Q4"])
         self.assertTrue(all(part.section_text == "" for part in refined))
 
+    def test_refine_submission_granularity_can_include_unmarked_subparts_for_inspection(self) -> None:
+        context = prepare_marking_context(
+            rubric_text="",
+            brief_text=(
+                "Part 1 (15 marks)\n"
+                "1. Generate a short summary of the policy.\n"
+                "2. Comment on whether the generated output is accurate using the provided material.\n"
+                "3. Edit the output to correct any mistakes and rewrite it in your own tone.\n"
+            ),
+            marking_scheme_text=(
+                "Part 1 (15 marks)\n"
+                "Answer:\n"
+                "Marks should be allocated for identifying inaccuracies and rewriting clearly.\n"
+                "out of 15\n"
+            ),
+            graded_sample_text="",
+            other_context_text="",
+        )
+        parts = [
+            SubmissionPart(
+                label="Part 1",
+                anchor_text="Part 1",
+                section_text="Part 1\n1) Prompt text.\n2) Accuracy comments.\n3) Rewritten summary.",
+                max_mark=15.0,
+            )
+        ]
+        refined = refine_submission_granularity(parts, context, "student.docx", "qwen2:7b", include_unmarked_subparts=True)
+        self.assertEqual([part.label for part in refined], ["Part 1 Q1", "Part 1 Q2", "Part 1 Q3"])
+        self.assertEqual([part.task_type for part in refined], ["critique_and_revision", "critique_and_revision", "critique_and_revision"])
+        self.assertEqual([part.criterion_mode for part in refined], ["abstract", "abstract", "abstract"])
+        self.assertIn("1) Prompt text.", refined[1].section_text)
+        self.assertIn("2) Accuracy comments.", refined[2].section_text)
+
+    def test_refine_submission_granularity_uses_larger_local_chunk_for_short_damaged_subpart(self) -> None:
+        context = prepare_marking_context(
+            rubric_text=(
+                "Part 2 (15 marks)\n"
+                "1. [7.5 marks] Derive conditions for scenario 1 and explain why they hold.\n"
+                "2. [7.5 marks] Discuss scenario 2.\n"
+                "out of 15"
+            ),
+            brief_text="",
+            marking_scheme_text="",
+            graded_sample_text="",
+            other_context_text="",
+        )
+        parts = [
+            SubmissionPart(
+                label="Part 2",
+                anchor_text="Part 2",
+                section_text=(
+                    "Part 2\n"
+                    "Q1\n"
+                    "deriveconditions hold.\n"
+                    "The answer then explains why the first scenario is stable and checks each family decision carefully.\n"
+                    "Q2\n"
+                    "Second answer text."
+                ),
+                max_mark=15.0,
+            )
+        ]
+
+        refined = refine_submission_granularity(parts, context, "student.docx", "qwen2:7b")
+        self.assertEqual([part.label for part in refined], ["Part 2 Q1", "Part 2 Q2"])
+        self.assertIn("checks each family decision carefully", refined[0].section_text)
+
     def test_builds_zero_credit_analysis_for_missing_expected_part(self) -> None:
         part = SubmissionPart(label="Part 3 Q4", max_mark=7.5, marking_guidance="Deterministic derivation section.")
         analysis = build_missing_part_analysis(part)
@@ -1619,7 +1950,8 @@ class SubmissionStructureTests(unittest.TestCase):
         self.assertEqual(analysis["provisional_score"], 0.0)
         self.assertIsNone(analysis["provisional_score_0_to_100"])
         self.assertEqual(len(analysis["criterion_notes"]), 5)
-        self.assertTrue(all(item["status"] == "missed" for item in analysis["criterion_notes"]))
+        self.assertTrue(all(item["status"] == "missing_or_wrong" for item in analysis["criterion_notes"]))
+        self.assertTrue(all(item["normalized_status"] == "missed" for item in analysis["criterion_notes"]))
         self.assertIn("zero", analysis["coverage_comment"].lower())
 
 
@@ -1664,6 +1996,42 @@ class VerificationTests(unittest.TestCase):
         self.assertEqual(result["agreement"], "minor_concern")
         self.assertEqual(result["confidence_0_to_100"], 82.0)
 
+    def test_normalizes_part_verification_result(self) -> None:
+        result = normalize_part_verification_result(
+            {
+                "agreement": "major_concern",
+                "confidence_0_to_100": 91,
+                "criteria_adjustments": ["tighten criterion to require balanced tradeoff analysis"],
+                "overgenerous_criteria": ["overall judgement criterion rewards plausible discussion too easily"],
+                "score_too_generous": True,
+                "max_reasonable_score": 6,
+                "recommendation": "lower_score",
+            },
+            max_mark=7.5,
+        )
+        self.assertEqual(result["agreement"], "major_concern")
+        self.assertEqual(result["max_reasonable_score"], 6.0)
+
+    def test_apply_part_verifier_result_caps_generous_score(self) -> None:
+        adjusted = apply_part_verifier_result(
+            {
+                "section_label": "Part 2 Q6",
+                "provisional_score": 8.5,
+                "coverage_comment": "Strong discussion with uneven support.",
+            },
+            {
+                "agreement": "major_concern",
+                "confidence_0_to_100": 90.0,
+                "criteria_adjustments": ["tighten criterion to require explicit treatment of weaker groups"],
+                "overgenerous_criteria": ["broad judgement criterion over-rewards plausible answers"],
+                "score_too_generous": True,
+                "max_reasonable_score": 7.0,
+                "recommendation": "lower_score",
+            },
+        )
+        self.assertEqual(adjusted["provisional_score"], 7.0)
+        self.assertIn("Verifier cap applied", adjusted["coverage_comment"])
+
     @patch("marking_pipeline.core.requests.post")
     def test_verify_marking_result_calls_model(self, mock_post: Mock) -> None:
         context = prepare_marking_context("Maximum mark: 20", "", "", "", "")
@@ -1684,6 +2052,45 @@ class VerificationTests(unittest.TestCase):
             model_name="gemma3:4b",
         )
         self.assertEqual(result["agreement"], "agree")
+
+    @patch("marking_pipeline.core.requests.post")
+    def test_verify_part_analysis_calls_model(self, mock_post: Mock) -> None:
+        context = prepare_marking_context("Maximum mark: 10", "", "", "", "")
+        response = Mock()
+        response.json.return_value = {
+            "message": {
+                "content": '{"agreement": "minor_concern", "confidence_0_to_100": 84, "criteria_adjustments": ["tighten judgement criterion to require concrete tradeoff analysis"], "overgenerous_criteria": ["general judgement criterion is too forgiving"], "score_too_generous": true, "max_reasonable_score": 7, "recommendation": "lower_score"}'
+            }
+        }
+        response.raise_for_status.return_value = None
+        mock_post.return_value = response
+
+        result = verify_part_analysis(
+            part=SubmissionPart(
+                label="Part 2 Q6",
+                section_text="Student answer",
+                max_mark=10.0,
+                question_text_exact="Discuss whether VAT on private schools is a good idea.",
+                marking_guidance="Discuss carefully whether the policy is a good idea.",
+                task_type="evaluative_discussion",
+                criterion_mode="abstract",
+            ),
+            context=context,
+            filename="student1.pdf",
+            part_analysis={
+                "section_label": "Part 2 Q6",
+                "provisional_score": 8.5,
+                "grade_band": "2:1",
+                "within_band_position": "high",
+                "criterion_notes": [],
+                "strengths": ["clear view", "uses examples"],
+                "weaknesses": ["tradeoffs thin", "some claims generic"],
+                "evidence": ["mentions redistribution"],
+                "coverage_comment": "Plausible but a little generous.",
+            },
+            model_name="qwen2:7b",
+        )
+        self.assertEqual(result["recommendation"], "lower_score")
 
     @patch("marking_pipeline.core.requests.post")
     def test_regrade_marking_result_revises_grade(self, mock_post: Mock) -> None:

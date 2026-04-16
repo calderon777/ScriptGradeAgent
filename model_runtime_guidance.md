@@ -203,19 +203,48 @@ Best current use:
 Strengths:
 
 - can be stronger than Gemma on nuanced scoring
-- often benefits from richer structured payloads
+- often benefits from structured, concrete payloads
+- benefits more from precise local constraints than from repeated long scaffolding
 
 Risks:
 
 - can become slow on long extraction tasks
 - can timeout if asked to parse large documents in one shot
 - can over-process and drift if the task is broad
+- can drift when the prompt repeats broad rubric text instead of giving hard local rules
 
 Use Qwen when:
 
 - the task is important enough to justify more latency
 - the input has already been narrowed
 - you need stronger judgement, not just label extraction
+
+### Internal Prompt-Probe Notes For Qwen
+
+I also ran small local meta-probes against `qwen2:7b` to ask which instruction styles seem to stabilize its own behaviour on our scoring workflow.
+
+These probes are not evidence about proprietary training details. They are only directional evidence from Qwen's self-report and observed response shape. One follow-up partly scrambled item labels while still pointing to the same general preference pattern, so the conclusions below should be treated as practical prompt-design guidance rather than model internals.
+
+What the probe outputs consistently supported:
+
+- precise local scope rules such as `use only this section` and `do not import requirements from other questions`
+- explicit allowed-value constraints such as `choose one label only from the allowed values`
+- hard score-discipline rules such as `if a required element is missing, cap the score`
+- strict output typing such as `return one JSON object with exactly these keys`
+- a short valid example shape can help when schema drift is still happening
+
+What the probe outputs treated as weak or noisy:
+
+- repeating the same long rubric and output contract in every prompt
+- broad "mark like a professor" wording without scope, scale, or typing constraints
+- generic repetition that does not add a new decision rule
+
+Practical translation for this repo:
+
+- "structured" should mean clear, local, and typed, not verbose
+- for Qwen scoring calls, prefer scope rules, allowed labels, caps, and exact keys over repeated prose
+- use one short example only when output drift remains after the hard constraints are already clear
+- if task type changes the scale, classify first and then score; otherwise do not add that extra step
 
 ### Mistral 7B
 

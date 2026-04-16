@@ -1,0 +1,13 @@
+{
+  "sample_path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Sadik Ulusow_1494125_assignsubmission_file\\Economics and Society Coursework (60^L1) (Final).pdf",
+  "model_name": "qwen2:7b",
+  "prompt_words": 5907,
+  "submission_part2_words": 1824,
+  "scheme_part2_words": 4059,
+  "human_part2_total": 29.0,
+  "raw_result": {
+    "marks": 5,
+    "description": "The student correctly derived the payoff functions for each family attending private school and explained how each term in the function captures different aspects of costs and benefits. The explanation was thorough, linking to concepts from previous lectures and reports."
+  },
+  "mark_delta": null
+}

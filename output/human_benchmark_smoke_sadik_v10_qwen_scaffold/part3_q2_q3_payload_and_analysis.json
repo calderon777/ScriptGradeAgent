@@ -1,0 +1,327 @@
+[
+  {
+    "label": "Part 3 Q2",
+    "max_mark": 7.5,
+    "task_type": "measurement_and_data_design",
+    "criterion_mode": "deterministic",
+    "question_text_exact": "2. [7.5 marks] For each prediction from the theory, explain how each variable could\nbemeasuredintherealworld. Findsomedatasourcesonlinethatcouldbeusedto\nmeasure these variables. Note: you do not need to download the data, just provide\na link to the source of data and indicate which variable or combination of variables\nin the dataset you would use.",
+    "marking_guidance": "Compact scoring criteria:\n- Evaluate whether the response covers each prediction from the theory rather than only a subset.\n- Evaluate whether the response maps each theoretical concept to an observable variable or indicator.\n- Evaluate whether the response proposes suitable data sources for the measures being used.\n- Evaluate whether the response provides a usable source link for the proposed data.\n- Evaluate whether the response identifies which dataset variable or variable combination would be used.\n\nDetailed rubric:\nUnit: Part 3 Q2\nTask focus: the required measurement choices and data-source mapping.\nAvailable marks: 0 to 7.5.\nUse this rubric to classify and score the attempt:\n- Evaluate whether the response covers each prediction from the theory rather than only a subset.\n- Evaluate whether the response maps each theoretical concept to an observable variable or indicator.\n- Evaluate whether the response proposes suitable data sources for the measures being used.\n- Evaluate whether the response provides a usable source link for the proposed data.\n- Evaluate whether the response identifies which dataset variable or variable combination would be used.\n- Award explicit partial credit for correct setup, valid intermediate steps, and correct interpretation even when the final answer is incomplete.\n- Place work lower when key steps are missing, algebra is wrong, the method is unjustified, or the interpretation does not follow from the working.\n- Rank attempts within the same band by accuracy, completeness of working, and clarity of interpretation.",
+    "system_prompt": "Score only this section from the payload. Use no outside information. Follow the scope_block, decision_block, and output_block exactly. Return one JSON object only.",
+    "parsed_payload": {
+      "section_id": "Part 3 Q2",
+      "max_mark": 7.5,
+      "question": {
+        "text": "For each prediction from the theory, explain how each variable could bemeasuredintherealworld. Findsomedatasourcesonlinethatcouldbeusedto measure these variables. Note: you do not need to download the data, just provide a link to the source of data and indicate which variable or combination of variables in the dataset you would use",
+        "task_type": "measurement_and_data_design",
+        "task_goal": "For each prediction from the theory, explain how each variable could bemeasuredintherealworld"
+      },
+      "scoring": {
+        "method": "criterion_evaluation",
+        "scale": {
+          "type": "verification_check",
+          "labels": [
+            "missing_or_wrong",
+            "partial",
+            "secure"
+          ]
+        },
+        "criteria": [
+          {
+            "criterion_name": "criterion_1",
+            "check": "Check that the response covers each prediction from the theory rather than only a subset."
+          },
+          {
+            "criterion_name": "criterion_2",
+            "check": "Check that the response maps each theoretical concept to an observable variable or indicator."
+          },
+          {
+            "criterion_name": "criterion_3",
+            "check": "Check that the response proposes suitable data sources for the measures being used."
+          },
+          {
+            "criterion_name": "criterion_4",
+            "check": "Check that the response provides a usable source link for the proposed data."
+          },
+          {
+            "criterion_name": "criterion_5",
+            "check": "Check that the response identifies which dataset variable or variable combination would be used."
+          }
+        ],
+        "rules": [
+          "Give partial credit for correct setup, method, or interpretation."
+        ],
+        "scope_block": [
+          "Score only this section.",
+          "Use only the question, criteria, scoring rules, and student response in this payload.",
+          "Do not import requirements from other questions or from outside knowledge."
+        ],
+        "decision_block": [
+          "Task mode: deterministic.",
+          "For each criterion, choose one status only from: missing_or_wrong, partial, secure.",
+          "First assign the criterion statuses. Then assign the numeric score.",
+          "If a required element is missing, do not use secure for that criterion and do not award a top score.",
+          "Do not award marks for unsupported steps, missing components, or incorrect claims.",
+          "provisional_score must be between 0 and 7.5.",
+          "Make the numeric score match the criterion statuses and the visible evidence."
+        ],
+        "output_block": [
+          "Return one JSON object with exactly these keys: section_label, provisional_score, criterion_notes, strengths, weaknesses, evidence, coverage_comment.",
+          "criterion_notes must be a list of {criterion_name, status, note}.",
+          "criterion_notes.status must be one of: missing_or_wrong, partial, secure.",
+          "criterion_notes.note must be 2 to 5 words and must not copy the criterion text.",
+          "strengths and weaknesses must each contain at least 2 items.",
+          "evidence must contain at least 1 item.",
+          "coverage_comment is required."
+        ]
+      },
+      "student_response": {
+        "text": "2)\nWhen the VAT rate on private fees (\u03c4) rises, the number of children attending private\nschools fall as people leave.\nVariables to measure:\n\u2022 Dependent variable: private enrolment (count or share of pupils in private\nschools).\n\u2022 Independent variable: VAT policy indicator (timing of VAT introduction /\nchanges in \u03c4).\nData sources:\nIndependent Schools Council (ISC) Annual Census: counts of pupils in independent\nschools. Use the ISC pupil counts by school and year.\n_isc_census_2025_29may25.pdf\nDepartment for Education (DfE) : total pupils by area / state vs independent split; use to\nform private share which would be ISC_private_pupils / total_pupils_by_area.\nSchools, pupils and their characteristics, Academic year 2024/25 - Explore education\nstatistics - GOV.UK\nHMRC / Government publications for VAT policy/timing and receipts\nHMRC tax receipts and National Insurance contributions for the UK - GOV.UK"
+      }
+    },
+    "analysis": {
+      "section_label": "Part 3 Q2",
+      "provisional_score_0_to_100": null,
+      "provisional_score": 4.5,
+      "grade_band": "Secure",
+      "within_band_position": "mid",
+      "band_confidence_0_to_100": 75.0,
+      "criterion_notes": [
+        {
+          "criterion_name": "criterion_1",
+          "status": "secure",
+          "normalized_status": "met",
+          "scale_type": "verification_check",
+          "scale_labels": [
+            "missing_or_wrong",
+            "partial",
+            "secure"
+          ],
+          "note": "Covers all predictions from the"
+        },
+        {
+          "criterion_name": "criterion_2",
+          "status": "secure",
+          "normalized_status": "met",
+          "scale_type": "verification_check",
+          "scale_labels": [
+            "missing_or_wrong",
+            "partial",
+            "secure"
+          ],
+          "note": "Maps theoretical concepts to observable"
+        },
+        {
+          "criterion_name": "criterion_3",
+          "status": "secure",
+          "normalized_status": "met",
+          "scale_type": "verification_check",
+          "scale_labels": [
+            "missing_or_wrong",
+            "partial",
+            "secure"
+          ],
+          "note": "Proposes suitable data sources for"
+        },
+        {
+          "criterion_name": "criterion_4",
+          "status": "partial",
+          "normalized_status": "partial",
+          "scale_type": "verification_check",
+          "scale_labels": [
+            "missing_or_wrong",
+            "partial",
+            "secure"
+          ],
+          "note": "Provides source links but does"
+        },
+        {
+          "criterion_name": "criterion_5",
+          "status": "secure",
+          "normalized_status": "met",
+          "scale_type": "verification_check",
+          "scale_labels": [
+            "missing_or_wrong",
+            "partial",
+            "secure"
+          ],
+          "note": "Identifies dataset variable for use"
+        }
+      ],
+      "strengths": [
+        "Covers all theoretical predictions.",
+        "Maps concepts to observable variables effectively."
+      ],
+      "weaknesses": [
+        "Does not specify which variables from the data sources are used.",
+        "Lacks detail on how to interpret or analyze the data."
+      ],
+      "evidence": [
+        "{'source': 'ISC Annual Census', 'description': 'Counts of pupils in independent schools'}",
+        "{'source': 'Department for Education (DfE)', 'description': 'Total pupils by area / state vs independent split'}"
+      ],
+      "coverage_comment": "The response demonstrates a comprehensive understanding of the theoretical concepts and provides suitable data sources. However, it could be improved with more detailed information on how to use these sources."
+    }
+  },
+  {
+    "label": "Part 3 Q3",
+    "max_mark": 7.5,
+    "task_type": "regression_specification",
+    "criterion_mode": "deterministic",
+    "question_text_exact": "3. [7.5 marks] Choose one of the theory\u2019s prediction from your answer to question\n1 above, and write down the regression equation that would allow you to test\nthe prediction using the data you identified in question 2. Explain carefully each\nterm in your equation, identify the main coefficient of interest and describe what\nhypothesis you would test to check if the theory is correct.",
+    "marking_guidance": "Compact scoring criteria:\n- Evaluate whether the response matches the regression specification to one stated theory prediction.\n- Evaluate whether the response uses variables that are consistent with the measures or data identified earlier.\n- Evaluate whether the response defines each term in the equation clearly.\n- Evaluate whether the response identifies the main coefficient of interest.\n- Evaluate whether the response states the hypothesis that would test the chosen prediction.\n\nDetailed rubric:\nUnit: Part 3 Q3\nTask focus: the required regression equation, coefficient of interest, and hypothesis.\nAvailable marks: 0 to 7.5.\nUse this rubric to classify and score the attempt:\n- Evaluate whether the response matches the regression specification to one stated theory prediction.\n- Evaluate whether the response uses variables that are consistent with the measures or data identified earlier.\n- Evaluate whether the response defines each term in the equation clearly.\n- Evaluate whether the response identifies the main coefficient of interest.\n- Evaluate whether the response states the hypothesis that would test the chosen prediction.\n- Award explicit partial credit for correct setup, valid intermediate steps, and correct interpretation even when the final answer is incomplete.\n- Place work lower when key steps are missing, algebra is wrong, the method is unjustified, or the interpretation does not follow from the working.\n- Rank attempts within the same band by accuracy, completeness of working, and clarity of interpretation.",
+    "system_prompt": "Score only this section from the payload. Use no outside information. Follow the scope_block, decision_block, and output_block exactly. Return one JSON object only.",
+    "parsed_payload": {
+      "section_id": "Part 3 Q3",
+      "max_mark": 7.5,
+      "question": {
+        "text": "Choose one of the theory\u2019s prediction from your answer to question 1 above, and write down the regression equation that would allow you to test the prediction using the data you identified in question 2. Explain carefully each term in your equation, identify the main coefficient of interest and describe what hypothesis you would test to check if the theory is correct",
+        "task_type": "regression_specification",
+        "task_goal": "[7.5 marks] Choose one of the theory\u2019s prediction from your answer to question 1 above, and write down the regression equation that would allow you to test the prediction using the data you identified in question"
+      },
+      "scoring": {
+        "method": "criterion_evaluation",
+        "scale": {
+          "type": "verification_check",
+          "labels": [
+            "missing_or_wrong",
+            "partial",
+            "secure"
+          ]
+        },
+        "criteria": [
+          {
+            "criterion_name": "criterion_1",
+            "check": "Check that the response matches the regression specification to one stated theory prediction."
+          },
+          {
+            "criterion_name": "criterion_2",
+            "check": "Check that the response uses variables that are consistent with the measures or data identified earlier."
+          },
+          {
+            "criterion_name": "criterion_3",
+            "check": "Check that the response defines each term in the equation clearly."
+          },
+          {
+            "criterion_name": "criterion_4",
+            "check": "Check that the response identifies the main coefficient of interest."
+          },
+          {
+            "criterion_name": "criterion_5",
+            "check": "Check that the response states the hypothesis that would test the chosen prediction."
+          }
+        ],
+        "rules": [
+          "Give partial credit for correct setup, method, or interpretation."
+        ],
+        "scope_block": [
+          "Score only this section.",
+          "Use only the question, criteria, scoring rules, and student response in this payload.",
+          "Do not import requirements from other questions or from outside knowledge."
+        ],
+        "decision_block": [
+          "Task mode: deterministic.",
+          "For each criterion, choose one status only from: missing_or_wrong, partial, secure.",
+          "First assign the criterion statuses. Then assign the numeric score.",
+          "If a required element is missing, do not use secure for that criterion and do not award a top score.",
+          "Do not award marks for unsupported steps, missing components, or incorrect claims.",
+          "provisional_score must be between 0 and 7.5.",
+          "Make the numeric score match the criterion statuses and the visible evidence."
+        ],
+        "output_block": [
+          "Return one JSON object with exactly these keys: section_label, provisional_score, criterion_notes, strengths, weaknesses, evidence, coverage_comment.",
+          "criterion_notes must be a list of {criterion_name, status, note}.",
+          "criterion_notes.status must be one of: missing_or_wrong, partial, secure.",
+          "criterion_notes.note must be 2 to 5 words and must not copy the criterion text.",
+          "strengths and weaknesses must each contain at least 2 items.",
+          "evidence must contain at least 1 item.",
+          "coverage_comment is required."
+        ]
+      },
+      "student_response": {
+        "text": "3)\n\u2022 Theory - When the VAT rate on private fees (\u03c4) rises, the number of children\nattending private schools fall as people leave.\nPrivate at = \u03b1 + \u03b2 VATt + \u03b3Xat + \u03bca + \u03bbt + \u03b5at\nPrivateat: Share of pupils attending private schools in area in \u03b1 in year t. This is\nconstructed form ISC private pupil counts divided by total pupils from DfE data.\nVATt: A policy variable capturing the VAT rate on private school fees. This reflects the\nparameter T in the model.\nXat: A vector of control variables such as average household income and population\nsize. These control for other factors affecting school choice.\n\u03bca: Area fixed affects. These control for time invariant differences.\n\u039bt: Year fixed effects. This captures macro-economic conditions e.g. nationwide\nshocks.\n\u0395\nat: This is the error term.\nThe main coefficient of interest is \u03b2.\nThis is the hypothesis to test:\nNull hypothesis: \u03b2 = 0\nAlternate hypothesis: \u03b2< 0. This would suggest an increase in VAT reduces private\nschool enrolment.\nIf \u03b2 is negative and statistically significant, it supports the theory\u2019s prediction that\nhigher VAT pushes families away from private schools."
+      }
+    },
+    "analysis": {
+      "section_label": "Part 3 Q3",
+      "provisional_score_0_to_100": null,
+      "provisional_score": 6.5,
+      "grade_band": "Excellent",
+      "within_band_position": "low",
+      "band_confidence_0_to_100": 75.0,
+      "criterion_notes": [
+        {
+          "criterion_name": "criterion_1",
+          "status": "secure",
+          "normalized_status": "met",
+          "scale_type": "verification_check",
+          "scale_labels": [
+            "missing_or_wrong",
+            "partial",
+            "secure"
+          ],
+          "note": "The response matches the regression"
+        },
+        {
+          "criterion_name": "criterion_2",
+          "status": "secure",
+          "normalized_status": "met",
+          "scale_type": "verification_check",
+          "scale_labels": [
+            "missing_or_wrong",
+            "partial",
+            "secure"
+          ],
+          "note": "Variables used are consistent with"
+        },
+        {
+          "criterion_name": "criterion_3",
+          "status": "secure",
+          "normalized_status": "met",
+          "scale_type": "verification_check",
+          "scale_labels": [
+            "missing_or_wrong",
+            "partial",
+            "secure"
+          ],
+          "note": "Each term in the equation"
+        },
+        {
+          "criterion_name": "criterion_4",
+          "status": "secure",
+          "normalized_status": "met",
+          "scale_type": "verification_check",
+          "scale_labels": [
+            "missing_or_wrong",
+            "partial",
+            "secure"
+          ],
+          "note": "The main coefficient of interest"
+        },
+        {
+          "criterion_name": "criterion_5",
+          "status": "secure",
+          "normalized_status": "met",
+          "scale_type": "verification_check",
+          "scale_labels": [
+            "missing_or_wrong",
+            "partial",
+            "secure"
+          ],
+          "note": "The hypothesis that would test"
+        }
+      ],
+      "strengths": [
+        "Detailed regression equation with clear variable definitions.",
+        "Identification of main coefficient and hypothesis testing explanation."
+      ],
+      "weaknesses": [
+        "Lack of specific data sources or references for variables used in the equation.",
+        "Assumptions about the impact of each variable are not explicitly discussed."
+      ],
+      "evidence": [
+        "The response includes a clear regression equation with all terms defined."
+      ],
+      "coverage_comment": "The student's response covers all necessary components to test the theory prediction using the identified data, but lacks specific details on data sources and assumptions about variable impacts."
+    }
+  }
+]

@@ -1,0 +1,24 @@
+{
+  "sample_path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Sadik Ulusow_1494125_assignsubmission_file\\Economics and Society Coursework (60^L1) (Final).pdf",
+  "model_name": "qwen2:7b",
+  "num_ctx": 24576,
+  "num_predict": 700,
+  "prompt_words": 11242,
+  "submission_words": 3835,
+  "marking_scheme_words": 7366,
+  "human_total": 64.0,
+  "human_feedback_excerpt": "This is a well-structured and strong assignment. Overall, a goodsubmission with clear strengths in theory and interpretation, but scope to strengthen precision and depth in the empirical analysis. Your grade breakdown is...",
+  "raw_result": {
+    "total_mark": 85,
+    "max_mark": 100,
+    "overall_feedback": "The student has demonstrated a strong understanding of the economic concepts related to the VAT policy on private schools and provided insightful analysis in their submission. The explanations are clear, structured, and well-supported by relevant references from course materials and external sources. However, there is room for improvement in terms of precision and depth in certain sections."
+  },
+  "normalized_result": {
+    "total_mark": 85.0,
+    "max_mark": 100.0,
+    "overall_feedback": "The student has demonstrated a strong understanding of the economic concepts related to the VAT policy on private schools and provided insightful analysis in their submission. The explanations are clear, structured, and well-supported by relevant references from course materials and external sources. However, there is room for improvement in terms of precision and depth in certain sections.",
+    "strengths": [],
+    "weaknesses": []
+  },
+  "mark_delta": 21.0
+}

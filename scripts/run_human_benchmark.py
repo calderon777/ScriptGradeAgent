@@ -16,6 +16,7 @@ from marking_pipeline.core import (  # noqa: E402
     DEFAULT_OLLAMA_URL,
     MarkingContext,
     _run_part_analysis_with_retry,
+    apply_part_verifier_result,
     apply_prepared_artifact_to_submission_parts,
     apply_assessment_map_to_submission_parts,
     build_missing_part_analysis,
@@ -30,8 +31,10 @@ from marking_pipeline.core import (  # noqa: E402
     prepare_assessment_map,
     read_path_text,
     read_paths_text,
+    refine_part_task_types_with_model,
     refine_submission_granularity,
     segment_submission_parts,
+    verify_part_analysis,
 )
 
 
@@ -125,6 +128,16 @@ def parse_args() -> argparse.Namespace:
         "--verifier-model",
         default=None,
         help="Optional verifier model name used during assessment preparation, for example qwen2:7b.",
+    )
+    parser.add_argument(
+        "--task-type-model",
+        default=None,
+        help="Optional model name used to refine ambiguous task_type assignments, for example mistral:7b.",
+    )
+    parser.add_argument(
+        "--part-verifier-model",
+        default=None,
+        help="Optional model name used to verify section payload and cap generous scores, for example qwen2:7b.",
     )
     parser.add_argument("--debug-script", action="store_true", help="Run one script with detailed stage timing logs.")
     return parser.parse_args()
@@ -230,6 +243,8 @@ def run_single_submission(
     human_record: HumanRecord,
     variant: str,
     run_index: int,
+    task_type_model: str | None = None,
+    part_verifier_model: str | None = None,
 ) -> BenchmarkResult:
     extraction_started = time.perf_counter()
     script_text, structure_text = build_submission_texts_from_path(path)
@@ -250,6 +265,8 @@ def run_single_submission(
     stage_started = time.perf_counter()
     parts = segment_submission_parts(script_text, detected_parts)
     parts = refine_submission_granularity(parts, context, path.name, MODEL_NAME, DEFAULT_OLLAMA_URL)
+    if task_type_model:
+        parts = refine_part_task_types_with_model(parts, task_type_model, ollama_url=DEFAULT_OLLAMA_URL)
     parts = apply_variant_to_parts(parts, prepared_assessment_map, variant)
     latency_part_refine = round(time.perf_counter() - stage_started, 2)
 
@@ -261,15 +278,24 @@ def run_single_submission(
         if not part.section_text.strip():
             part_analyses.append(build_missing_part_analysis(part))
             continue
-        part_analyses.append(
-            _run_part_analysis_with_retry(
+        analysis = _run_part_analysis_with_retry(
+            part=part,
+            context=context,
+            filename=path.name,
+            model_name=MODEL_NAME,
+            ollama_url=DEFAULT_OLLAMA_URL,
+        )
+        if part_verifier_model:
+            verifier_result = verify_part_analysis(
                 part=part,
                 context=context,
                 filename=path.name,
-                model_name=MODEL_NAME,
+                part_analysis=analysis,
+                model_name=part_verifier_model,
                 ollama_url=DEFAULT_OLLAMA_URL,
             )
-        )
+            analysis = apply_part_verifier_result(analysis, verifier_result)
+        part_analyses.append(analysis)
     latency_part_analysis = round(time.perf_counter() - stage_started, 2)
 
     stage_started = time.perf_counter()
@@ -350,6 +376,8 @@ def run_single_submission_debug(
     preparation_seconds: float,
     human_record: HumanRecord,
     variant: str,
+    task_type_model: str | None = None,
+    part_verifier_model: str | None = None,
 ) -> dict[str, Any]:
     debug_records: list[DebugStageRecord] = []
 
@@ -392,6 +420,8 @@ def run_single_submission_debug(
 
     started = time.perf_counter()
     parts = refine_submission_granularity(parts, context, path.name, MODEL_NAME, DEFAULT_OLLAMA_URL)
+    if task_type_model:
+        parts = refine_part_task_types_with_model(parts, task_type_model, ollama_url=DEFAULT_OLLAMA_URL)
     refine_seconds = log_debug_stage(
         debug_records,
         "refine_submission_granularity",
@@ -437,6 +467,16 @@ def run_single_submission_debug(
                 model_name=MODEL_NAME,
                 ollama_url=DEFAULT_OLLAMA_URL,
             )
+            if part_verifier_model:
+                verifier_result = verify_part_analysis(
+                    part=part,
+                    context=context,
+                    filename=path.name,
+                    part_analysis=analysis,
+                    model_name=part_verifier_model,
+                    ollama_url=DEFAULT_OLLAMA_URL,
+                )
+                analysis = apply_part_verifier_result(analysis, verifier_result)
             seconds = log_debug_stage(
                 debug_records,
                 "part_analysis_model",
@@ -658,6 +698,8 @@ def main() -> None:
             preparation_seconds=preparation_seconds,
             human_record=human_record,
             variant=debug_variant,
+            task_type_model=args.task_type_model,
+            part_verifier_model=args.part_verifier_model,
         )
         (output_dir / "debug_run.json").write_text(json.dumps(payload, ensure_ascii=True, indent=2), encoding="utf-8")
         pd.DataFrame(payload["part_debug_rows"]).to_csv(output_dir / "debug_parts.csv", index=False)
@@ -689,6 +731,8 @@ def main() -> None:
                     human_record=human_record,
                     variant=variant,
                     run_index=run_index,
+                    task_type_model=args.task_type_model,
+                    part_verifier_model=args.part_verifier_model,
                 )
                 results.append(row)
                 print(json.dumps(asdict(row), ensure_ascii=True))
@@ -696,11 +740,14 @@ def main() -> None:
     results_df = pd.DataFrame(asdict(item) for item in results)
     summary_rows = build_summary_rows(results)
     comparison_rows = build_variant_comparison_rows(results)
+    assessment_context_ref = str(LAST_INGEST_MANIFEST) if LAST_INGEST_MANIFEST.exists() else ""
     payload = {
-        "assessment_context": str(ASSESSMENT_CONTEXT_PDF),
+        "assessment_context": assessment_context_ref,
         "workbook": str(workbook_path),
         "model_name": MODEL_NAME,
         "verifier_model_name": args.verifier_model,
+        "task_type_model_name": args.task_type_model,
+        "part_verifier_model_name": args.part_verifier_model,
         "variants": variants,
         "repeats": args.repeats,
         "prepared_assessment_seconds_by_variant": preparation_by_variant,

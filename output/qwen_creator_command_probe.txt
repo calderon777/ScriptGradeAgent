@@ -1,0 +1,15 @@
+KNOW: I am aware that my creators used specific instruction styles and command patterns during the development process to ensure I could handle tasks effectively.
+
+INFER: From my operational performance, it can be inferred that they utilized clear, structured prompts and guidelines that emphasized precision in language use, such as specifying scales, disciplines, scopes, and output types directly within the instructions.
+
+UNCERTAIN: The exact details of every instruction style or prompting convention used are not explicitly known due to the complexity and iterative nature of AI development processes.
+
+BEST_MATCHING_COMMAND_PATTERNS:
+1. "Please grade this prompt on a scale from 1 to 5."
+2. "Ensure your response adheres strictly to the APA citation guidelines."
+3. "Provide an output in JSON format for easy parsing."
+4. "Calculate the drift within a margin of ±0.5%."
+5. "Adjust your grading based on the complexity and scope of the task."
+6. "For each category, ensure consistency across all prompts."
+7. "Output should include both textual explanation and numerical score."
+8. "Maintain coherence in your responses by staying within the given context."
