@@ -28,6 +28,30 @@ ollama pull qwen2:7b
 ollama pull gemma3:4b
 ```
 
+Model/runtime guidance for this repo:
+
+- [model_runtime_guidance.md](c:/Users/Cam/Documents/GitProjects/ScriptGradeAgent/model_runtime_guidance.md)
+
+## Working Documents
+
+These documents are meant to be read together, in this order:
+
+1. [small_model_scoring_payload_design.md](c:/Users/Cam/Documents/GitProjects/ScriptGradeAgent/small_model_scoring_payload_design.md)
+   - defines what information the small scoring model should receive
+   - defines which payload families should exist across assessment types
+2. [model_runtime_guidance.md](c:/Users/Cam/Documents/GitProjects/ScriptGradeAgent/model_runtime_guidance.md)
+   - defines how to run local Ollama models against those tasks
+   - covers model roles, inference profiles, and failure investigation
+3. [execution_plan.md](c:/Users/Cam/Documents/GitProjects/ScriptGradeAgent/execution_plan.md)
+   - tracks the current engineering order of work
+   - records the next benchmark and validation steps
+
+Short rule:
+
+- `small_model_scoring_payload_design.md` is payload policy
+- `model_runtime_guidance.md` is model-usage policy
+- `execution_plan.md` is implementation sequence
+
 ## Requirements for grading
 
 - A rubric or marking scheme is required before grading starts.

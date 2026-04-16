@@ -81,6 +81,20 @@ class SubmissionDiagnostics:
 
 
 @dataclass(frozen=True)
+class AssessmentStructureSection:
+    label: str
+    parent_label: str = ""
+    max_mark: float | None = None
+    weight_text: str = ""
+    question_text_exact: str = ""
+    marking_instructions_exact: str = ""
+    anchor_phrases: tuple[str, ...] = ()
+    evidence_expectations: tuple[str, ...] = ()
+    dependency_labels: tuple[str, ...] = ()
+    children: tuple["AssessmentStructureSection", ...] = ()
+
+
+@dataclass(frozen=True)
 class AssessmentUnit:
     label: str
     max_mark: float | None = None
@@ -446,6 +460,7 @@ def build_part_messages(
     task_text = _build_part_task_text(part)
     question_text = _question_text_for_model(part.question_text_exact or part.focus_hint or part.label)
     task_goal = _task_goal_for_model(task_text, question_text)
+    required_steps = _extract_required_steps_for_model(part)
     criteria = _build_prompt_criteria(part)
     scoring_rules = _extract_prompt_scoring_rules(part.marking_guidance, part.max_mark)
     question_payload: dict[str, Any] = {
@@ -454,6 +469,8 @@ def build_part_messages(
     }
     if task_goal:
         question_payload["task_goal"] = task_goal
+    if required_steps:
+        question_payload["required_steps"] = required_steps
     payload = {
         "section_id": part.label,
         "max_mark": part.max_mark if part.max_mark is not None else 100,
@@ -597,6 +614,29 @@ def _supplemental_prompt_criteria(part: SubmissionPart) -> list[str]:
             "Evaluate whether key terms, variables, or assumptions are explicit enough to be usable.",
             *common_structured,
         ]
+    if task_type == "deterministic_derivation":
+        targeted: list[str] = []
+        question_text = part.question_text_exact.lower()
+        if "inequalit" in question_text or "condition" in question_text:
+            targeted.append(
+                "Evaluate whether the answer states the required inequalities or parameter conditions correctly."
+            )
+        if any(phrase in question_text for phrase in ("numerical values", "example", "give an example")):
+            targeted.append(
+                "Evaluate whether any numerical example is valid and actually satisfies the required conditions."
+            )
+        if any(
+            phrase in question_text
+            for phrase in (
+                "for each family",
+                "other families are doing",
+                "change its decision",
+            )
+        ):
+            targeted.append(
+                "Evaluate whether the derivation checks each required case or family decision rather than skipping a decisive step."
+            )
+        return [*targeted, *common_structured]
     if _part_scoring_method(part) == "classification_then_score":
         return [
             "Evaluate whether the response prioritizes the most relevant points instead of padding with lower-value material.",
@@ -605,6 +645,45 @@ def _supplemental_prompt_criteria(part: SubmissionPart) -> list[str]:
             *common_structured,
         ]
     return common_structured
+
+
+def _extract_required_steps_for_model(part: SubmissionPart) -> list[str]:
+    question_text = _question_text_for_model(part.question_text_exact)
+    if not question_text:
+        return []
+    lowered = question_text.lower()
+    steps: list[str] = []
+    if part.task_type == "deterministic_derivation":
+        if "inequalit" in lowered or "condition" in lowered:
+            steps.append("state the required inequalities or parameter conditions")
+        if any(phrase in lowered for phrase in ("for each family", "other families are doing", "change its decision")):
+            steps.append("check the relevant family-by-family deviation conditions")
+        if any(phrase in lowered for phrase in ("numerical values", "give an example", "example of some")):
+            steps.append("give a numerical example that satisfies the stated conditions")
+        if "explain carefully" in lowered or "why they result" in lowered:
+            steps.append("explain why the conditions imply the stated scenario")
+    elif part.task_type == "comparative_statics":
+        if "each of the parameters" in lowered or "changing each" in lowered:
+            steps.append("cover each relevant parameter rather than only a subset")
+        if "more likely" in lowered or "scenario" in lowered:
+            steps.append("link each parameter change to the scenario comparison")
+    elif part.task_type == "critique_and_revision":
+        if "prompt" in lowered:
+            steps.append("include the original prompt")
+        if "output" in lowered:
+            steps.append("include the model output and audit it")
+        if any(phrase in lowered for phrase in ("page numbers", "quotes", "course material", "report")):
+            steps.append("support the audit with cited evidence")
+        if "rewrite" in lowered or "own tone" in lowered:
+            steps.append("provide a corrected rewrite in the student's own tone")
+    normalized: list[str] = []
+    seen: set[str] = set()
+    for step in steps:
+        key = step.strip().lower()
+        if key and key not in seen:
+            normalized.append(step)
+            seen.add(key)
+    return normalized[:4]
 
 
 def _criterion_anchors(criterion: str) -> tuple[str, str]:
@@ -1330,6 +1409,7 @@ def detect_submission_parts(
         model_name=model_name,
         messages=build_structure_messages_with_guidance(script_text, filename, structure_guidance),
         ollama_url=ollama_url,
+        profile="structure_extraction",
     )
     return reconcile_detected_parts(normalize_detected_parts(data), context)
 
@@ -1523,9 +1603,9 @@ def extract_structure_guidance(context: MarkingContext) -> str:
     lines = [line.strip() for line in source_text.splitlines() if line.strip()]
     useful_lines: list[str] = []
     patterns = (
-        r"\b(question|part|section)\s+[a-z0-9ivx]+\b",
-        r"\b\d+\s*(marks?|%)\b",
-        r"\bweight(?:ing)?\b",
+        r"\b(question|part|section|subsection|subpart|task|item)\s+[a-z0-9ivx]+\b",
+        r"\b\d+(?:\.\d+)?\s*(marks?|points?|%)\b",
+        r"\b(weight|weights|weighting|worth|allocated|allocation|available)\b",
         r"\bout of\s+\d+\b",
     )
     for line in lines:
@@ -1537,120 +1617,617 @@ def extract_structure_guidance(context: MarkingContext) -> str:
     return "\n".join(useful_lines)
 
 
-def extract_expected_parts_from_context(context: MarkingContext) -> list[SubmissionPart]:
+_TOP_LEVEL_CONTEXT_PATTERN = re.compile(
+    r"^(?P<label>(?:question|part|section|task|item)\s+(?:\d+|[ivx]+|[a-z]))\b(?P<tail>.*)$",
+    flags=re.IGNORECASE,
+)
+_SUBPART_CONTEXT_PATTERN = re.compile(
+    r"^(?P<token>(?:\d+|[a-z])(?:[\.\)]|\])|\((?:\d+|[a-z])\))\s*(?P<body>.*)$",
+    flags=re.IGNORECASE,
+)
+_WEIGHT_TEXT_PATTERN = re.compile(
+    r"(?P<value>\d+(?:\.\d+)?)\s*(?P<unit>marks?|points?|%)\b|\b(?:worth|allocated|allocation|available)\s+(?P<alt>\d+(?:\.\d+)?)\s*(?P<alt_unit>marks?|points?|%)\b",
+    flags=re.IGNORECASE,
+)
+_DEPENDENCY_LABEL_PATTERN = re.compile(
+    r"\b(?P<kind>part|question|section)\s+(?P<id>\d+|[ivx]+)(?:\s*q(?P<child>\d+))?\b",
+    flags=re.IGNORECASE,
+)
+
+
+def extract_assessment_structure(context: MarkingContext) -> tuple[AssessmentStructureSection, ...]:
+    prompt_sections = extract_assessment_prompt_structure(context)
+    marking_scheme_sections = extract_marking_scheme_structure(context)
+    if prompt_sections and marking_scheme_sections:
+        return _reconcile_assessment_structure_sections(prompt_sections, marking_scheme_sections)
+    if prompt_sections:
+        return prompt_sections
+    return marking_scheme_sections
+
+
+def extract_assessment_prompt_structure(context: MarkingContext) -> tuple[AssessmentStructureSection, ...]:
     source_text = "\n\n".join(
         text.strip()
-        for text in (context.rubric_text, context.brief_text, context.marking_scheme_text)
+        for text in (context.rubric_text, context.brief_text)
         if text and text.strip()
     )
     if not source_text:
-        return []
+        return ()
+    return _merge_assessment_structure_sections(_deterministic_extract_assessment_structure(source_text))
 
-    parts: list[SubmissionPart] = []
-    seen: set[str] = set()
-    pattern = re.compile(
-        r"^(?P<kind>question|part|section)\s+(?P<id>\d+|[ivx]+|[a-d])\b(?:\s*[:.)-]|\s*\((?P<marks>\d+(?:\.\d+)?)\s*marks?\)|$)",
-        flags=re.IGNORECASE,
+
+def extract_marking_scheme_structure(context: MarkingContext) -> tuple[AssessmentStructureSection, ...]:
+    source_text = context.marking_scheme_text.strip()
+    if not source_text:
+        return ()
+    return _merge_assessment_structure_sections(_deterministic_extract_assessment_structure(source_text))
+
+
+def _deterministic_extract_assessment_structure(source_text: str) -> tuple[AssessmentStructureSection, ...]:
+    lines = [line.strip() for line in source_text.replace("\r\n", "\n").splitlines() if line.strip()]
+    sections: list[AssessmentStructureSection] = []
+    current_label = ""
+    current_lines: list[str] = []
+
+    def flush_section() -> None:
+        nonlocal current_label, current_lines
+        if not current_label:
+            return
+        sections.append(_build_structure_section(_canonical_context_label(current_label), current_lines))
+        current_label = ""
+        current_lines = []
+
+    for line in lines:
+        top_match = _TOP_LEVEL_CONTEXT_PATTERN.match(line)
+        if top_match is not None and _is_top_level_context_header(line, top_match.group("tail")):
+            flush_section()
+            current_label = top_match.group("label").strip()
+            current_lines = [line]
+            continue
+        if current_label:
+            current_lines.append(line)
+    flush_section()
+    return tuple(section for section in sections if section.label)
+
+
+def _build_structure_section(label: str, lines: list[str]) -> AssessmentStructureSection:
+    header = lines[0] if lines else label
+    body_lines = lines[1:] if len(lines) > 1 else []
+    question_lines, marking_lines = _split_question_and_marking_lines(body_lines)
+    children = _extract_structure_children(label, question_lines)
+    question_text = "\n".join([header, *question_lines]).strip() if question_lines else header.strip()
+    marking_text = "\n".join(marking_lines).strip()
+    combined_text = "\n".join(text for text in (question_text, marking_text) if text).strip()
+    return AssessmentStructureSection(
+        label=label,
+        max_mark=_extract_max_mark_text(header),
+        weight_text=_extract_weight_text(header),
+        question_text_exact=question_text,
+        marking_instructions_exact=marking_text,
+        anchor_phrases=_extract_anchor_lines(combined_text),
+        evidence_expectations=_extract_evidence_lines(combined_text),
+        dependency_labels=_extract_dependency_labels(combined_text, current_label=label),
+        children=children,
     )
-    lines = [line.strip() for line in source_text.splitlines() if line.strip()]
-    for index, line in enumerate(lines):
-        match = pattern.search(line)
-        if not match:
+
+
+def _merge_assessment_structure_sections(
+    sections: tuple[AssessmentStructureSection, ...],
+) -> tuple[AssessmentStructureSection, ...]:
+    merged: dict[str, AssessmentStructureSection] = {}
+    order: list[str] = []
+    for section in sections:
+        key = _normalize_label_key(section.label)
+        if key not in merged:
+            merged[key] = section
+            order.append(key)
             continue
-        label = f"{match.group('kind').title()} {match.group('id')}"
-        key = _normalize_label_key(label)
-        if key in seen:
+        merged[key] = _merge_assessment_structure_section_pair(merged[key], section)
+    return tuple(merged[key] for key in order if merged[key].label)
+
+
+def _reconcile_assessment_structure_sections(
+    prompt_sections: tuple[AssessmentStructureSection, ...],
+    marking_scheme_sections: tuple[AssessmentStructureSection, ...],
+) -> tuple[AssessmentStructureSection, ...]:
+    scheme_by_key = {_normalize_label_key(section.label): section for section in marking_scheme_sections}
+    prompt_by_key = {_normalize_label_key(section.label): section for section in prompt_sections}
+    order: list[str] = []
+    for section in marking_scheme_sections:
+        key = _normalize_label_key(section.label)
+        if key not in order:
+            order.append(key)
+    for section in prompt_sections:
+        key = _normalize_label_key(section.label)
+        if key not in order:
+            order.append(key)
+
+    reconciled: list[AssessmentStructureSection] = []
+    for key in order:
+        prompt_section = prompt_by_key.get(key)
+        scheme_section = scheme_by_key.get(key)
+        if prompt_section is not None and scheme_section is not None:
+            reconciled.append(_reconcile_assessment_structure_section_pair(prompt_section, scheme_section))
+        elif prompt_section is not None:
+            reconciled.append(prompt_section)
+        elif scheme_section is not None:
+            reconciled.append(scheme_section)
+    return tuple(section for section in reconciled if section.label)
+
+
+def _reconcile_assessment_structure_section_pair(
+    prompt_section: AssessmentStructureSection,
+    scheme_section: AssessmentStructureSection,
+) -> AssessmentStructureSection:
+    return AssessmentStructureSection(
+        label=scheme_section.label or prompt_section.label,
+        parent_label=scheme_section.parent_label or prompt_section.parent_label,
+        max_mark=scheme_section.max_mark if scheme_section.max_mark is not None else prompt_section.max_mark,
+        weight_text=scheme_section.weight_text or prompt_section.weight_text,
+        question_text_exact=_prefer_canonical_section_question_text(
+            scheme_section.question_text_exact,
+            prompt_section.question_text_exact,
+        ),
+        marking_instructions_exact=_prefer_richer_structure_text(
+            scheme_section.marking_instructions_exact,
+            prompt_section.marking_instructions_exact,
+        ),
+        anchor_phrases=_merge_unique_text_items(prompt_section.anchor_phrases, scheme_section.anchor_phrases),
+        evidence_expectations=_merge_unique_text_items(
+            prompt_section.evidence_expectations,
+            scheme_section.evidence_expectations,
+        ),
+        dependency_labels=_merge_unique_text_items(
+            prompt_section.dependency_labels,
+            scheme_section.dependency_labels,
+            current_label=prompt_section.label or scheme_section.label,
+        ),
+        children=_reconcile_structure_children(prompt_section.children, scheme_section.children),
+    )
+
+
+def _reconcile_structure_children(
+    prompt_children: tuple[AssessmentStructureSection, ...],
+    scheme_children: tuple[AssessmentStructureSection, ...],
+) -> tuple[AssessmentStructureSection, ...]:
+    scheme_by_key = {_normalize_label_key(child.label): child for child in scheme_children}
+    prompt_by_key = {_normalize_label_key(child.label): child for child in prompt_children}
+    order: list[str] = []
+    for child in scheme_children:
+        key = _normalize_label_key(child.label)
+        if key not in order:
+            order.append(key)
+    for child in prompt_children:
+        key = _normalize_label_key(child.label)
+        if key not in order:
+            order.append(key)
+
+    merged_children: list[AssessmentStructureSection] = []
+    for key in order:
+        prompt_child = prompt_by_key.get(key)
+        scheme_child = scheme_by_key.get(key)
+        if prompt_child is not None and scheme_child is not None:
+            merged_children.append(_reconcile_assessment_structure_section_pair(prompt_child, scheme_child))
+        elif prompt_child is not None:
+            merged_children.append(prompt_child)
+        elif scheme_child is not None:
+            merged_children.append(scheme_child)
+    return tuple(child for child in merged_children if child.label)
+
+
+def _merge_assessment_structure_section_pair(
+    existing: AssessmentStructureSection,
+    incoming: AssessmentStructureSection,
+) -> AssessmentStructureSection:
+    question_text = _prefer_richer_structure_text(existing.question_text_exact, incoming.question_text_exact)
+    marking_text = _prefer_richer_structure_text(existing.marking_instructions_exact, incoming.marking_instructions_exact)
+    combined_text = "\n".join(text for text in (question_text, marking_text) if text).strip()
+    return AssessmentStructureSection(
+        label=existing.label,
+        parent_label=existing.parent_label or incoming.parent_label,
+        max_mark=existing.max_mark if existing.max_mark is not None else incoming.max_mark,
+        weight_text=existing.weight_text or incoming.weight_text,
+        question_text_exact=question_text,
+        marking_instructions_exact=marking_text,
+        anchor_phrases=_merge_unique_text_items(existing.anchor_phrases, incoming.anchor_phrases),
+        evidence_expectations=_merge_unique_text_items(existing.evidence_expectations, incoming.evidence_expectations),
+        dependency_labels=_merge_unique_text_items(
+            existing.dependency_labels,
+            incoming.dependency_labels,
+            current_label=existing.label,
+        ),
+        children=_merge_structure_children(existing.children, incoming.children),
+    )
+
+
+def _prefer_richer_structure_text(existing: str, incoming: str) -> str:
+    existing_text = existing.strip()
+    incoming_text = incoming.strip()
+    if not existing_text:
+        return incoming_text
+    if not incoming_text:
+        return existing_text
+    if existing_text == incoming_text:
+        return existing_text
+    if len(incoming_text.splitlines()) > len(existing_text.splitlines()):
+        return incoming_text
+    if len(incoming_text) > len(existing_text) and len(incoming_text.splitlines()) >= len(existing_text.splitlines()):
+        return incoming_text
+    return existing_text
+
+
+def _prefer_canonical_section_question_text(scheme_text: str, prompt_text: str) -> str:
+    scheme_clean = scheme_text.strip()
+    prompt_clean = prompt_text.strip()
+    if not scheme_clean:
+        return prompt_clean
+    if not prompt_clean:
+        return scheme_clean
+    if _looks_header_only_question_text(scheme_clean) and not _looks_header_only_question_text(prompt_clean):
+        return prompt_clean
+    if _looks_damaged_question_text(scheme_clean) and not _looks_damaged_question_text(prompt_clean):
+        return prompt_clean
+    return scheme_clean
+
+
+def _looks_header_only_question_text(text: str) -> bool:
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    if not lines:
+        return True
+    if len(lines) == 1 and len(lines[0]) <= 40:
+        return True
+    return len(lines) == 1 and bool(_TOP_LEVEL_CONTEXT_PATTERN.match(lines[0]))
+
+
+def _looks_damaged_question_text(text: str) -> bool:
+    normalized = " ".join(text.split())
+    damage_patterns = (
+        "outputgenerated",
+        "deriveconditions",
+        "inequilibrium",
+        "inprivate",
+        "decreasingthem",
+        "...",
+    )
+    if any(pattern in normalized.lower() for pattern in damage_patterns):
+        return True
+    merged_word_hits = re.findall(r"[a-z]{6,}[A-Z][a-z]+", normalized)
+    return len(merged_word_hits) >= 2
+
+
+def _merge_unique_text_items(
+    existing: tuple[str, ...],
+    incoming: tuple[str, ...],
+    current_label: str = "",
+) -> tuple[str, ...]:
+    merged: list[str] = []
+    seen: set[str] = set()
+    current_key = _normalize_label_key(current_label) if current_label else ""
+    for item in (*existing, *incoming):
+        text = item.strip()
+        if not text:
             continue
-        seen.add(key)
-        marks = float(match.group("marks")) if match.group("marks") else None
-        guidance_lines = [line.strip()]
-        for extra in lines[index + 1 :]:
-            if pattern.search(extra):
-                break
-            if extra.lower().startswith("answer:"):
-                break
-            if len(guidance_lines) >= 18:
-                break
-            if extra.isdigit():
-                continue
-            guidance_lines.append(extra)
-        question_text_exact = "\n".join(guidance_lines).strip()
+        normalized = _normalize_label_key(text)
+        if normalized == current_key or normalized in seen:
+            continue
+        merged.append(text)
+        seen.add(normalized)
+    return tuple(merged)
+
+
+def _merge_structure_children(
+    existing: tuple[AssessmentStructureSection, ...],
+    incoming: tuple[AssessmentStructureSection, ...],
+) -> tuple[AssessmentStructureSection, ...]:
+    merged: dict[str, AssessmentStructureSection] = {}
+    order: list[str] = []
+    for child in (*existing, *incoming):
+        key = _normalize_label_key(child.label)
+        if key not in merged:
+            merged[key] = child
+            order.append(key)
+            continue
+        merged[key] = _merge_assessment_structure_section_pair(merged[key], child)
+    return tuple(merged[key] for key in order if merged[key].label)
+
+
+def _split_question_and_marking_lines(lines: list[str]) -> tuple[list[str], list[str]]:
+    question_lines: list[str] = []
+    marking_lines: list[str] = []
+    in_marking = False
+    capture_continuation = False
+    for line in lines:
+        lowered = line.lower()
+        if lowered.startswith("answer:"):
+            in_marking = True
+            remainder = line.split(":", 1)[1].strip()
+            if remainder and _is_marking_instruction_line(remainder):
+                marking_lines.append(remainder)
+                capture_continuation = True
+            continue
+        if in_marking:
+            if _is_marking_instruction_line(line) or (capture_continuation and line.startswith(("-", "•"))):
+                marking_lines.append(line)
+                capture_continuation = True
+            else:
+                capture_continuation = False
+            continue
+        question_lines.append(line)
+    return question_lines, marking_lines
+
+
+def _extract_structure_children(parent_label: str, question_lines: list[str]) -> tuple[AssessmentStructureSection, ...]:
+    if not question_lines:
+        return ()
+    groups: list[list[str]] = []
+    current: list[str] = []
+    for line in question_lines:
+        if _SUBPART_CONTEXT_PATTERN.match(line):
+            if current:
+                groups.append(current)
+            current = [line]
+        elif current:
+            current.append(line)
+    if current:
+        groups.append(current)
+    if len(groups) < 2:
+        return ()
+    children: list[AssessmentStructureSection] = []
+    for group in groups:
+        first_line = group[0]
+        match = _SUBPART_CONTEXT_PATTERN.match(first_line)
+        if match is None:
+            continue
+        token = _normalize_subpart_token(match.group("token"))
+        child_label = _build_context_subpart_label(parent_label, token)
+        question_text = "\n".join(group).strip()
+        children.append(
+            AssessmentStructureSection(
+                label=child_label,
+                parent_label=parent_label,
+                max_mark=_extract_max_mark_text(first_line),
+                weight_text=_extract_weight_text(first_line),
+                question_text_exact=question_text,
+                marking_instructions_exact="",
+                anchor_phrases=_extract_anchor_lines(question_text),
+                evidence_expectations=_extract_evidence_lines(question_text),
+                dependency_labels=_extract_dependency_labels(question_text, current_label=child_label),
+                children=(),
+            )
+        )
+    return tuple(children)
+
+
+def _canonical_context_label(label: str) -> str:
+    parts = label.split()
+    if len(parts) < 2:
+        return label.strip()
+    kind = parts[0].title()
+    token = parts[1].upper() if parts[1].isalpha() else parts[1]
+    return f"{kind} {token}"
+
+
+def _is_top_level_context_header(line: str, tail: str) -> bool:
+    if _extract_max_mark_text(line) is not None or _extract_weight_text(line):
+        return True
+    normalized_tail = " ".join(tail.split()).strip(" :.-")
+    if not normalized_tail:
+        return True
+    return len(line) <= 32
+
+
+def _normalize_subpart_token(token: str) -> str:
+    cleaned = token.strip().strip("()[]").rstrip(".").rstrip(")").strip()
+    return cleaned.upper() if cleaned.isalpha() else cleaned
+
+
+def _build_context_subpart_label(parent_label: str, token: str) -> str:
+    if token.isdigit():
+        return f"{parent_label} Q{token}"
+    return f"{parent_label} {token}"
+
+
+def _extract_max_mark_text(text: str) -> float | None:
+    match = _WEIGHT_TEXT_PATTERN.search(text)
+    if match is None:
+        return None
+    value = match.group("value") or match.group("alt")
+    unit = (match.group("unit") or match.group("alt_unit") or "").lower()
+    if not value or unit == "%":
+        return None
+    return float(value)
+
+
+def _extract_weight_text(text: str) -> str:
+    match = _WEIGHT_TEXT_PATTERN.search(text)
+    if match is None:
+        return ""
+    value = match.group("value") or match.group("alt") or ""
+    unit = match.group("unit") or match.group("alt_unit") or ""
+    if not value or not unit:
+        return ""
+    return f"{value} {unit}".strip()
+
+
+def _is_marking_instruction_line(line: str) -> bool:
+    lowered = line.strip().lower()
+    if not lowered:
+        return False
+    starters = (
+        "students should",
+        "student should",
+        "marks should",
+        "mark should",
+        "for full mark",
+        "for a high grade",
+        "points that should",
+        "key elements",
+        "references should",
+        "references to",
+        "note:",
+        "high grade",
+    )
+    if lowered.startswith(starters):
+        return True
+    phrases = (
+        "marks should be allocated",
+        "should be allocated",
+        "are expected to",
+        "should mention",
+        "should provide",
+        "for full mark",
+        "high grade would",
+        "key elements for a high grade",
+    )
+    return any(phrase in lowered for phrase in phrases)
+
+
+def _extract_anchor_lines(text: str) -> tuple[str, ...]:
+    cues = (
+        "use ",
+        "using ",
+        "comment on whether",
+        "discuss",
+        "explain",
+        "identify",
+        "support",
+        "qualify",
+        "contradict",
+        "rewrite",
+        "in your own",
+        "use the results",
+    )
+    anchors: list[str] = []
+    for line in [piece.strip() for piece in text.splitlines() if piece.strip()]:
+        lowered = line.lower()
+        if any(cue in lowered for cue in cues):
+            anchors.append(line)
+        if len(anchors) >= 4:
+            break
+    return tuple(anchors)
+
+
+def _extract_evidence_lines(text: str) -> tuple[str, ...]:
+    cues = (
+        "quote",
+        "quotes",
+        "page",
+        "slide",
+        "reference",
+        "references",
+        "data source",
+        "link",
+        "evidence",
+        "report",
+        "course material",
+        "lecture",
+    )
+    evidence_lines: list[str] = []
+    for line in [piece.strip() for piece in text.splitlines() if piece.strip()]:
+        lowered = line.lower()
+        if any(cue in lowered for cue in cues):
+            evidence_lines.append(line)
+        if len(evidence_lines) >= 4:
+            break
+    return tuple(evidence_lines)
+
+
+def _extract_dependency_labels(text: str, current_label: str = "") -> tuple[str, ...]:
+    labels: list[str] = []
+    current_key = _normalize_label_key(current_label) if current_label else ""
+    seen_keys: set[str] = set()
+    for match in _DEPENDENCY_LABEL_PATTERN.finditer(text):
+        kind = match.group("kind").title()
+        identifier = match.group("id")
+        child = match.group("child")
+        label = f"{kind} {identifier}"
+        if child:
+            label = f"{label} Q{child}"
+        normalized = _normalize_label_key(label)
+        if normalized == current_key or normalized in seen_keys:
+            continue
+        labels.append(label)
+        seen_keys.add(normalized)
+    return tuple(labels)
+
+
+def _build_structure_marking_guidance(
+    section: AssessmentStructureSection,
+    parent: AssessmentStructureSection | None = None,
+) -> str:
+    lines: list[str] = []
+
+    marking_text = section.marking_instructions_exact.strip()
+    if marking_text:
+        lines.append("Marking instructions:")
+        lines.append(marking_text)
+
+    if parent is not None:
+        parent_marking = parent.marking_instructions_exact.strip()
+        if parent_marking and parent_marking != marking_text:
+            lines.append("Parent marking instructions:")
+            lines.append(parent_marking)
+
+    if section.anchor_phrases:
+        lines.append("Anchor phrases:")
+        lines.extend(f"- {phrase}" for phrase in section.anchor_phrases)
+
+    if section.evidence_expectations:
+        lines.append("Evidence expectations:")
+        lines.extend(f"- {expectation}" for expectation in section.evidence_expectations)
+
+    if section.dependency_labels:
+        lines.append(f"Dependency links: {', '.join(section.dependency_labels)}")
+
+    if not lines:
+        if section.question_text_exact.strip():
+            return section.question_text_exact.strip()
+        if parent is not None and parent.question_text_exact.strip():
+            return parent.question_text_exact.strip()
+        return ""
+    return "\n".join(lines).strip()
+
+
+def extract_expected_parts_from_context(context: MarkingContext) -> list[SubmissionPart]:
+    sections = extract_assessment_structure(context)
+    parts: list[SubmissionPart] = []
+    for section in sections:
+        marking_guidance = _build_structure_marking_guidance(section)
+        focus_hint = next((line for line in section.question_text_exact.splitlines()[1:] if line.strip()), section.label)
         parts.append(
             SubmissionPart(
-                label=label,
-                focus_hint=line.strip(),
-                anchor_text=label,
-                max_mark=marks,
-                marking_guidance="\n".join(guidance_lines),
-                question_text_exact=question_text_exact,
+                label=section.label,
+                focus_hint=focus_hint.strip(),
+                anchor_text=section.label,
+                max_mark=section.max_mark,
+                marking_guidance=marking_guidance,
+                question_text_exact=section.question_text_exact,
             )
         )
     return parts
 
 
 def extract_expected_subparts_from_context(context: MarkingContext) -> dict[str, list[SubmissionPart]]:
-    source_text = "\n\n".join(
-        text.strip()
-        for text in (context.rubric_text, context.brief_text, context.marking_scheme_text)
-        if text and text.strip()
-    )
-    if not source_text:
-        return {}
-
-    top_level_pattern = re.compile(
-        r"^(?P<kind>question|part|section)\s+(?P<id>\d+|[ivx]+|[a-d])\b(?:\s*[:.)-]|\s*\((?P<marks>\d+(?:\.\d+)?)\s*marks?\)|$)",
-        flags=re.IGNORECASE,
-    )
-    subpart_pattern = re.compile(
-        r"^(?P<id>\d+)\.\s*\[(?P<marks>\d+(?:\.\d+)?)\s*marks?\]",
-        flags=re.IGNORECASE,
-    )
-
-    lines = [line.strip() for line in source_text.splitlines() if line.strip()]
     child_map: dict[str, list[SubmissionPart]] = {}
-    current_parent: str | None = None
-    current_children: list[SubmissionPart] = []
-
-    def flush_children() -> None:
-        nonlocal current_parent, current_children
-        if current_parent and len(current_children) >= 2:
-            child_map[current_parent] = list(current_children)
-        current_children = []
-
-    for index, line in enumerate(lines):
-        top_match = top_level_pattern.search(line)
-        if top_match:
-            flush_children()
-            current_parent = _normalize_label_key(f"{top_match.group('kind').title()} {top_match.group('id')}")
+    for section in extract_assessment_structure(context):
+        safe_children = [
+            child
+            for child in section.children
+            if child.max_mark is not None
+        ]
+        if len(safe_children) < 2:
             continue
-        if current_parent is None:
-            continue
-        sub_match = subpart_pattern.search(line)
-        if not sub_match:
-            continue
-        question_id = sub_match.group("id")
-        guidance_lines = [line]
-        for extra in lines[index + 1 :]:
-            if top_level_pattern.search(extra) or subpart_pattern.search(extra):
-                break
-            if extra.lower().startswith("answer:"):
-                break
-            guidance_lines.append(extra)
-            if len(guidance_lines) >= 6:
-                break
-        question_text_exact = "\n".join(guidance_lines).strip()
-        current_children.append(
+        child_map[_normalize_label_key(section.label)] = [
             SubmissionPart(
-                label=f"{_restore_label_from_key(current_parent)} Q{question_id}",
-                focus_hint=line,
-                anchor_text=f"Q{question_id}",
-                max_mark=float(sub_match.group("marks")),
-                marking_guidance=question_text_exact,
-                question_text_exact=question_text_exact,
+                label=child.label,
+                focus_hint=child.question_text_exact.splitlines()[0].strip() if child.question_text_exact.strip() else child.label,
+                anchor_text=child.label.split()[-1] if " Q" in child.label else child.label,
+                max_mark=child.max_mark,
+                marking_guidance=_build_structure_marking_guidance(child, parent=section),
+                question_text_exact=child.question_text_exact,
             )
-        )
-
-    flush_children()
+            for child in safe_children
+        ]
     return child_map
 
 
@@ -1871,61 +2448,70 @@ def prepare_assessment_map(
 
 
 def build_assessment_map(context: MarkingContext) -> AssessmentMap:
-    top_level_parts = extract_expected_parts_from_context(context)
-    child_map = extract_expected_subparts_from_context(context)
+    sections = extract_assessment_structure(context)
 
     units: list[AssessmentUnit] = []
-    if top_level_parts:
-        for part in top_level_parts:
-            children = child_map.get(_normalize_label_key(part.label), [])
-            if children:
-                for child in children:
-                    question_text = child.question_text_exact or child.marking_guidance or part.question_text_exact or part.marking_guidance or part.focus_hint
+    if sections:
+        for section in sections:
+            marked_children = [child for child in section.children if child.max_mark is not None]
+            if len(marked_children) >= 2:
+                for child in marked_children:
+                    marking_guidance = _build_structure_marking_guidance(child, parent=section)
+                    question_text = child.question_text_exact or section.question_text_exact or marking_guidance or child.label
                     task_type = infer_task_type(child.label, question_text)
-                    mode = infer_grading_mode(child.label, child.marking_guidance or part.marking_guidance or part.focus_hint, task_type=task_type)
-                    dependency = infer_dependency_group(child.label, child.marking_guidance, parent_label=part.label)
+                    mode = infer_grading_mode(
+                        child.label,
+                        marking_guidance or section.marking_instructions_exact or section.question_text_exact or child.label,
+                        task_type=task_type,
+                    )
+                    dependency_source = "\n".join(
+                        text for text in (question_text, marking_guidance, section.question_text_exact) if text.strip()
+                    )
+                    dependency = infer_dependency_group(child.label, dependency_source, parent_label=section.label)
                     units.append(
                         AssessmentUnit(
                             label=child.label,
                             max_mark=child.max_mark,
-                            parent_label=part.label,
+                            parent_label=section.label,
                             grading_mode=mode,
                             task_type=task_type,
                             dependency_group=dependency,
                             question_text_exact=question_text,
-                            marking_guidance=child.marking_guidance,
+                            marking_guidance=marking_guidance,
                             rubric_text=build_unit_rubric_text(
                                 label=child.label,
                                 max_mark=child.max_mark,
                                 grading_mode=mode,
                                 task_type=task_type,
                                 question_text_exact=question_text,
-                                marking_guidance=child.marking_guidance,
+                                marking_guidance=marking_guidance,
                             ),
                         )
                     )
             else:
-                question_text = part.question_text_exact or part.marking_guidance or part.focus_hint
-                task_type = infer_task_type(part.label, question_text)
-                mode = infer_grading_mode(part.label, part.marking_guidance or part.focus_hint, task_type=task_type)
-                dependency = infer_dependency_group(part.label, part.marking_guidance, parent_label=part.label)
+                marking_guidance = _build_structure_marking_guidance(section)
+                question_text = section.question_text_exact or marking_guidance or section.label
+                task_type = infer_task_type(section.label, question_text)
+                mode = infer_grading_mode(section.label, marking_guidance or section.label, task_type=task_type)
+                dependency_source = "\n".join(text for text in (question_text, marking_guidance) if text.strip())
+                dependency = infer_dependency_group(section.label, dependency_source, parent_label=section.label)
                 units.append(
                     AssessmentUnit(
-                        label=part.label,
-                        max_mark=part.max_mark,
+                        label=section.label,
+                        max_mark=section.max_mark,
                         parent_label="",
                         grading_mode=mode,
                         task_type=task_type,
                         dependency_group=dependency,
                         question_text_exact=question_text,
-                        marking_guidance=part.marking_guidance,
+                        marking_guidance=marking_guidance,
                         rubric_text=build_unit_rubric_text(
-                            label=part.label,
-                            max_mark=part.max_mark,
+                            label=section.label,
+                            max_mark=section.max_mark,
                             grading_mode=mode,
                             task_type=task_type,
                             question_text_exact=question_text,
-                            marking_guidance=part.marking_guidance,
+                            marking_guidance=marking_guidance,
                         ),
                     )
                 )
@@ -2059,6 +2645,7 @@ def verify_assessment_rubrics(
                     model_name=verifier_model_name,
                     messages=messages,
                     ollama_url=ollama_url,
+                    profile="rubric_verification",
                 )
                 normalized = normalize_verified_rubric(data, unit)
                 break
@@ -2628,6 +3215,7 @@ def _run_part_analysis_with_retry(
             model_name=model_name,
             messages=messages,
             ollama_url=ollama_url,
+            profile="part_scoring",
         )
         try:
             return normalize_part_analysis(analysis, part=part)
@@ -2703,6 +3291,7 @@ def moderate_part_analyses_across_submission(
         model_name=model_name,
         messages=build_moderation_messages(script_text, parts, part_analyses, context, filename),
         ollama_url=ollama_url,
+        profile="moderation",
     )
     return normalize_moderated_part_scores(data, parts, part_analyses)
 
@@ -3207,6 +3796,7 @@ def calibrate_marks_across_students(
         model_name=model_name,
         messages=build_calibration_messages(assessment_name, context, model_label, eligible),
         ollama_url=ollama_url,
+        profile="moderation",
     )
     return normalize_calibration_result(data, eligible, context.max_mark)
 
@@ -3259,6 +3849,7 @@ def verify_marking_result(
         model_name=model_name,
         messages=build_verification_messages(script_text, context, filename, grading_result),
         ollama_url=ollama_url,
+        profile="verification",
     )
     return normalize_verification_result(data)
 
@@ -3593,23 +4184,44 @@ def _call_ollama_json(
     model_name: str,
     messages: list[dict[str, str]],
     ollama_url: str,
+    profile: str = "default",
 ) -> dict[str, Any]:
     payload = {
         "model": model_name,
         "format": "json",
         "messages": messages,
         "stream": False,
-        "options": {
-            "temperature": 0.1,
-            "top_p": 0.9,
-            "num_ctx": 8192,
-        },
+        "options": _ollama_options_for_profile(profile),
     }
     response = requests.post(ollama_url, json=payload, timeout=300)
     response.raise_for_status()
     response_json = response.json()
     content = extract_message_content(response_json)
     return parse_json_object(content)
+
+
+def _ollama_options_for_profile(profile: str) -> dict[str, Any]:
+    base = {
+        "temperature": 0.0,
+        "top_p": 0.85,
+        "num_ctx": 8192,
+        "seed": 7,
+        "num_predict": 900,
+    }
+    if profile in {"structure_extraction", "rubric_verification", "verification"}:
+        return {
+            **base,
+            "top_p": 0.8,
+            "num_predict": 700,
+        }
+    if profile in {"part_scoring", "moderation", "final_result"}:
+        return {
+            **base,
+            "temperature": 0.05,
+            "top_p": 0.85,
+            "num_predict": 1100,
+        }
+    return base
 
 
 def _run_final_result_with_retry(
@@ -3624,7 +4236,12 @@ def _run_final_result_with_retry(
     last_error: Exception | None = None
     current_messages = list(messages)
     for attempt in range(2):
-        data = _call_ollama_json(model_name=model_name, messages=current_messages, ollama_url=ollama_url)
+        data = _call_ollama_json(
+            model_name=model_name,
+            messages=current_messages,
+            ollama_url=ollama_url,
+            profile="final_result",
+        )
         try:
             return normalize_marking_result(
                 data,
@@ -4072,6 +4689,7 @@ def _detect_subparts_with_model(
         model_name=model_name,
         messages=build_subpart_structure_messages(parent_part, filename, child_specs),
         ollama_url=ollama_url,
+        profile="structure_extraction",
     )
     detected = normalize_detected_parts(data)
     if len(detected) == 1 and _normalize_label_key(detected[0].label) == _normalize_label_key(parent_part.label):

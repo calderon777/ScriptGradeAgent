@@ -29,6 +29,9 @@ from marking_pipeline.core import (
     build_single_assessment_bundle,
     build_submission_diagnostics,
     clear_prepared_assessment_map_cache,
+    extract_assessment_structure,
+    extract_assessment_prompt_structure,
+    extract_marking_scheme_structure,
     extract_expected_parts_from_context,
     extract_expected_subparts_from_context,
     extract_structure_guidance,
@@ -801,6 +804,21 @@ class SubmissionStructureTests(unittest.TestCase):
         self.assertNotIn("General comment about presentation.", guidance)
         self.assertNotIn("Read the dataset appendix carefully.", guidance)
 
+    def test_extract_structure_guidance_keeps_generic_weights_points_and_subsection_signals(self) -> None:
+        context = prepare_marking_context(
+            rubric_text="Subsection A is allocated 10 points.\nUse clear prose throughout.",
+            brief_text="Task 2 carries 25% of the available weight.\nBring your calculator.",
+            marking_scheme_text="Item 3 is worth 15 marks.\nout of 100\nComments should stay concise.",
+            graded_sample_text="",
+            other_context_text="",
+        )
+        guidance = extract_structure_guidance(context)
+        self.assertIn("Subsection A is allocated 10 points.", guidance)
+        self.assertIn("Task 2 carries 25% of the available weight.", guidance)
+        self.assertIn("Item 3 is worth 15 marks.", guidance)
+        self.assertNotIn("Use clear prose throughout.", guidance)
+        self.assertNotIn("Bring your calculator.", guidance)
+
     def test_expected_parts_ignore_inline_question_references(self) -> None:
         context = prepare_marking_context(
             rubric_text="Part 1 (15 marks)\nPart 2 (40 marks)\nPart 3 (30 marks)\nPart 4 (15 marks)\nout of 85",
@@ -838,6 +856,87 @@ class SubmissionStructureTests(unittest.TestCase):
             ["Part 2 Q1", "Part 2 Q2", "Part 2 Q3"],
         )
         self.assertEqual(child_map["part 2"][0].max_mark, 5.0)
+
+    def test_extract_assessment_structure_captures_unmarked_subparts_marking_and_anchors(self) -> None:
+        context = prepare_marking_context(
+            rubric_text="",
+            brief_text=(
+                "Part 1 (15 marks)\n"
+                "1. Generate a 300 word summary of the policy.\n"
+                "2. Using the course material and the IFS report provided, comment on whether the output generated seems accurate.\n"
+                "3. Edit the output to correct any mistakes or inaccuracies that you found, support it in your own words.\n"
+            ),
+            marking_scheme_text=(
+                "Part 1 (15 marks)\n"
+                "Answer:\n"
+                "Students should use the course material and the IFS report to check the generated summary.\n"
+                "References should include specific quotes and page numbers from the report or lecture slides.\n"
+                "Marks should be allocated for identifying inaccuracies, supporting corrections with evidence, and rewriting clearly in the student's own tone.\n"
+                "out of 15\n"
+            ),
+            graded_sample_text="",
+            other_context_text="",
+        )
+
+        structure = extract_assessment_structure(context)
+        self.assertEqual([section.label for section in structure], ["Part 1"])
+        self.assertEqual([child.label for child in structure[0].children], ["Part 1 Q1", "Part 1 Q2", "Part 1 Q3"])
+        self.assertIn("Students should use the course material", structure[0].marking_instructions_exact)
+        self.assertTrue(any("IFS report" in phrase for phrase in structure[0].anchor_phrases))
+        self.assertTrue(any("page numbers" in phrase for phrase in structure[0].evidence_expectations))
+
+    def test_extract_assessment_structure_reconciles_prompt_and_marking_scheme_views(self) -> None:
+        context = prepare_marking_context(
+            rubric_text=(
+                "Part 2 (10 marks)\n"
+                "1. [5 marks] Explain the policy mechanism in your own words.\n"
+                "2. [5 marks] Derive conditions for scenario 1 and give a numerical example.\n"
+                "out of 10\n"
+            ),
+            brief_text="",
+            marking_scheme_text=(
+                "Part 2 (10 marks)\n"
+                "Answer:\n"
+                "Marks should be allocated for correct inequalities, family-by-family checks, and a valid numerical example.\n"
+                "out of 10\n"
+            ),
+            graded_sample_text="",
+            other_context_text="",
+        )
+
+        prompt_sections = extract_assessment_prompt_structure(context)
+        scheme_sections = extract_marking_scheme_structure(context)
+        merged_sections = extract_assessment_structure(context)
+
+        self.assertIn("Derive conditions for scenario 1", prompt_sections[0].question_text_exact)
+        self.assertIn("Marks should be allocated", scheme_sections[0].marking_instructions_exact)
+        self.assertIn("Derive conditions for scenario 1", merged_sections[0].question_text_exact)
+        self.assertIn("Marks should be allocated", merged_sections[0].marking_instructions_exact)
+        self.assertEqual([child.label for child in merged_sections[0].children], ["Part 2 Q1", "Part 2 Q2"])
+
+    def test_extract_assessment_structure_prefers_marking_scheme_as_canonical_when_explicit(self) -> None:
+        context = prepare_marking_context(
+            rubric_text=(
+                "Part 2 (10 marks)\n"
+                "2. [5 marks] Deriveconditionsforthescenarioandgiveanexample.\n"
+                "out of 10\n"
+            ),
+            brief_text="",
+            marking_scheme_text=(
+                "Part 2 (10 marks)\n"
+                "2. [5 marks] Derive conditions for scenario 1 and give a numerical example.\n"
+                "Answer:\n"
+                "Marks should be allocated for correct inequalities and a valid numerical example.\n"
+                "out of 10\n"
+            ),
+            graded_sample_text="",
+            other_context_text="",
+        )
+
+        merged_sections = extract_assessment_structure(context)
+        self.assertIn("Derive conditions for scenario 1 and give a numerical example.", merged_sections[0].question_text_exact)
+        self.assertNotIn("Deriveconditionsforthescenarioandgiveanexample", merged_sections[0].question_text_exact)
+        self.assertIn("Marks should be allocated", merged_sections[0].marking_instructions_exact)
 
     def test_builds_assessment_map_with_subparts_and_modes(self) -> None:
         context = prepare_marking_context(
@@ -910,6 +1009,43 @@ class SubmissionStructureTests(unittest.TestCase):
         self.assertEqual(unit_by_label["Part 4"].grading_mode, "analytical")
         self.assertIn("theoretical model from Part 2", unit_by_label["Part 4"].question_text_exact)
         self.assertIn("the required synthesis of framework, evidence, and material claims", unit_by_label["Part 4"].rubric_text)
+
+    def test_build_assessment_map_keeps_parent_unit_for_unmarked_subparts_and_uses_exact_marking_text(self) -> None:
+        context = prepare_marking_context(
+            rubric_text="",
+            brief_text=(
+                "Part 1 (15 marks)\n"
+                "1. Generate a short summary of the policy.\n"
+                "2. Comment on whether the generated output is accurate using the provided material.\n"
+                "3. Edit the output to correct any mistakes and rewrite it in your own tone.\n"
+                "Part 2 (10 marks)\n"
+                "1. [5 marks] Write down the utility function.\n"
+                "2. [5 marks] Explain the comparative statics.\n"
+            ),
+            marking_scheme_text=(
+                "Part 1 (15 marks)\n"
+                "Answer:\n"
+                "Students should identify inaccuracies and support corrections with evidence from the report and lecture slides.\n"
+                "Marks should be allocated for clear rewriting in the student's own words.\n"
+                "Part 2 (10 marks)\n"
+                "1. [5 marks] Full marks require the correct utility function and notation.\n"
+                "2. [5 marks] Full marks require the right directional effects and interpretation.\n"
+                "out of 25\n"
+            ),
+            graded_sample_text="",
+            other_context_text="",
+        )
+
+        assessment_map = build_assessment_map(context)
+        unit_by_label = {unit.label: unit for unit in assessment_map.units}
+
+        self.assertIn("Part 1", unit_by_label)
+        self.assertNotIn("Part 1 Q1", unit_by_label)
+        self.assertIn("1. Generate a short summary of the policy.", unit_by_label["Part 1"].question_text_exact)
+        self.assertIn("Marks should be allocated for clear rewriting", unit_by_label["Part 1"].marking_guidance)
+        self.assertIn("Evidence expectations:", unit_by_label["Part 1"].marking_guidance)
+        self.assertIn("Part 2 Q1", unit_by_label)
+        self.assertIn("Full marks require the correct utility function and notation.", unit_by_label["Part 2 Q1"].marking_guidance)
 
     def test_rubric_generation_avoids_raw_task_prose_as_criterion(self) -> None:
         context = prepare_marking_context(
@@ -1035,6 +1171,35 @@ class SubmissionStructureTests(unittest.TestCase):
         self.assertNotIn("RELEVANT MARKING-SCHEME EXCERPT:", user)
         self.assertNotIn("RUBRIC:\n", user)
         self.assertNotIn("EXAMPLE GRADED SCRIPT", user)
+
+    def test_part_messages_include_required_steps_for_derivation_questions(self) -> None:
+        context = prepare_marking_context(
+            rubric_text="Part 2 Q2 (7.5 marks)\nDerive conditions for scenario 1 and give a numerical example.\nout of 7.5",
+            brief_text="",
+            marking_scheme_text="",
+            graded_sample_text="",
+            other_context_text="",
+        )
+        part = SubmissionPart(
+            label="Part 2 Q2",
+            focus_hint="Derive scenario 1 conditions.",
+            section_text="Student answer text.",
+            max_mark=7.5,
+            question_text_exact=(
+                "2. [7.5 marks] Derive conditions for scenario 1. "
+                "Give an example of some numerical values for the parameters such that these conditions are satisfied. "
+                "You only need to check, for each family, whether the family would like to change its decision, given what the other families are doing."
+            ),
+            marking_guidance="Evaluate whether the derivation is correct.",
+            task_type="deterministic_derivation",
+        )
+
+        messages = build_part_messages(part, context, "student.docx")
+        user = messages[1]["content"]
+        self.assertIn('"required_steps"', user)
+        self.assertIn('state the required inequalities or parameter conditions', user)
+        self.assertIn('check the relevant family-by-family deviation conditions', user)
+        self.assertIn('give a numerical example that satisfies the stated conditions', user)
 
     def test_normalizes_verified_rubric(self) -> None:
         unit = AssessmentUnit(label="Part 2 Q1", max_mark=5.0, grading_mode="deterministic")

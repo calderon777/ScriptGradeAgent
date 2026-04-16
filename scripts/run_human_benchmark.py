@@ -29,19 +29,15 @@ from marking_pipeline.core import (  # noqa: E402
     moderate_linked_part_analyses,
     prepare_assessment_map,
     read_path_text,
+    read_paths_text,
     refine_submission_granularity,
     segment_submission_parts,
 )
 
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
-ASSESSMENT_CONTEXT_PDF = (
-    ROOT_DIR
-    / ".scriptgrade_cache"
-    / "last_ingest"
-    / "marking_scheme"
-    / "001_Final_Main_2025_V03_-_solutions.pdf"
-)
+LAST_INGEST_DIR = ROOT_DIR / ".scriptgrade_cache" / "last_ingest"
+LAST_INGEST_MANIFEST = LAST_INGEST_DIR / "manifest.json"
 DEFAULT_WORKBOOK = Path(
     r"C:\Users\Cam\OneDrive - City St George's, University of London\grading test\test 2\EC3040 deanonymised grades.xlsx"
 )
@@ -135,15 +131,18 @@ def parse_args() -> argparse.Namespace:
 
 
 def load_context() -> MarkingContext:
-    rubric_text = read_path_text(ASSESSMENT_CONTEXT_PDF)
-    return MarkingContext(
-        rubric_text=rubric_text.strip(),
-        brief_text="",
-        marking_scheme_text="",
-        graded_sample_text="",
-        other_context_text="",
-        max_mark=100.0,
-    )
+    if LAST_INGEST_MANIFEST.exists():
+        manifest = json.loads(LAST_INGEST_MANIFEST.read_text(encoding="utf-8"))
+        documents = manifest.get("documents", {})
+        return MarkingContext(
+            rubric_text=read_paths_text(tuple(Path(path) for path in documents.get("rubric_files", []))),
+            brief_text=read_paths_text(tuple(Path(path) for path in documents.get("brief_files", []))),
+            marking_scheme_text=read_paths_text(tuple(Path(path) for path in documents.get("marking_scheme_files", []))),
+            graded_sample_text=read_paths_text(tuple(Path(path) for path in documents.get("graded_sample_files", []))),
+            other_context_text=read_paths_text(tuple(Path(path) for path in documents.get("other_files", []))),
+            max_mark=float(manifest.get("manual_max_mark", 100.0)),
+        )
+    raise FileNotFoundError(f"Benchmark context manifest not found: {LAST_INGEST_MANIFEST}")
 
 
 def parse_part_breakdown(feedback_comments: str) -> dict[str, float]:

@@ -1,5 +1,43 @@
 # Small-Model Scoring Payload Design
 
+## Document Role
+
+This document defines the model-facing scoring payload.
+
+It answers:
+
+1. what the scoring model should receive,
+2. what it should decide,
+3. how the payload should generalize across assessment types.
+
+It does not define:
+
+- Ollama runtime settings,
+- model-specific inference parameters,
+- benchmark execution order.
+
+Those belong in:
+
+- [model_runtime_guidance.md](c:/Users/Cam/Documents/GitProjects/ScriptGradeAgent/model_runtime_guidance.md)
+- [execution_plan.md](c:/Users/Cam/Documents/GitProjects/ScriptGradeAgent/execution_plan.md)
+
+## How This Relates To The Other Docs
+
+Read the three working docs in this order:
+
+1. this file:
+   - payload design and task decomposition
+2. [model_runtime_guidance.md](c:/Users/Cam/Documents/GitProjects/ScriptGradeAgent/model_runtime_guidance.md):
+   - how local models should be used against those tasks
+3. [execution_plan.md](c:/Users/Cam/Documents/GitProjects/ScriptGradeAgent/execution_plan.md):
+   - what to implement and benchmark next
+
+Short version:
+
+- this file defines the information contract
+- the runtime guide defines the inference contract
+- the execution plan defines the work order
+
 ## Goal
 
 Design the minimum scoring payload a small model needs in order to:
@@ -10,6 +48,21 @@ Design the minimum scoring payload a small model needs in order to:
 4. justify the score with short evidence.
 
 The design should generalize across different assessment shapes. `EC3040` is used as a worked example of a sectioned multi-part exam. `Econ2545 rubric 2020.xlsx` is used as a contrasting example of a holistic criterion-matrix rubric. The code should not be overfit to either one.
+
+## Current Repository Status
+
+Current direction in the repository:
+
+1. deterministic assessment-structure extraction is now the main baseline,
+2. exact question text and exact marking instructions should be preserved upstream,
+3. small-model scoring payloads should be compact but valid,
+4. inference tuning should happen after the structure and payload are sound.
+
+This means the current priority is:
+
+- fix structure extraction,
+- derive better anchors and criteria from that structure,
+- then tune the scoring model profile against a fixed sample.
 
 ## Design Principles
 
