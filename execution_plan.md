@@ -1,190 +1,399 @@
 # Execution Plan
 
-Ranked from highest priority to lowest priority.
+This file is the repo's TOWS plan. It converts current SWOT forces into milestone and issue candidates, then orders them into daily execution steps.
 
-Working-doc order:
+Read the working docs in this order:
 
-1. [small_model_scoring_payload_design.md](c:/Users/Cam/Documents/GitProjects/ScriptGradeAgent/small_model_scoring_payload_design.md)
+1. [small_model_scoring_payload_design.md](small_model_scoring_payload_design.md)
    - payload policy
-2. [model_runtime_guidance.md](c:/Users/Cam/Documents/GitProjects/ScriptGradeAgent/model_runtime_guidance.md)
+2. [model_runtime_guidance.md](model_runtime_guidance.md)
    - runtime and inference policy
 3. this file
-   - implementation and benchmark sequence
+   - work order, milestone ladder, and issue queue
 
-Current extraction note:
-- PDF handling is now hybrid by design.
-- `PyMuPDF4LLM` cleaned text is used for structure detection only.
-- The current extractor output is used for segmentation and scoring text because it preserves math and equations better.
-- The two texts are not merged into one document; they are used at different pipeline stages.
-- If future work changes PDF extraction again, preserve this split unless a replacement backend clearly beats the current extractor on both structure recovery and equation retention in end-to-end tests.
+## Current Repo Snapshot
 
-Current structure note:
-- Deterministic assessment-structure extraction is now the main baseline.
-- The structure pass should preserve:
-  - top-level parts
-  - subparts, even when they are unmarked
-  - exact task instructions
-  - exact marking instructions
-  - anchor phrases and evidence expectations
-  - dependency links across parts
-- Model tuning should now happen against this cleaner structure baseline rather than against the older heuristic-only structure path.
-- Marking-scheme structure is now the canonical source when it is explicit enough.
-- Assessment-side structure should now act as fallback or repair when the marking scheme is missing, header-only, or visibly damaged.
+Observed on 2026-04-16:
 
-Current critical issues, ranked:
+- Canonical app entrypoint is `app.py`.
+- CI already exists in `.github/workflows/ci.yml`.
+- Local validation passed:
+  - `python -m unittest discover -s tests` -> 107 tests passed
+  - `python -m compileall app.py batch_mark.py mvp_mark_one.py marking_pipeline tests` -> passed
+- The repo has strong inspection tooling:
+  - `scripts/run_human_benchmark.py`
+  - `scripts/compare_assessment_structure_methods.py`
+  - `scripts/export_assessment_structure_inspection.py`
+  - `scripts/export_scoring_payload_inspection.py`
+- The main engineering hotspot is still concentrated in:
+  - `marking_pipeline/core.py` at about 5,022 lines
+  - `tests/test_core.py` at about 2,291 lines
+- Current benchmark evidence from `output/human_benchmark_ec3040/summary.json`:
+  - mean absolute total-mark delta: `9.38`
+  - PDF mean absolute total-mark delta: `13.0`
+  - DOCX mean absolute total-mark delta: `5.75`
+  - mean total latency: `373.7s`
+- Current structure evidence from `output/assessment_structure_bakeoff/assessment_structure_bakeoff.json`:
+  - deterministic structure extraction is ahead of the old heuristic baseline
+- Current DOCX evidence from `output/docx_competitor_smoke_10/summary.json`:
+  - the current backend can hit exact top-level part matches, but not consistently enough to call the problem solved
 
-1. Exact section payload text is still degraded for some high-value units.
-   - `Part 2 Q2` remains the clearest example.
-   - The current payload still contains merged words such as `Deriveconditions...` and `inequilibrium`.
-   - The scoring payload still trims `question.text` too aggressively and can end with `...`, which is risky for deterministic sections.
-   - This is currently the highest-priority quality issue because it distorts the actual task before scoring begins.
+## Repo SWOT
 
-2. The scorer still over-credits some deterministic derivation answers.
-   - The one-script EC3040 smoke remains materially high on total-mark delta even after structure and profile changes.
-   - `Part 2 Q2` is still being marked too generously relative to the human benchmark.
-   - Required-step hints now exist, but the payload still does not force enough discrimination between:
-     - presence of formulas
-     - validity of inequalities
-     - correct family-by-family deviation logic
-     - valid numerical example
+### Strengths
 
-3. Larger local chunk fallback is not implemented yet.
-   - The right policy is not minimalism at any cost.
-   - When exact section wording looks damaged or incomplete, the system should send a slightly larger local chunk rather than a smaller but invalid one.
-   - This is especially important for derivations, multi-step prompts, and sections with hidden subrequirements.
+1. The repo already has a coherent governance stack:
+   - `constitution.md`
+   - payload design doc
+   - runtime guidance doc
+   - execution plan
+2. The pipeline is audit-oriented:
+   - deterministic totals
+   - prepared assessment maps
+   - verifier hooks
+   - benchmark and export scripts
+3. The test baseline is real, not nominal:
+   - 107 passing tests
+   - many core behaviors already pinned
+4. The repo already stores benchmark artifacts and comparison outputs, so changes can be evaluated against evidence rather than memory.
+5. CI is already in place, so the next step is better regression content, not basic setup.
 
-4. Disparities between assessment-map structure and marking-scheme structure still need a deliberate inspection pass.
-   - The code now supports scheme-first canonical structure.
-   - We still need a mismatch review between:
-     - the assessment map built from assessment documents
-     - the structure extracted from the marking scheme
-   - This is important because downstream scoring quality will stay fragile if those two disagree silently.
+### Weaknesses
 
-5. Moderation is adding latency without clear value on the fixed smoke benchmark.
-   - Stricter inference profiles made moderation eligible for `Part 2`, adding roughly 50 seconds.
-   - That extra time has not produced a meaningful quality win on the fixed one-script benchmark.
-   - The moderation gate needs inspection before further latency tuning.
+1. Accuracy is still not trustworthy enough on the fixed benchmark, especially for PDFs and deterministic derivation sections.
+2. `marking_pipeline/core.py` is too large, which raises change risk and slows focused iteration.
+3. `tests/test_core.py` is also concentrated into one large file, which makes failures harder to localize.
+4. Benchmark scripts still depend on machine-specific paths and local artifacts outside the repo, which weakens portability.
+5. Moderation is consuming latency even when it produces no mark change.
+6. The previous `execution_plan.md` had stale items:
+   - CI was listed as future work even though it already exists
+   - legacy app cleanup was listed even though those files are not in the current tree
 
-6. The current scheme text is the right source, but still noisy.
-   - The benchmark harness now uses marking-scheme-first context correctly.
-   - However, the scheme extraction still contains merged words and truncated instruction lines.
-   - So the remaining issue is no longer source precedence; it is extracted text cleanliness inside the chosen source.
+### Opportunities
 
-7. Scoring payloads still contain some redundant or generic content.
-   - The payloads are better than before, but they still repeat generic criterion language and weak/strong anchor patterns.
-   - This affects latency and may reduce discrimination for small models.
+1. The existing benchmark harness can become a formal regression gate with very little new infrastructure.
+2. The payload and structure inspection scripts can directly support issue-driven debugging.
+3. DOCX performance is already materially better than PDF performance, which gives a usable reference path for cross-format comparisons.
+4. Prepared assessment maps, cache logic, and artifact enrichment already exist and can be used to isolate real gains from prompt churn.
+5. The repo already contains enough benchmark output to define numeric success criteria for the next sprint.
 
-Recommendations raised in this chat but not yet carried through:
+### Threats
 
-- Stop truncating exact question text so aggressively for hard deterministic sections.
-- Add a larger local chunk fallback when the extracted section wording looks damaged or incomplete.
-- Add stricter derivation-specific criteria that test validity, not just apparent completeness.
-- Inspect the moderation gate and disable or narrow it where it adds latency without quality gain.
-- Run an explicit disparity review between the assessment map and the marking-scheme extraction artifact.
-- Keep heuristics generic and avoid topic-specific overfitting.
-- Continue using the deterministic Python section-detection fast path as the default where context structure is strong.
+1. Overfitting to EC3040-style prompts could improve one benchmark while weakening general assessment behavior.
+2. PDF extraction damage can silently distort the actual task before scoring begins.
+3. Latency at current levels can make the app operationally unattractive even when marks improve.
+4. Hard-coded private data paths and real sample artifacts create portability and data-governance risk.
+5. The monolithic core raises the chance that a local fix creates a regression elsewhere in extraction, scoring, or reporting.
 
-Next steps in this area:
-- Immediate next move:
-  - stop truncating exact question text so aggressively in the model-facing payload for deterministic sections
-  - add a larger local chunk fallback when the extracted section wording looks damaged
-  - rerun the fixed Sadik one-script benchmark after that change
-- Next scoring-quality move after that:
-  - sharpen deterministic derivation criteria so the scorer distinguishes valid conditions from merely complete-looking working
-  - target `Part 2 Q2` and similar multi-step derivation questions without overfitting to EC3040 wording
-- Immediate moderation move:
-  - inspect why moderation is firing for `Part 2`
-  - keep it only if it produces measurable quality improvement on the fixed benchmark
-- Immediate structure-validation move:
-  - perform an explicit disparity review between:
-    - assessment map built from assessment-side documents
-    - structure extracted from the marking scheme
-  - record mismatches and decide when assessment-side text should repair scheme-side text
-- Immediate scoring-payload efficiency move:
-  - inspect the exported anchored payload workbook and identify repeated criterion or anchor wording across the 12 part calls
-  - compress shared anchors into shorter status semantics or criterion phrasing without dropping task-specific criteria
-  - rerun the same fixed 1-script benchmark after each compression step so quality and latency can be compared directly
-- Promote this branch as the new baseline for ongoing work. The assessment-preparation cache refactor, Qwen/Qwen policy, PDF hybrid, and DOCX hybrid are a better default than the prior branch state.
-- Run a small end-to-end benchmark against human marks for both PDF and DOCX:
-  - reuse one prepared assessment map per assessment
-  - grade at least 2 PDF submissions and 2 DOCX submissions
-  - compare total mark, part-level marks, and feedback quality against human marking
-- Focus the first post-merge DOCX check on the known risk:
-  - confirm whether the adaptive DOCX scoring extractor reduces under-marking on the Aya sample and a second contrasting sample
-  - if under-marking persists, inspect whether the loss comes from extraction, section detection, granularity refinement, or scoring prompts
-- Validate the new DOCX heading hints on a broader mixed sample:
-  - confirm they improve section detection often enough to justify keeping them
-  - watch for false positives from bold inline prose or stylistic emphasis
-- Keep the DOCX policy generic:
-  - rely on formatting/layout signals first
-  - avoid assessment-specific lexical heuristics
-- Do not change the PDF split lightly:
-  - structure text remains `PyMuPDF4LLM` with cleanup
-  - scoring text remains the current extractor unless a new benchmark shows a better end-to-end outcome
-- Record benchmark results in a stable output location so future extraction changes can be compared against the same cases.
-- Recommended next benchmark slice after this extraction phase:
-  - rerun the same 4-script EC3040 benchmark set after any scoring or missing-evidence changes
-  - keep the benchmark fixed to:
-    - Sadik PDF
-    - Federica PDF
-    - Aya DOCX
-    - Apisan DOCX
-  - target the next improvements at:
-    - false positives for absent evidence
-    - over-harsh per-part scoring on PDFs
-    - alignment with human zero-credit decisions such as missing-answer cases
-  - treat this as a scoring-calibration benchmark, not another extraction bakeoff, unless a later change clearly reopens extraction as the main bottleneck
+## TOWS To Milestones
 
-1. Validate the canonical app end to end with real marking inputs
-   Run `streamlit run app.py` and test the full workflow with:
-   - a valid text-based submission and valid rubric
-   - a missing rubric or marking scheme
-   - a scanned or text-empty PDF
-   Confirm that valid grading succeeds and invalid inputs fail clearly.
+### SO Strategies
 
-2. Verify Ollama model behavior against the stricter response contract
-   Test each supported model (`llama3.1:8b`, `mistral:7b`, `qwen2:7b`, `gemma3:4b`) with representative submissions.
-   Check for:
-   - valid JSON output
-   - correct `max_mark`
-   - marks staying within range
-   - feedback quality matching the rubric and script content
+Use existing strengths to exploit current opportunities.
 
-3. Tune prompts or narrow supported models based on actual failures
-   If any model frequently returns invalid JSON, wrong scales, or weak feedback, either:
-   - adjust the shared prompt logic in `marking_pipeline/core.py`, or
-   - remove that model from the default supported list
-   Do not keep unreliable models in the main path.
+1. Turn benchmark scripts plus stored outputs into a formal regression milestone.
+   - Milestone: `M4 Benchmark Productization`
+2. Use passing tests and exported inspection artifacts to make issue triage evidence-first.
+   - Milestone: `M1 Trustworthy Payloads`
+   - Milestone: `M2 Scoring Calibration`
 
-4. Decide whether the legacy entrypoints should remain in the repo
-   `app_v1_mvp.py` and `app_v2_mvp.py` now forward to `app.py`.
-   Keep them only if you still need compatibility with old launch commands; otherwise delete them to reduce ambiguity.
+### ST Strategies
 
-5. Confirm sample data policy and remove sensitive artifacts if needed
-   Review `scripts/test/student1.pdf` and any remaining sample materials.
-   If they are real assessment artifacts, remove them and clean repository history as needed.
+Use existing strengths to contain current threats.
 
-6. Add an automated integration test for the shared grading flow
-   Mock the Ollama API and cover:
-   - a valid grading run
-   - malformed model output
-   - wrong mark scale from the model
-   - empty extracted submission text
+1. Use the constitution, deterministic totals, and current tests to stop accuracy fixes from becoming silent logic drift.
+   - Milestone: `M2 Scoring Calibration`
+2. Use existing timing and benchmark outputs to cut latency only where value is unproven.
+   - Milestone: `M3 Latency And Moderation Discipline`
+3. Use the structure-comparison tooling to keep EC3040-specific fixes from becoming hidden general-policy changes.
+   - Milestone: `M5 Structure Mismatch Visibility`
 
-7. Add CI so the repo stays runnable
-   Set up a simple CI workflow that runs:
-   - dependency install
-   - `python -m compileall`
-   - `python -m unittest discover -s tests`
+### WO Strategies
 
-8. Improve user-facing error reporting in the app
-   Replace raw `ERROR: ...` strings in result cells with cleaner structured statuses where useful.
-   Keep technical detail available, but avoid mixing operational errors with normal grading output more than necessary.
+Use current opportunities to fix repo weaknesses.
 
-9. Add OCR only if scanned PDFs are a real requirement
-   The app now rejects scanned or text-empty PDFs instead of hallucinating marks.
-   If scanned submissions are part of the real workflow, implement OCR as a deliberate next feature rather than a silent fallback.
+1. Use the benchmark harness to replace vague planning with ranked issue tickets and measurable exit criteria.
+   - Milestone: `M1 Trustworthy Payloads`
+   - Milestone: `M2 Scoring Calibration`
+2. Use existing CI and scripts to remove machine-specific benchmark friction.
+   - Milestone: `M4 Benchmark Productization`
+3. Use the current evidence base to split the monolith only after the highest-value quality issues are pinned.
+   - Milestone: `M6 Architecture Hardening`
 
-10. Consider removing generated-output write paths from normal workflows
-    The Streamlit app already returns in-memory downloads, which is cleaner.
-    If batch scripts are mainly for local testing, consider whether writing Excel files to `output/` should stay as the default behavior.
+### WT Strategies
+
+Reduce weaknesses that amplify external threats.
+
+1. Reduce concentrated code risk before broader feature work such as OCR or new model routes.
+   - Milestone: `M6 Architecture Hardening`
+2. Clean up data and fixture policy before scaling benchmark usage.
+   - Milestone: `M7 Data Hygiene`
+3. Keep OCR in backlog until real workflow evidence justifies it.
+   - Milestone: `M7 Data Hygiene`
+
+## Milestone Ladder
+
+Create milestones in this order.
+
+### M1 Trustworthy Payloads
+
+Priority: `P0`
+
+Goal:
+- Preserve exact task meaning for high-value sections before calibration starts.
+
+Issue candidates:
+1. `[P0][Payload] Stop aggressive truncation of exact question text for deterministic units`
+2. `[P0][Payload] Detect damaged section wording and fall back to a larger local chunk`
+3. `[P0][Payload] Export before/after payload inspections for PDF outlier sections`
+
+Exit criteria:
+- No `question_text_exact` payload for the targeted PDF outliers ends with a harmful ellipsis when the source contains more recoverable local text.
+- The known `Part 2 Q2` and `Part 2 Q3` payloads preserve the actual section request well enough for manual inspection.
+
+### M2 Scoring Calibration
+
+Priority: `P0`
+
+Goal:
+- Reduce mark error on deterministic and PDF-heavy failures without hard-coding EC3040 topic language.
+
+Issue candidates:
+1. `[P0][Scoring] Tighten derivation scoring around inequality validity and family-by-family deviation logic`
+2. `[P0][Scoring] Add missing-answer and low-evidence benchmark cases for zero or near-zero credit`
+3. `[P0][Benchmark] Re-run the fixed 4-script benchmark after each scoring change`
+
+Exit criteria:
+- Improve `mean_abs_total_delta` from `9.38` to `<= 7.5`
+- Improve PDF `mean_abs_total_delta` from `13.0` to `<= 9.0`
+- Keep DOCX `mean_abs_total_delta` at `<= 6.0`
+
+### M3 Latency And Moderation Discipline
+
+Priority: `P1`
+
+Goal:
+- Remove time spent on moderation when it does not change outcomes.
+
+Issue candidates:
+1. `[P1][Latency] Log moderation trigger reasons and resulting mark deltas on the fixed benchmark`
+2. `[P1][Latency] Narrow or disable moderation paths that repeatedly return zero change`
+3. `[P1][Runtime] Compare quality before and after moderation narrowing on the same benchmark set`
+
+Exit criteria:
+- Reduce benchmark mean latency from `373.7s` to `< 320s`
+- Do not worsen `mean_abs_total_delta` relative to the pre-change baseline
+
+### M4 Benchmark Productization
+
+Priority: `P1`
+
+Goal:
+- Make the benchmark process portable, reproducible, and issue-friendly.
+
+Issue candidates:
+1. `[P1][Benchmark] Remove hard-coded machine-specific defaults from benchmark scripts`
+2. `[P1][Benchmark] Standardize benchmark artifact output paths inside the repo`
+3. `[P1][Docs] Add one reproducible benchmark command per benchmark family`
+
+Exit criteria:
+- Benchmark scripts can run from repo-relative or CLI-supplied paths without editing source files.
+- New benchmark outputs land in stable folders that are easy to diff across runs.
+
+### M5 Structure Mismatch Visibility
+
+Priority: `P1`
+
+Goal:
+- Surface disagreements between assessment-side and scheme-side structure before they become silent scoring defects.
+
+Issue candidates:
+1. `[P1][Structure] Export assessment-map vs marking-scheme mismatch reports`
+2. `[P1][Structure] Define repair precedence rules for scheme-first vs assessment-side text`
+3. `[P1][Inspection] Add mismatch examples to the inspection workflow`
+
+Exit criteria:
+- Mismatch cases are explicitly reported and inspectable.
+- Repair rules are documented and reflected in exported artifacts.
+
+### M6 Architecture Hardening
+
+Priority: `P2`
+
+Goal:
+- Reduce change risk after the highest-value quality fixes are stabilized.
+
+Issue candidates:
+1. `[P2][Refactor] Split extraction, assessment-preparation, scoring, and moderation concerns out of core.py`
+2. `[P2][Tests] Split test_core.py by subsystem`
+3. `[P2][Docs] Document subsystem ownership and main regression hooks`
+
+Exit criteria:
+- `core.py` is materially smaller
+- tests are grouped by subsystem
+- no loss in test coverage or benchmark reproducibility
+
+### M7 Data Hygiene
+
+Priority: `P2`
+
+Goal:
+- Reduce data and portability risk before scaling the benchmark corpus.
+
+Issue candidates:
+1. `[P2][Data] Audit sample artifacts under scripts, output, and cache-backed workflows`
+2. `[P2][Data] Define fixture policy for private grading data vs repo-safe fixtures`
+3. `[P2][Backlog] Decide whether OCR remains backlog or becomes a planned feature`
+
+Exit criteria:
+- Sample-data policy is explicit
+- sensitive or machine-bound fixtures are separated from repo-safe fixtures
+
+## Ranked Daily Milestones
+
+This is the next ranked daily sequence. Each day should close or materially advance one issue group.
+
+### Day 1
+
+Open the milestone and issue skeleton from `M1` and `M2`, then freeze the benchmark baseline.
+
+Tasks:
+- create the `M1` to `M7` milestone set
+- create the `P0` issues first
+- record the current benchmark numbers from `output/human_benchmark_ec3040/summary.json` as the baseline
+- link each P0 issue to one concrete benchmark failure or exported artifact
+
+Done when:
+- the issue tracker reflects the same ordering as this file
+
+### Day 2
+
+Fix question-text truncation for deterministic units.
+
+Tasks:
+- inspect the exact payload builder path
+- stop harmful ellipsis-based shortening for deterministic sections
+- add tests around payload preservation
+- export updated payload inspections for the known PDF outliers
+
+Done when:
+- targeted deterministic payloads preserve the real task wording on inspection
+
+### Day 3
+
+Add damaged-text detection and larger local chunk fallback.
+
+Tasks:
+- detect merged-word or visibly incomplete section wording
+- switch to a larger local chunk only when the exact section looks damaged
+- add tests for fallback activation and non-activation
+- rerun the two PDF outlier scripts first
+
+Done when:
+- fallback behavior is selective and inspectable, not global
+
+### Day 4
+
+Tighten deterministic derivation scoring.
+
+Tasks:
+- sharpen criteria for formula validity, inequality logic, deviation checks, and numerical examples
+- add missing-answer and low-evidence tests
+- rerun the fixed 4-script benchmark
+
+Done when:
+- part-level deltas improve on the targeted derivation failures without adding topic-specific rules
+
+### Day 5
+
+Audit moderation value versus latency.
+
+Tasks:
+- log trigger reasons and delta outcomes for moderation
+- identify no-op moderation cases
+- narrow or disable no-op branches
+- rerun the same benchmark to compare latency and quality
+
+Done when:
+- moderation has a measured justification or is removed from the affected path
+
+### Day 6
+
+Make structure mismatches visible.
+
+Tasks:
+- generate explicit mismatch reports between assessment-side and scheme-side structure
+- document repair precedence
+- add at least one regression test or inspection artifact for mismatch handling
+
+Done when:
+- structure disagreements are surfaced before scoring, not discovered after bad marks
+
+### Day 7
+
+Make the benchmark workflow portable.
+
+Tasks:
+- remove hard-coded OneDrive-style defaults from benchmark scripts where practical
+- prefer CLI arguments, repo-relative fixtures, or documented local overrides
+- standardize output locations for reruns
+
+Done when:
+- another machine can run the same scripts without editing source files
+
+### Day 8
+
+Reduce monolith risk after the quality path is stable.
+
+Tasks:
+- split `core.py` into smaller responsibility-focused modules
+- split `tests/test_core.py` into matching test files
+- keep public imports stable through `marking_pipeline/__init__.py`
+
+Done when:
+- the code layout is easier to reason about and tests still pass unchanged
+
+### Day 9
+
+Run the data-hygiene pass.
+
+Tasks:
+- audit repo-safe fixtures versus private benchmark data
+- document what must stay local
+- decide whether OCR is a backlog item or a planned milestone
+
+Done when:
+- data policy is explicit and future contributors can tell which artifacts are safe to keep in-repo
+
+### Day 10
+
+Close the sprint with a benchmarked release gate.
+
+Tasks:
+- rerun tests
+- rerun the fixed benchmark
+- compare against Day 1 baseline
+- close completed issues and re-rank the remainder
+
+Done when:
+- the tracker shows which issues moved the benchmark and which did not
+
+## Not Current Priorities
+
+These should not be treated as current milestone work unless repo evidence changes.
+
+1. Adding CI
+   - already done in `.github/workflows/ci.yml`
+2. Cleaning up `app_v1_mvp.py` and `app_v2_mvp.py`
+   - those files are not in the current repo tree
+3. Adding OCR immediately
+   - keep as backlog until the data policy and benchmark goals justify it
+
+## Decision Rule
+
+For the next sprint, do not open new feature work until `M1`, `M2`, and `M3` are materially advanced. The repo's highest-value path is:
+
+1. preserve the task correctly
+2. score deterministic sections more truthfully
+3. remove latency that is not buying quality
+4. only then widen the benchmark and refactor the architecture

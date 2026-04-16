@@ -930,7 +930,9 @@ def _construct_criteria_for_task(task_type: str, question_text: str, marking_gui
 
 
 def _extract_required_steps_for_model(part: SubmissionPart) -> list[str]:
-    question_text = _question_text_for_model(part.question_text_exact)
+    # Use the full cleaned question here so late instructions still become explicit
+    # required steps even when the prompt carries a shorter display version.
+    question_text = _question_text_for_model(part.question_text_exact, max_chars=None)
     if not question_text:
         return []
     lowered = question_text.lower()

@@ -1276,6 +1276,45 @@ class SubmissionStructureTests(unittest.TestCase):
         self.assertIn("Confirm that the answer states the required inequalities or parameter conditions correctly.", user)
         self.assertIn('"type": "verification_check"', user)
 
+    def test_part_messages_keep_late_required_steps_from_long_deterministic_question_text(self) -> None:
+        context = prepare_marking_context(
+            rubric_text="Part 2 Q2 (7.5 marks)\nDerive conditions for scenario 1 and give a numerical example.\nout of 7.5",
+            brief_text="",
+            marking_scheme_text="",
+            graded_sample_text="",
+            other_context_text="",
+        )
+        long_setup = "Explain the economic setting briefly before starting the derivation. " * 11
+        part = SubmissionPart(
+            label="Part 2 Q2",
+            focus_hint="Derive scenario 1 conditions.",
+            section_text="Student answer text.",
+            max_mark=7.5,
+            question_text_exact=(
+                "2. [7.5 marks] Derive conditions for scenario 1. "
+                f"{long_setup}"
+                "Give an example of some numerical values for the parameters such that these conditions are satisfied. "
+                "You only need to check, for each family, whether the family would like to change its decision, "
+                "given what the other families are doing."
+            ),
+            marking_guidance="Evaluate whether the derivation is correct.",
+            task_type="deterministic_derivation",
+        )
+
+        self.assertGreater(len(_question_text_for_model(part.question_text_exact, max_chars=None)), 650)
+        messages = build_part_messages(part, context, "student.docx", model_name="qwen2:7b")
+        payload = json.loads(messages[1]["content"].split("scoring_payload:\n", 1)[1])
+        self.assertFalse(payload["question"]["text"].endswith("..."))
+        self.assertIn("Give an example of some numerical values", payload["question"]["text"])
+        self.assertIn(
+            "give a numerical example that satisfies the stated conditions",
+            payload["question"]["required_steps"],
+        )
+        self.assertIn(
+            "check the relevant family-by-family deviation conditions",
+            payload["question"]["required_steps"],
+        )
+
     def test_part_messages_keep_longer_exact_question_text_for_deterministic_sections(self) -> None:
         context = prepare_marking_context("Maximum mark: 5", "", "", "", "")
         part = SubmissionPart(
