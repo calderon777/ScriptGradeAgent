@@ -288,6 +288,61 @@ class TaskTypeInferenceTests(unittest.TestCase):
             "",
         )
 
+    def test_task_goal_for_model_rejects_pre_truncated_ellipsis_goal(self) -> None:
+        # If the upstream builder already appended "..." (because the question
+        # text exceeded the 1200-char cap in _build_part_task_text), the result
+        # must not flow into the payload as a task_goal.  The model will rely on
+        # question.text which is preserved at the 1800-char limit.
+        long_prefix = "Explain the economic setting. " * 50  # > 1200 chars
+        truncated_goal = _question_text_for_model(long_prefix, max_chars=1200)
+        self.assertTrue(truncated_goal.endswith("..."), "precondition: goal ends with ellipsis")
+        self.assertEqual(_task_goal_for_model(truncated_goal, "some question text"), "")
+
+    def test_task_goal_for_model_deduplicates_using_full_text_not_truncated(self) -> None:
+        # Previously both cleaned_goal and cleaned_question were truncated to 650
+        # chars before comparison.  Two texts that are identical when full but
+        # differ when truncated must still deduplicate correctly.
+        long_qte = (
+            "2. [7.5 marks] Derive conditions on the model's parameters such that, in equilibrium, "
+            "only the low income family sends their child to public school and the other two "
+            "families send their children to private school. We will refer to this outcome as "
+            "scenario 1 in subsequent questions. Give an example of some numerical values "
+            "for the parameters such that these conditions are satisfied. Note: what you should "
+            "report are inequalities involving S, t, τ, P_L, P_M, and P_H. Explain carefully how "
+            "you obtain these inequalities and why they result in the scenario described. Hint: "
+            "you only need to check, for each family, whether the family would like to change "
+            "its decision, given what the other families are doing."
+        )
+        self.assertGreater(len(long_qte), 650, "precondition: text exceeds old 650-char limit")
+        cleaned = _question_text_for_model(long_qte, max_chars=None)
+        # When task_goal and question_text are the same cleaned content, result must be "".
+        self.assertEqual(_task_goal_for_model(cleaned, cleaned), "")
+
+    def test_task_goal_for_model_part2_q2_ec3040_produces_no_ellipsis_payload_text(self) -> None:
+        # Regression pin for the Part 2 Q2 PDF outlier from the EC3040 benchmark.
+        # The question_text_exact is 701 chars — above the old 650 default limit
+        # used inside _task_goal_for_model.  The task_goal entry in the payload
+        # must not end with "...".
+        part2_q2_qte = (
+            "2. [7.5marks]Deriveconditionsonthemodel\u2019sparameterssuchthat,inequilibrium,\n"
+            "only the low income family sends their child to public school and the other two\n"
+            "families send their children to private school. We will refer to this outcome as\n"
+            "scenario 1 in subsequent questions. Give an example of some numerical values\n"
+            "for the parameters such that these conditions are satisfied. Note: what you should\n"
+            "report are inequalities involving S, t, \u03c4, P , P , and P . Explain carefully how\n"
+            "L M H\nyou obtain these inequalities and why they result in the scenario described. Hint:\n"
+            "you only need to check, for each family, whether the family would like to change\n"
+            "its decision, given what the other families are doing."
+        )
+        self.assertGreater(len(part2_q2_qte), 650, "precondition: EC3040 Q2 text exceeds 650 chars")
+        cleaned_for_model = _question_text_for_model(part2_q2_qte, max_chars=None)
+        result = _task_goal_for_model(cleaned_for_model, cleaned_for_model)
+        # task_goal should be "" (deduplicated) or at minimum never end with "..."
+        self.assertFalse(
+            result.endswith("..."),
+            f"task_goal must not end with '...', got: {result!r}",
+        )
+
 
 class DependencyAndCriteriaTests(unittest.TestCase):
     def test_dependency_inference_requires_actual_backward_reference(self) -> None:

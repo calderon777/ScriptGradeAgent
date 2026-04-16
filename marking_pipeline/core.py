@@ -1027,8 +1027,14 @@ def _question_text_for_model(question_text: str, max_chars: int | None = 650) ->
 
 
 def _task_goal_for_model(task_goal: str, question_text: str) -> str:
-    cleaned_goal = _question_text_for_model(task_goal)
-    cleaned_question = _question_text_for_model(question_text)
+    # Use max_chars=None so that an already-built task_goal is not re-truncated
+    # to 650 chars here.  If the upstream builder already appended "..." (because
+    # the source exceeded its own 1200-char cap), treat the result as unusable and
+    # let the model rely on question.text alone.
+    if task_goal.strip().endswith("..."):
+        return ""
+    cleaned_goal = _question_text_for_model(task_goal, max_chars=None)
+    cleaned_question = _question_text_for_model(question_text, max_chars=None)
     if not cleaned_goal:
         return ""
     if len(cleaned_goal) < 24 and cleaned_goal.endswith(("(", "[", ":", ";", ",")):
