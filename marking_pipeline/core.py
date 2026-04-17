@@ -5259,7 +5259,23 @@ def _normalize_criterion_notes(
             "note": note,
         }
     if len(by_name) != len(expected_names):
-        raise ValueError(f"Model returned incomplete criterion_notes for {expected_label}: {value}")
+        # M2 hardening: instead of crashing on incomplete criterion_notes,
+        # fill missing criteria with conservative defaults ("weak" for likert, "missing_or_wrong" for scale)
+        missing_status, missing_normalized = _normalize_criterion_note_status(
+            "weak" if expected_scale_type == "likert_judgement" else "missing_or_wrong",
+            expected_scale_type,
+        )
+        for criterion_name in expected_names:
+            if criterion_name in by_name:
+                continue
+            by_name[criterion_name] = {
+                "criterion_name": criterion_name,
+                "status": missing_status,
+                "normalized_status": missing_normalized,
+                "scale_type": expected_scale_type,
+                "scale_labels": list(expected_scale_labels),
+                "note": "omitted by model",
+            }
     return [by_name[name] for name in expected_names]
 
 
