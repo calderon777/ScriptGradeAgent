@@ -557,11 +557,20 @@ def _build_qwen_decision_block(
 ) -> list[str]:
     mode = _criterion_mode_for_part(part)
     top_label = scale_labels[-1]
-    support_rule = (
-        "Do not award high marks to broad but weakly supported discussion."
-        if mode == "abstract"
-        else "Do not award marks for unsupported steps, missing components, or incorrect claims."
-    )
+
+    # Evidence-aware support rule: for derivations, focus on visible method/setup;
+    # for other tasks, flag unsupported claims
+    if part.task_type == "deterministic_derivation":
+        support_rule = (
+            "Award partial credit for visible correct setup, valid intermediate steps, and correct interpretation "
+            "even if the final result is incomplete or hard to verify in the extracted text. "
+            "Award zero or minimal credit only if the response shows no relevant method or no visible attempt."
+        )
+    elif mode == "abstract":
+        support_rule = "Do not award high marks to broad but weakly supported discussion."
+    else:
+        support_rule = "Do not award marks for unsupported steps, missing components, or incorrect claims."
+
     return [
         f"Task mode: {mode}.",
         f"For each criterion, choose one status only from: {', '.join(scale_labels)}.",
@@ -1161,6 +1170,8 @@ def _extract_prompt_scoring_rules(marking_guidance: str, max_mark: float | None)
         rules.append("Reward specific references when the task asks for them.")
     if any(term in guidance_text for term in ("rewrite", "own tone", "own words", "correct any mistakes", "edit the output")):
         rules.append("Reward justified correction and rewriting when asked.")
+    # M2 addition: explicit guidance for no-attempt cases
+    rules.append("If a response contains no relevant attempt, no attempt at the required method, or only unrelated content, award zero or minimal credit.")
     deduped: list[str] = []
     seen: set[str] = set()
     for rule in rules:

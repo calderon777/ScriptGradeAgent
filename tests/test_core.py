@@ -68,6 +68,7 @@ from marking_pipeline.core import (
     refine_submission_granularity,
     segment_submission_parts,
     SubmissionPart,
+    MarkingContext,
     verify_part_analysis,
     verify_assessment_rubrics,
     verify_marking_result,
@@ -1604,6 +1605,32 @@ class SubmissionStructureTests(unittest.TestCase):
         self.assertIn("Check that the response uses variables that are consistent with the measures or data identified earlier.", user)
         self.assertIn("Check that the response identifies the main coefficient of interest.", user)
         self.assertIn("Check that the response states the hypothesis that would test the chosen prediction.", user)
+
+    def test_m2_derivation_support_rule_awards_partial_credit_for_visible_work(self) -> None:
+        # M2 evidence-aware rule: derivations should get partial credit for visible correct setup/steps
+        # even if final result is incomplete or hard to verify in extraction.
+        part = SubmissionPart(
+            label="Part 2 Q3",
+            question_text_exact="Derive the conditions required for equilibrium under the stated assumptions.",
+            marking_guidance="Award method marks for correct setup and algebra, even if final result is incomplete.",
+            task_type="deterministic_derivation",
+            max_mark=7.5,
+        )
+        context = MarkingContext(rubric_text="", brief_text="", marking_scheme_text="", graded_sample_text="", other_context_text="", max_mark=100.0)
+        messages = build_part_messages(part, context, "student.pdf", model_name="qwen2:7b")
+        user = messages[1]["content"]
+        # Verify the decision_block contains evidence-aware language about partial credit
+        self.assertIn("Award partial credit for visible correct setup, valid intermediate steps", user)
+        self.assertIn("award partial credit", user.lower())
+        self.assertNotIn("Do not award marks for unsupported steps", user)
+
+    def test_m2_scoring_rules_include_no_attempt_guidance(self) -> None:
+        # M2: all scoring rules should include guidance about zero credit for no-attempt cases
+        from marking_pipeline.core import _extract_prompt_scoring_rules
+        rules = _extract_prompt_scoring_rules("General marking guidance.", None)
+        # Should include the new rule about no-attempt cases
+        no_attempt_rules = [r for r in rules if "no relevant attempt" in r.lower() or "unrelated content" in r.lower()]
+        self.assertGreater(len(no_attempt_rules), 0, "Should have rule about zero credit for no-attempt cases")
 
     def test_generated_unit_rubric_uses_source_specific_synthesis_constructs(self) -> None:
         rubric = build_unit_rubric_text(
