@@ -1,0 +1,447 @@
+EC3040 Economics and Society  
+Assessment 2 – Coursework: Written assignment 
+ 
+Maria Klenina, 230015464 
+ 
+Part 1  
+ 
+1.1  
+ 
+My prompt:  
+ 
+“Write a 300-word summary explaining the UK Labour Party’s proposal to introduce a VAT 
+on private school fees. Tell me how the policy works and include the expected costs and 
+benefits it might bring through possible effects on school choices, funding of public schools, 
+inequality, government revenue, and educational quality. You should use such economic 
+concepts as externalities, redistribution, incentives, and behavioral responses”. 
+ 
+AI-generated response:  
+“The Labour Party proposes applying the standard 20% VAT rate to private school fees, 
+which are currently exempt. The policy is intended to raise revenue and increase fairness in 
+the education system. Adding VAT would make private school fees more expensive and 
+could reduce demand for private education. Some families might switch to state schools, 
+increasing enrolment pressures. 
+The policy’s benefits include higher government revenue that can be reinvested in public 
+schools, reducing inequality by improving the quality of state education. The VAT also aims 
+to correct the implicit subsidy private schools receive by being VAT-exempt. Supporters 
+argue that this would ensure private schools contribute fairly to the public system. 
+However, there are concerns. Some argue that reduced private school enrolment would 
+increase class sizes and strain public school resources. Others worry the additional VAT costs 
+may push middle-income families out of private education while wealthier families are 
+unaffected, creating further polarisation. Critics also argue that private schools might offset 
+the tax by cutting bursaries or reducing quality. 
+Overall, the VAT on private school fees aims to increase fairness, raise funds for state 
+education, and reduce inequalities, but may also create risks for both systems depending on 
+behavioural responses.” 
+1.2  
+Evaluation:  
+ 
+a) “The Labour Party proposes applying the standard 20% VAT rate to private school 
+fees”. – Correct, as IFS confirms that: “Labour has proposed levying VAT at the main 
+rate of 20% on private school fees”. (IFS 2023, page 4) 
+ 
+b)  “The VAT aims to raise funds for state education”. – It is right, as IFS supports this: 
+“In the short run (one or two years), the impact on the level of private schooling is 
+
+likely to be small, with £1.5–1.6 billion representing the most likely net public 
+finance impact in the short run”. (IFS 2023, page 24) 
+ 
+c) “…the additional VAT costs may push middle-income families out of private 
+education while wealthier families are unaffected.” Underestimated by AI. IFS: “…a 
+range of somewhere between a 3% and 7% fall in private school attendance (or about 
+20,000–40,000 pupils) as a result of a 15% effective VAT rate”. (IFS 2023 page 26)  
+ 
+d) “The VAT also aims to correct the implicit subsidy private schools receive by being 
+VAT-exempt”. – Correct, but not enough, as IFS supports it: “Current tax exemptions 
+could be seen as playing a similar role to such a voucher”. “…there are also equity 
+arguments for the state making a contribution to the cost of educating pupils across all 
+sectors.” (IFS 2023, page 6)  
+ 
+e) AI did not mention the equity argument (redistribution rationale). Lecture 9 on 
+Education mentions that State education has equity and efficiency benefits: 
+externalities, borrowing constraints and peer effects.  
+ 
+f) AI doesn’t discuss the potential long-run school quality effects 
+ 
+g) AI doesn’t mention anything about inelastic demand, as it is said in IFS: As we argue 
+later, the demand for private schooling is likely to be inelastic – i.e. the number 
+attending private schools is not that responsive to the price. The old Ramsey rule 
+would suggest inelastic goods should be subject to higher-than-average tax rates to 
+minimise deadweight costs and maximise revenues (Ramsey, 1927)”. (IFS 2023, page 
+5)  
+ 
+ 
+1.3  
+My summary: 
+ 
+The Labour Party proposed to remove the current VAT exemption on private school fees and 
+to apply the standard 20% rate. It is confirmed by the IFS, which states that “Labour has 
+proposed levying VAT at the main rate of 20% on private school fees” (IFS, 2023, p. 4). The 
+main fiscal motivation is to raise revenue for state education. In the short run, behavioural 
+responses are expected to be limited, and IFS estimates “£1.5–1.6 billion, representing the 
+most likely net public finance impact in the short run” (IFS, 2023, p. 24). These additional 
+funds would go toward the state sector, where spending pressures are increased. 
+The policy might then affect household schooling decisions. The IFS states: a "3% to 7% fall 
+in private school attendance (20,000-40,000 pupils)" can be expected in response to the 
+effective VAT rate (IFS, 2023, p. 26), which gives more precise evidence. The resulting 
+behavioural effect, though modest, may come with distributional consequences because rich 
+households are less responsive to higher prices. 
+  
+The IFS explains that "current tax exemptions could be seen as playing a similar role to such 
+a voucher" and that there are "equity arguments for the state contributing to the cost of 
+
+educating pupils across all sectors" (IFS, 2023, p. 6). Therefore, eliminating the exemption 
+improves redistributive goals and enhances the tax system’s neutrality. Lecture 9 proves this 
+by showing that state education generates equity and efficiency benefits through externalities, 
+borrowing constraints, and peer effects. 
+There are also long-run effects on school quality and the role of inelastic demand that are 
+worth talking about. The IFS also mentions that private schooling is "likely to be inelastic" 
+and that, according to the Ramsey rule, such goods may efficiently be subject to higher 
+taxation. Overall, the policy seems financially robust and driven by equitable considerations, 
+though its wider educational effects rely on behavioural responses. 
+ 
+Part 2  
+ 
+2.1 
+Public school  
+ 
+The coursework defines the payoff from attending public school as:  
+ 
+ 
+ 
+Public-school payoff 
+ 
+ 
+ 
+ 
+So, public-school utility increases when VAT revenue (T) is high and when there are less 
+students attending public schools (x is lower).  
+ 
+ 
+Private school 
+ 
+
+
+Number of families that send their child to private school (number of private-school pupils): 
+y = 3 – x 
+Total fees: F = y*t 
+ 
+ 
+ 
+Costs of private school:  
+ 
+ 
+ 
+ 
+ 
+ 
+2.2  
+Scenario 1: Only L in Public school, M and H in Private  
+ 
+So:  
+x = 1 
+y = 2 
+F =2t 
+T = 2tτ 
+ 
+
+
+ 
+ 
+ 
+So, scenario 1 holds for all inequalities a,b,c  
+ 
+ 
+2.3 
+Scenario 2: L and M in public school, H in private 
+ 
+x = 2 
+y = 1  
+
+
+F = t  
+T = tτ 
+ 
+Step 1: We compute utilities:  
+ 
+Public school:  
+ 
+ 
+ 
+ 
+2.4 How parameters affect scenarios 
+ 
+- When t or  τ:  private schools become less attractive (More likely in scenario 2)  
+-  S or  redistribution (higher T/x): public schools attractiveness improves (More 
+likely in scenario 2)  
+-  Pi: there is a stronger preference for private schools (More likely in scenario 1)  
+ 
+2.5 Effect of VAT on social welfare 
+ 
+Social welfare:  
+ 
+
+
+ 
+ 
+1. Negative effect: higher fees of private-schools reduce utilities of private-school 
+families  
+2. Positive effect: VAT makes T higher, increasing public-school utility  
+ 
+Welfare is increased by VAT if the benefit of redistribution exceeds: 
+- Overcrowding in public schools  
+- Forced transfer of families with a strong preference for private education 
+ 
+ 
+ 
+ 
+Welfare can decrease when raising  changes the equilibrium choices, then: 
+
+
+- The VAT base  
+- Changes because of changes in y 
+- Private-quality term 
+ 
+ 
+ 
+2.6 Is VAT on private schools a good idea?  
+The desirability of the VAT, therefore, depends on the parameters of the model and how 
+families respond to it. On the one hand, VAT could enhance equity and welfare effects 
+because of inelastic demand for private education enrolment, as well as effective 
+redistribution of VAT revenues generated, accruing benefits for public schooling. In the 
+setup, VAT-generated revenues boost welfare from public schooling, as captured through 
+5T/x, benefiting those pupils in government schools because of better resources due to 
+increased utility from public schooling. Because of much larger enrolment in public 
+schooling, such redistribution would be beneficial for many pupils and help in making them 
+more equally literate. 
+On the other hand, welfare gains from VAT will be diminished – or even negative – if VAT 
+causes significant movement of pupils from private to public schools. When many families 
+switch, the number of pupils in public schools rises, which reduces public-school utility 
+through congestion because baseline quality and funding are spread over more pupils. In this 
+case, congestion effects can dominate the gains from additional funding. Welfare effects are 
+therefore ambiguous and depend on the elasticity of demand for private schooling, the 
+strength of redistribution, and the capacity of the public education system. Consequently, 
+VAT is not universally desirable, but its effectiveness depends critically on these underlying 
+parameters. 
+Part 3  
+ 
+3.1  
+In the theoretical model from Part 2 we get several clear and testable empirical predictions 
+about the results of VAT introduction on private school fees.  
+ 
+Prediction 1: VAT and private school attendance 
+ 
+
+
+Raising the VAT rate on private school fees (t (1+ τ)) leads to a lower number and share of 
+pupils in private schools. Higher prices of private schooling due to a higher VAT rate have a 
+major effect on people who value private schooling least (low and middle-income families). 
+ 
+Prediction 2: Public school funding and private school attendance 
+ 
+An increase in public-school spending per student will lead to an increase in the advantage of 
+public education and a subsequent reduction in private-school enrolment. The above can be 
+represented in the model by an increase in S or an increase in VAT revenue per public-school 
+student given by T/x. 
+ 
+Prediction 3: Income and school choice 
+ 
+Regions in which household income or wealth is high (Pi is high) have more pupils in private 
+schools. Wealthy people value private education more and are not very sensitive to prices. 
+ 
+Prediction 4: Diverse reactions to VAT 
+ 
+The negative impact of VAT on private school enrollment is less in the case of high-income 
+regions. This is because the demand for private education has less elasticity in the case of 
+high-income classes, and the lower classes have a greater tendency to shift to public schools. 
+ 
+3.2 Measuring variables  
+ 
+Attending private schools 
+Expressed as the percentage of pupils who attend private (independent) schools. 
+Possible data sources: 
+ 
+- UK: School census data from Department for Education (DfE), or Independent 
+Schools Council (ISC), by local authority or geographic area. 
+- The variables to use: Number of pupils in independent schools, Total number of 
+pupils. SO, we can get Private school share (= independent school pupils / total 
+pupils)  
+ 
+Source: https://explore-education-statistics.service.gov.uk/find-statistics/school-pupils-and-
+their-characteristics/2024-25  
+ 
+Source: https://www.isc.co.uk/media/k5sfmobx/isc_census_2025-main-infographic.pdf  
+ 
+- International: The OECD "Education at a Glance" presents the percentage of 
+enrollments in privately managed institutions. 
+- Variables to use: Percentage of students in private institutions (by country and 
+education level)  
+ 
+Source: https://www.oecd.org/en/publications/education-at-a-glance-2025_1c0d9c79-en.html  
+ 
+ 
+VAT and private school prices  
+
+ 
+- VAT rate (τ): The statutory VAT rate that applies to private education (or Standard 
+VAT Rate pre- and post-reform). 
+- Variables to use: Standard VAT rate (%) by country and year  
+ 
+Source: https://www.oecd.org/en/topics/taxation.html  
+ 
+- Tuition fees (t): Average private school fees using ISC data (UK) or education 
+statistics. 
+- Variables to use: Average private school fees 
+ 
+Source: https://www.gov.uk/vat-rates  
+ 
+Source: https://www.isc.co.uk/research/annual-census/  
+ 
+Public school funding/quality  
+Stands for S and T/x 
+ 
+- UK: expenditure per pupil by local authority from DfE school funding statistics. 
+- Variables to use: Funding per pupil by local authority  
+ 
+Source: https://explore-education-statistics.service.gov.uk/find-statistics/school-funding-
+statistics/2024-25  
+ 
+- International: Public expenditure on educational institutions in OECD nations, by 
+student. 
+- Variables to use: Public spending per student as a share of GDP  
+ 
+Source: https://data-
+explorer.oecd.org/vis?fs[0]=Topic%2C0%7CEducation%20and%20skills%23EDU%23&
+pg=0&fc=Topic&bp=true&snb=112&df[ds]=dsDisseminateFinalDMZ&df[id]=DSD_EA
+G_UOE_FIN%40DF_UOE_INDIC_FIN_PERSTUD&df[ag]=OECD.EDU.IMEP&df[vs]
+=3.1&dq=..ISCED11_1%2BISCED11_2%2BISCED11_3%2BISCED11_34%2BISCED
+11_35%2BISCED11_4%2BISCED11_5%2BISCED11_5T8%2BISCED11_6T8%2BISC
+ED11_1T8._T.INST_EDU.DIR_EXP.V%2B_Z.USD_PPP_ST%2BPT_B1GQ_POP.&pd
+=2022%2C2022&to[TIME_PERIOD]=true  
+ 
+Income 
+Used as Proxy for (Pi) 
+ 
+- UK: Average Household Disposable Income by Region from Office for National 
+Statistics.  
+- Variables to use: Mean disposable household income  
+ 
+Source: 
+https://www.ons.gov.uk/peoplepopulationandcommunity/personalandhouseholdfinances/inco
+meandwealth/datasets/nowcastinghouseholdincomeintheuk/current  
+ 
+- International: GDP per capita or household income data from the OECD. 
+- Variables to use: Gini (disposable income)  
+
+  
+Source: https://data-
+explorer.oecd.org/vis?df[ds]=DisseminateFinalDMZ&df[id]=DSD_WISE_IDD%40DF_IDD
+&df[ag]=OECD.WISE.INE&dq=.A.INC_DISP_GINI..._T.METH2012.D_CUR.&pd=2010%
+2C&to[TIME_PERIOD]=false&vw=tb  
+ 
+ 
+ 
+3.3 Regression  
+ 
+ 
+ 
+3.4 Endogeneity concerns and solutions  
+ 
+Endogeneity is a key challenge in estimating the above regression 
+ 
+Reverse causality: 
+ 
+Going to a private school may have implications for government expenditures. For instance, 
+if most children are attending private schools, then the government will pay less to fund 
+public schools, resulting in biased estimations by OLS. 
+ 
+Omitted Variables: 
+ 
+Unobservable variables, such as the preference of the culture for private education and the 
+tradition of schooling, can influence both public and private education. 
+ 
+Simple errors: 
+ 
+With public expenditure per student potentially measured with error, resulting in attenuation 
+bias. 
+  
+Possible solutions: 
+ 
+
+
+- Panel data with fixed effects, adjusting for time-invariant variables (regional 
+characteristics). 
+- Difference-in-differences, increasing funding for public schools or imposing VAT on 
+private school fees. 
+- Instrumental variables, through external changes in funding formulas or political 
+variables that have an influence on the education spending but not on demand for 
+private schools.  
+ 
+ 
+Part 4 
+ 
+Video 1 by Orchardpractice focuses on the potential short-term adverse effects of the 
+introduction of VAT. The video suggests that raising the cost of private schools by 20% will 
+have a particularly damaging impact upon middle-class families who, despite their economic 
+circumstances, value private schooling despite the cost. Using the model developed in Part 2, 
+this translates into a rise in the cost of private schooling of t(1+τ), reducing the utility of 
+private schooling Pi for those with intermediate preferences Pi. The video’s concern that 
+schools will be full applies specifically to the congestion term of the payoff to attend a public 
+school (S/x) + 5(T/x): a significant number of pupils switching to public schools would cause 
+x to rise, possibly degrading the quality of public schooling because of increased class sizes 
+and a shortage of teachers. In this scenario, the introduction of VAT could worsen welfare 
+outcomes if the resulting congestion effects exceed the benefits of redistribution. 
+ 
+Video 2 by LBCOfficial argues that VAT on private schools is a redistributive policy, but not 
+just a “jealousy tax”, as one of the debaters said. The presenter of the show states that there is 
+only a small part of pupils leaving private schools and declining birth rates mean that there is 
+enough capacity for everyone in public schools.  
+This is related to the empirical discussion in Part 3 and evidence from the IFS on limited 
+switching. In the video, it is also mentioned that VAT revenue might improve the quality of 
+teaching, facilities, and support for special needs in state schools. In the model, this is shown 
+through an increase in T, which raises the utility offered by the public school via 5T/x, 
+benefiting many more children. 
+In conclusion, the videos demonstrate the core trade-off identified in coursework: while VAT 
+could be applying short-term forces on state schools, with inelastic demand for private 
+education and well-targeted redistributions of funds, it could lead to an overall improvement 
+in equity provisions and even boost overall welfare. 
+ 
+References:  
+ 
+1. Schools, pupils and their characteristics, academic year 2024/25 (no date) GOV.UK. 
+Available at: https://explore-education-statistics.service.gov.uk/find-statistics/school-
+pupils-and-their-characteristics/2024-25  (Accessed: 31 December 2025).  
+2. (No date) Annual Census - ISC. Available at: https://www.isc.co.uk/research/annual-
+census/  (Accessed: 21 December 2025).  
+3. (No date a) Education at a glance 2025 | OECD. Available at: 
+https://www.oecd.org/en/publications/education-at-a-glance-2025_1c0d9c79-en.html  
+(Accessed: 21 December 2025).  
+4. (No date a) Taxation | OECD. Available at: 
+https://www.oecd.org/en/topics/taxation.html  (Accessed: 21 December 2025).  
+
+5. (No date a) Taxation | OECD. Available at: 
+https://www.oecd.org/en/topics/taxation.html  (Accessed: 22 December 2025).  
+6. (No date a) Annual Census - ISC. Available at: 
+https://www.isc.co.uk/research/annual-census/  (Accessed: 22 December 2025).  
+7. School funding statistics, financial year 2024-25 (no date) GOV.UK. Available at: 
+https://explore-education-statistics.service.gov.uk/find-statistics/school-funding-
+statistics/2024-25  (Accessed: 22 December 2025).  
+8. (No date a) Data. Available at: https://data-
+explorer.oecd.org/vis?fs%5B0%5D=Topic%2C0%7CEducation+and+skills%23EDU
+%23&pg=0&fc=Topic&bp=true&snb=112&df%5Bds%5D=dsDisseminateFinalDMZ
+&df%5Bid%5D=DSD_EAG_UOE_FIN%40DF_UOE_INDIC_FIN_PERSTUD&df
+%5Bag%5D=OECD.EDU.IMEP&df%5Bvs%5D=3.1&dq=..ISCED11_1%2BISCED
+11_2%2BISCED11_3%2BISCED11_34%2BISCED11_35%2BISCED11_4%2BISC
+ED11_5%2BISCED11_5T8%2BISCED11_6T8%2BISCED11_1T8._T.INST_EDU.
+DIR_EXP.V%2B_Z.USD_PPP_ST%2BPT_B1GQ_POP.&pd=2022%2C2022&to%5
+BTIME_PERIOD%5D=true  (Accessed: 23 December 2025).  
+9. Dataset(s): Nowcasting household income in the UK (no date a) Nowcasting 
+household income in the UK - Office for National Statistics. Available at: 
+https://www.ons.gov.uk/peoplepopulationandcommunity/personalandhouseholdfinanc
+es/incomeandwealth/datasets/nowcastinghouseholdincomeintheuk/current  (Accessed: 
+23 December 2025).  
+10. (No date a) Data. Available at: https://data-
+explorer.oecd.org/vis?df%5Bds%5D=DisseminateFinalDMZ&df%5Bid%5D=DSD_
+WISE_IDD%40DF_IDD&df%5Bag%5D=OECD.WISE.INE&dq=.A.INC_DISP_GI
+NI..._T.METH2012.D_CUR.&pd=2010%2C&to%5BTIME_PERIOD%5D=false&v
+w=tb  (Accessed: 23 December 2025).

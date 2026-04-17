@@ -1,0 +1,6633 @@
+[
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494150",
+    "full_name": "Participant 1494150 (Faisal Khalid H Alotaibi)",
+    "grade": 71.0,
+    "feedback": "A well-structured script demonstrating very good understanding of the course material. Overall, strong engagement with the models and policy debates. More formal derivations and tighter empirical links could bring up your grade even more.  Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 4/5, Part 2 Q2: 6/7.5, Part 2 Q3: 6/7.5, Part 2 Q4: 4/5, Part 2 Q5: 3/5, Part 2 Q6: 6/10, Part 3 Q1: 5/7.5, Part 3 Q2: 6/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 5/7.5, Part 4: 11/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 11.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494019",
+    "full_name": "Participant 1494019 (Zakaria Hussain)",
+    "grade": 64.0,
+    "feedback": "Good understanding of the model and policy context, with clear structure and mostly correct analysis. Overall, the work could benefit from a more critical evaluation and tighter links between theory, evidence, and implications. Your grade breakdown is: Part 1: 9/15, Part 2 Q1: 3/5, Part 2 Q2: 5/7.5, Part 2 Q3: 5/7.5, Part 2 Q4: 3/5, Part 2 Q5: 3/5, Part 2 Q6: 6/10, Part 3 Q1: 5/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 5/7.5, Part 3 Q4: 6/7.5, Part 4: 9/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 9.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 9.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494021",
+    "full_name": "Participant 1494021 (Ruhama Saqib)",
+    "grade": 75.0,
+    "feedback": "This is a strongly structured assignment, well done!  Overall, you show clear economic intuition and apply the model consistently across parts. A high-quality piece of work with minor weaknesses in empirical identification and sometimes precision. Your grade breakdown is: Part 1: 13/15, Part 2 Q1: 4/5, Part 2 Q2: 6/7.5, Part 2 Q3: 6/7.5, Part 2 Q4: 4/5, Part 2 Q5: 4/5, Part 2 Q6: 7/10, Part 3 Q1: 6/7.5, Part 3 Q2: 6/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 4/7.5, Part 4: 11/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 13.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 11.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494148",
+    "full_name": "Participant 1494148 (Shayaan Mahmood)",
+    "grade": 70.0,
+    "feedback": "This is a very well-structured assignment!  Overall, the work is generally clear and well motivated. The main areas for improvement are sharper empirical identification and a more formal and critical welfare analysis, particularly when evaluating policy trade-offs. Your grade breakdown is: Part 1: 13/15, Part 2 Q1: 4.5/5, Part 2 Q2: 6.5/7.5, Part 2 Q3: 6.5/7.5, Part 2 Q4: 3.5/5, Part 2 Q5: 2/5, Part 2 Q6: 7/10, Part 3 Q1: 5/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 4/7.5, Part 4: 9/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 13.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 9.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494004",
+    "full_name": "Participant 1494004 (Hannah Gomaa)",
+    "grade": 68.0,
+    "feedback": "This is a strong and well-structured submission! Overall, you demonstrated a good understanding of the topic. The analysis would benefit from more consistently anchoring conclusions in explicit model results, and tighter links to the lecture concepts. Your grade breakdown is: Part 1: 9/15, Part 2 Q1: 4/5, Part 2 Q2: 5.5/7.5, Part 2 Q3: 5.5/7.5, Part 2 Q4: 4/5, Part 2 Q5: 3/5, Part 2 Q6: 7/10, Part 3 Q1: 5/7.5, Part 3 Q2: 6/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 6/7.5, Part 4: 9/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 9.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 5.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 5.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 9.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494034",
+    "full_name": "Participant 1494034 (Abdirahman Hassan)",
+    "grade": 67.0,
+    "feedback": "This assignment shows a solid understanding of the model. To improve even further, the analysis should more consistently anchor its conclusions in explicit model results and be more precise in linking arguments. For further submissions I recommend to ensure clearer scans of handwritten work (not part of the grade here) to aid readability.  Your grade breakdown is: Part 1: 10/15, Part 2 Q1: 2.5/5, Part 2 Q2: 5/7.5, Part 2 Q3: 6/7.5, Part 2 Q4: 3/5, Part 2 Q5: 3/5, Part 2 Q6: 7.5/10, Part 3 Q1: 5.5/7.5, Part 3 Q2: 4.5/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 5/7.5, Part 4: 11/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 10.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.5,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 4.5,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 11.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494091",
+    "full_name": "Participant 1494091 (Ibrahim Unal)",
+    "grade": 55.0,
+    "feedback": "This assignment demonstrates reasonable understanding of the core ideas. Overall, this shows good engagement with the model, but the analysis is often too broad and relies on intuition rather than clearly linking claims to spefic model results or identification strategies. More precision and tighter connections to the formal framework would strengthen the answers. Some handwritten calculations were also hard to read. Using a scan function would help (but this did not affect the grading). Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 3/5, Part 2 Q2: 3/7.5, Part 2 Q3: 3/7.5, Part 2 Q4: 2.5/5, Part 2 Q5: 2.5/5, Part 2 Q6: 7/10, Part 3 Q1: 4/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 2/7.5, Part 3 Q4: 3/7.5, Part 4: 9/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 2.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 9.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494090",
+    "full_name": "Participant 1494090 (Rishaye Whabi)",
+    "grade": 57.0,
+    "feedback": "This is a solid assignment.  Overall, this work shows good engagement with the material and the model's intuitions. This work can be improved by clearly linking claims to specific model results, identification strategies, or empirical evidence. Tighter use of course concepts would strengthen the work.    Your grade breakdown is: Part 1: 9/15, Part 2 Q1: 3/5, Part 2 Q2: 3/7.5, Part 2 Q3: 3/7.5, Part 2 Q4: 2/5, Part 2 Q5: 3/5, Part 2 Q6: 6/10, Part 3 Q1: 4/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 5/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 9.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494082",
+    "full_name": "Participant 1494082 (Muhammad Dahdouh)",
+    "grade": 56.0,
+    "feedback": "This assignment demonstrates reasonable understanding of the core ideas. Overall, this shows a good ability to work with economic concepts. This work can be improved by clearly linking claims to model results and explaining identification strategies in more depth. Stronger application of course concepts would strengthen this work.  Your grade breakdown is: Part 1: 12/15, Part 2 Q1: 3/5, Part 2 Q2: 2.5/7.5, Part 2 Q3: 2.5/7.5, Part 2 Q4: 3/5, Part 2 Q5: 2/5, Part 2 Q6: 5/10, Part 3 Q1: 4/7.5, Part 3 Q2: 4/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 4/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 12.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 2.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 2.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 5.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1493994",
+    "full_name": "Participant 1493994 (Mir-Nibras Rashed)",
+    "grade": 0.0,
+    "feedback": ".",
+    "part_scores": {}
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1493974",
+    "full_name": "Participant 1493974 (Amirah Jeylani)",
+    "grade": 67.0,
+    "feedback": "A well-structured and conclusive assignment.  Overall, this work demonstrates good understanding of the material. Arguments can be even more improved by tighter links between theory, evidence, and implications. Your grade breakdown is: Part 1: 10/15, Part 2 Q1: 4/5, Part 2 Q2: 4/7.5, Part 2 Q3: 5/7.5, Part 2 Q4: 4/5, Part 2 Q5: 3/5, Part 2 Q6: 6/10, Part 3 Q1: 5/7.5, Part 3 Q2: 6/7.5, Part 3 Q3: 6/7.5, Part 3 Q4: 5/7.5, Part 4: 9/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 10.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 9.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494140",
+    "full_name": "Participant 1494140 (Danish Naeem)",
+    "grade": 60.0,
+    "feedback": "This assignment is well-structured and demonstrates good understanding of the concepts.  Overall, this work brings good arguments and engagement with the topic. Most marks were lost due to calcluation errors and not linking the model results to key arguments and justifying empirical strategies.  Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 3/5, Part 2 Q2: 2.5/7.5, Part 2 Q3: 2.5/7.5, Part 2 Q4: 3/5, Part 2 Q5: 3/5, Part 2 Q6: 6/10, Part 3 Q1: 5/7.5, Part 3 Q2: 6/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 4/7.5, Part 4: 11/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 2.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 2.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 11.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494185",
+    "full_name": "Participant 1494185 (Bakisha Letchumikanthan)",
+    "grade": 72.0,
+    "feedback": "This is a very well-structured and strong assignment.  Overall, you demonstrate very good knowledge of the model implications and discuss them well. To bring you marks even higher, the discussions would benefit from stronger links to the core concepts and empirical evidence.  Your grade breakdown is: Part 1: 10/15, Part 2 Q1: 4/5, Part 2 Q2: 6.5/7.5, Part 2 Q3: 6.5/7.5, Part 2 Q4: 4/5, Part 2 Q5: 3/5, Part 2 Q6: 7/10, Part 3 Q1: 5/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 6/7.5, Part 3 Q4: 6/7.5, Part 4: 9/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 10.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 9.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494070",
+    "full_name": "Participant 1494070 (Dhruvi Sanghani)",
+    "grade": 68.0,
+    "feedback": "This assignment shows a a good understanding of the core concepts.  Overall, this works shows good engagement with the model, but the analsis is often kept rather broad. This work can be improved even further by linking claims to model results and by justifying identification strategies. Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 4/5, Part 2 Q2: 6/7.5, Part 2 Q3: 6/7.5, Part 2 Q4: 4/5, Part 2 Q5: 3/5, Part 2 Q6: 6/10, Part 3 Q1: 4/7.5, Part 3 Q2: 4/7.5, Part 3 Q3: 6/7.5, Part 3 Q4: 4/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494016",
+    "full_name": "Participant 1494016 (Mimi Noe)",
+    "grade": 52.0,
+    "feedback": "This submission shows understanding of the policy context and the theoretical model.  Overall, the empirical and policy discussion contain relevant ideas but rely too heavily on broad or generic statements. To improve, focus on writing more formally, clearly showing how conclusions follow from the model, and using concrete examples and precise references rather than general intuition.  Your grade breakdown is: Part 1: 9/15, Part 2 Q1: 4/5, Part 2 Q2: 2.5/7.5, Part 2 Q3: 2.5/7.5, Part 2 Q4: 2/5, Part 2 Q5: 2/5, Part 2 Q6: 6/10, Part 3 Q1: 5/7.5, Part 3 Q2: 3/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 2/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 9.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 2.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 2.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 2.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494142",
+    "full_name": "Participant 1494142 (Hannah Swiller)",
+    "grade": 58.0,
+    "feedback": "This assignment is well-structured and demonstrates understanding of the concepts.  Overall, the empirical and policy discussion contain relevant ideas but rely too heavily on broad or generic statements. Greater use of formal reasoning, clearer explanations of equilibrium conditions, and more explicit links to lecture material and evidence would substantially improve the work. Your grade breakdown is: Part 1: 9/15, Part 2 Q1: 4/5, Part 2 Q2: 4/7.5, Part 2 Q3: 3.5/7.5, Part 2 Q4: 3/5, Part 2 Q5: 2/5, Part 2 Q6: 6.5/10, Part 3 Q1: 6/7.5, Part 3 Q2: 3/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 3/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 9.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 3.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494157",
+    "full_name": "Participant 1494157 (Mohamed Anver)",
+    "grade": 58.0,
+    "feedback": "This assignment is well-structured and demonstrates understanding of the concepts.  Overall, the empirical and policy discussion contain relevant ideas but rely too heavily on broad or generic statements. Greater use of formal reasoning, clearer explanations of equilibrium conditions, and more explicit links to lecture material and evidence would substantially improve the work. Your grade breakdown is: Part 1: 9/15, Part 2 Q1: 2/5, Part 2 Q2: 3/7.5, Part 2 Q3: 3/7.5, Part 2 Q4: 3.5/5, Part 2 Q5: 3.5/5, Part 2 Q6: 6/10, Part 3 Q1: 5/7.5, Part 3 Q2: 4/7.5, Part 3 Q3: 5/7.5, Part 3 Q4: 3/7.5, Part 4: 11/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 9.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 11.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494042",
+    "full_name": "Participant 1494042 (Jobaer Nurul Alam)",
+    "grade": 51.0,
+    "feedback": "This assignment shows a a good understanding of the core concepts.  Overall, this works demonstrate good understanding of the material. Most marks were lost because two questions were not answered. The discussions could also benefit from stronger justification of the empirical strategies.  Your grade breakdown is: Part 1: 10/15, Part 2 Q1: 3/5, Part 2 Q2: 3/7.5, Part 2 Q3: 3/7.5, Part 2 Q4: 4/5, Part 2 Q5: 3/5, Part 2 Q6: 0/10, Part 3 Q1: 4/7.5, Part 3 Q2: 0/7.5, Part 3 Q3: 6/7.5, Part 3 Q4: 4/7.5, Part 4: 11/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 10.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 0.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 0.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 11.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494156",
+    "full_name": "Participant 1494156 (Ali Samhat)",
+    "grade": 52.0,
+    "feedback": "This assignment shows a reasonable understanding of the core ideas in the course.  Overall, this works contains some good intuition. Greater focus on empirical clarity and model mechanisms, as well as completing all parts of the assessment would significantly improve the overall results.  Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 3/5, Part 2 Q2: 3.5/7.5, Part 2 Q3: 3.5/7.5, Part 2 Q4: 4.5/5, Part 2 Q5: 2/5, Part 2 Q6: 6.5/10, Part 3 Q1: 4/7.5, Part 3 Q2: 4/7.5, Part 3 Q3: 0/7.5, Part 3 Q4: 0/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 3.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 3.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 0.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 0.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494190",
+    "full_name": "Participant 1494190 (Khalid Kahin)",
+    "grade": 68.0,
+    "feedback": "This is a very well-structured and strong assignment.  Overall, the work demonstrates good understanding of the theoretical framwork and makes effective connections to the policy discussion and supporting material. With clearer and more explicit links to the formal model, the analysis could be strengthened further.  Your grade breakdown is: Part 1: 13/15, Part 2 Q1: 3/5, Part 2 Q2: 4/7.5, Part 2 Q3: 5/7.5, Part 2 Q4: 3/5, Part 2 Q5: 2/5, Part 2 Q6: 7/10, Part 3 Q1: 5/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 5/7.5, Part 3 Q4: 6/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 13.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494138",
+    "full_name": "Participant 1494138 (Janarth Premabala)",
+    "grade": 60.0,
+    "feedback": "This is a good submission that demonstrates a solid understanding of the theoretical framework and engages appropriately with the policy discussion and supporting material. Overall, most questions are answered competently, with clear intuition and reasonable structure. Some answers would benefit from greater precision and more explicit links to the formal model, particularly in the empirical and discussion sections. Your grade breakdown is: Part 1: 12/15, Part 2 Q1: 4/5, Part 2 Q2: 3.5/7.5, Part 2 Q3: 3.5/7.5, Part 2 Q4: 3/5, Part 2 Q5: 2/5, Part 2 Q6: 7/10, Part 3 Q1: 4/7.5, Part 3 Q2: 4/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 4/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 12.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 3.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 3.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494063",
+    "full_name": "Participant 1494063 (Georgia Munn)",
+    "grade": 72.0,
+    "feedback": "This is a very strong submission. Overall, this work demonstrates a very good understanding of the theoretical model and engages thoughtfully with the policy debate. Some parts could be strengthened by developing the empirical part more thoroughly.  Your grade breakdown is: Part 1: 13/15, Part 2 Q1: 4.5/5, Part 2 Q2: 6.5/7.5, Part 2 Q3: 6.5/7.5, Part 2 Q4: 4.5/5, Part 2 Q5: 4/5, Part 2 Q6: 6/10, Part 3 Q1: 4/7.5, Part 3 Q2: 6/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 4/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 13.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1493971",
+    "full_name": "Participant 1493971 (Mohammad Alam)",
+    "grade": 74.0,
+    "feedback": "This assignment is very well-structured and shows strong understanding of the topic.  Overall, you consistently linked the model to policy arguments and empirical considerations, showing clear insight into mechanisms. The main scope for improvement lies in pushing the empirical analysis further and being more explicit about identification and measurement choices. Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 4/5, Part 2 Q2: 6/7.5, Part 2 Q3: 6/7.5, Part 2 Q4: 3.5/5, Part 2 Q5: 3.5/5, Part 2 Q6: 7/10, Part 3 Q1: 4.5/7.5, Part 3 Q2: 6.5/7.5, Part 3 Q3: 5/7.5, Part 3 Q4: 6/7.5, Part 4: 11/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.5,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 11.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494076",
+    "full_name": "Participant 1494076 (Teodora Obradovic)",
+    "grade": 70.0,
+    "feedback": "This is a strong and well-structured submission that demonstrates a clear understanding of the theoretical framework and engages effectively with the policy debate. Most marks were lost in the empirical sections, where the analysis would benefit from more precise identification, justification, and implementation of empirical strategies and assumptions. Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 4/5, Part 2 Q2: 5/7.5, Part 2 Q3: 5/7.5, Part 2 Q4: 4/5, Part 2 Q5: 5/5, Part 2 Q6: 7/10, Part 3 Q1: 6/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 4/7.5, Part 4: 11/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 5.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 11.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494035",
+    "full_name": "Participant 1494035 (Labiba Miah)",
+    "grade": 65.0,
+    "feedback": "This is a solid submission that shows good understanding of the theoretical model and the policy context.  Marks were mainly lost in the empirical sections, where the specification and identification strategy were underdeveloped. Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 3.5/5, Part 2 Q2: 4/7.5, Part 2 Q3: 5/7.5, Part 2 Q4: 3/5, Part 2 Q5: 3.5/5, Part 2 Q6: 7/10, Part 3 Q1: 4/7.5, Part 3 Q2: 6.5/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 4.5/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.5,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1493983",
+    "full_name": "Participant 1493983 (Veerle Vos)",
+    "grade": 64.0,
+    "feedback": "This submission demonstrates a good understanding of the core theoretical mechanisms and engages well with the policy question. Most marks were lost in the empirical sections, where the specification, identification strategy, and interpretation of magnitudes could have been developed more clearly and precisely. Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 4/5, Part 2 Q2: 6/7.5, Part 2 Q3: 6/7.5, Part 2 Q4: 4/5, Part 2 Q5: 3/5, Part 2 Q6: 6/10, Part 3 Q1: 4/7.5, Part 3 Q2: 4/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 4/7.5, Part 4: 9/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 9.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494023",
+    "full_name": "Participant 1494023 (Mohammed Elsheikh)",
+    "grade": 0.0,
+    "feedback": "",
+    "part_scores": {}
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494015",
+    "full_name": "Participant 1494015 (Felix Sherman-Dejonghe)",
+    "grade": 64.0,
+    "feedback": "This submission is well-structured and clear.  Overall, this is generally good work with clear understanding and engagement, but several answers remain at a descriptive level and lack depth. It could be strengthened by more explicitly linking arguments to the model\u2019s formal results, mechanisms, and conditions. Your grade breakdown is: Part 1: 10/15, Part 2 Q1: 3.5/5, Part 2 Q2: 3.5/7.5, Part 2 Q3: 4/7.5, Part 2 Q4: 4/5, Part 2 Q5: 3/5, Part 2 Q6: 6/10, Part 3 Q1: 5/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 5/7.5, Part 3 Q4: 5/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 10.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 3.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494022",
+    "full_name": "Participant 1494022 (Ealilan Tharmakulasingam)",
+    "grade": 57.0,
+    "feedback": "This assignment demonstrates reasonable understanding of the core ideas. Overall, this work shows good engagement with the material and the model's intuitions. This work can be improved by clearly linking claims to specific model results, identification strategies, or empirical evidence. Tighter use of course concepts would strengthen the work.\u00a0\u00a0\u00a0 Your grade breakdown is: Part 1: 10/15, Part 2 Q1: 4/5, Part 2 Q2: 4/7.5, Part 2 Q3: 4/7.5, Part 2 Q4: 3/5, Part 2 Q5: 2/5, Part 2 Q6: 5/10, Part 3 Q1: 4/7.5, Part 3 Q2: 3/7.5, Part 3 Q3: 5/7.5, Part 3 Q4: 4/7.5, Part 4: 9/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 10.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 5.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 9.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1493952",
+    "full_name": "Participant 1493952 (Aya Kalada)",
+    "grade": 72.0,
+    "feedback": "Strong submission with clear intuition and structure, but most marks were lost in the model calculation section due to imprecise algebra, and the discussion could be strengthened by linking claims more explicitly to the model\u2019s results and mechanisms. Your grade breakdown is: Part 1: 13/15, Part 2 Q1: 4/5, Part 2 Q2: 4/7.5, Part 2 Q3: 5/7.5, Part 2 Q4: 4/5, Part 2 Q5: 3/5, Part 2 Q6: 7/10, Part 3 Q1: 6/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 5/7.5, Part 3 Q4: 6/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 13.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494112",
+    "full_name": "Participant 1494112 (Shekinah Cifra)",
+    "grade": 60.0,
+    "feedback": "This is a good submission that demonstrates a solid understanding of the theoretical framework. However, some answers would benefit from greater precision and more explicit links to the formal model, particularly in the empirical and discussion sections. Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 4/5, Part 2 Q2: 3/7.5, Part 2 Q3: 3/7.5, Part 2 Q4: 4/5, Part 2 Q5: 3/5, Part 2 Q6: 6/10, Part 3 Q1: 5/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 3/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1493972",
+    "full_name": "Participant 1493972 (Tony Bui Van)",
+    "grade": 57.0,
+    "feedback": "This assignment is well-structured and demonstrates understanding of the concepts. Overall, the empirical and policy discussion contain relevant ideas but rely too heavily on broad or generic statements. To improve, focus on writing more formally, clearly showing how conclusions follow from the model, and using concrete examples and precise references rather than general intuition.\u00a0 Your grade breakdown is: Part 1: 12/15, Part 2 Q1: 3/5, Part 2 Q2: 3/7.5, Part 2 Q3: 3/7.5, Part 2 Q4: 3/5, Part 2 Q5: 2/5, Part 2 Q6: 6/10, Part 3 Q1: 4/7.5, Part 3 Q2: 3/7.5, Part 3 Q3: 5/7.5, Part 3 Q4: 4/7.5, Part 4: 9/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 12.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 9.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494146",
+    "full_name": "Participant 1494146 (Rebecca Morth)",
+    "grade": 68.0,
+    "feedback": "This is a well-structured and strong assignment. To improve, a stronger justification and explanation of data sources and identification strategy that is stronger aligned with the models mechanisms would strengthen your arguments.\u00a0 Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 4/5, Part 2 Q2: 6.5/7.5, Part 2 Q3: 6.5/7.5, Part 2 Q4: 4/5, Part 2 Q5: 3/5, Part 2 Q6: 6/10, Part 3 Q1: 5/7.5, Part 3 Q2: 4/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 6/7.5, Part 4: 9/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 9.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494092",
+    "full_name": "Participant 1494092 (Subhana Khan)",
+    "grade": 67.0,
+    "feedback": "This assignment demonstrates good understanding of the core concepts of the lectures. To improve, link arguments stronger to the model's formal restuls and mechanisms and a stronger identification strategy.\u00a0 Your grade breakdown is: Part 1: 12/15, Part 2 Q1: 4.5/5, Part 2 Q2: 4/7.5, Part 2 Q3: 4/7.5, Part 2 Q4: 4/5, Part 2 Q5: 4/5, Part 2 Q6: 6.5/10, Part 3 Q1: 5/7.5, Part 3 Q2: 6/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 5/7.5, Part 4: 9/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 12.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 9.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494018",
+    "full_name": "Participant 1494018 (Yasser Hasoon)",
+    "grade": 46.0,
+    "feedback": "The assignment shows understanding of the relevant economic ideas. To improve, the assignment would benefit from greater theoretical precision and stronger emphasis of the model\u2019s underlying mechanisms. Some arguments could be developed in more depth and more clearly tied to the formal structure of the model. In addition, the empirical strategies would be strengthened by a clearer justification of the identification approach and a more careful discussion. Your grade breakdown is: Part 1: 9/15, Part 2 Q1: 1/5, Part 2 Q2: 1.5/7.5, Part 2 Q3: 2.5/7.5, Part 2 Q4: 4/5, Part 2 Q5: 1/5, Part 2 Q6: 5/10, Part 3 Q1: 3/7.5, Part 3 Q2: 3/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 3/7.5, Part 4: 9/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 9.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 1.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 1.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 2.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 1.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 5.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 9.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494060",
+    "full_name": "Participant 1494060 (Joseph Poole)",
+    "grade": 76.0,
+    "feedback": "This is a strong assignment that demonstrates a very good understanding of the theoretical framework and its policy implications. To improve even further, the work would benefit from a more explicit identification strategy, with stronger discussion of which empirical approach would address endogeneity concerns. Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 4/5, Part 2 Q2: 6.5/7.5, Part 2 Q3: 6.5/7.5, Part 2 Q4: 4.5/5, Part 2 Q5: 3.5/5, Part 2 Q6: 8/10, Part 3 Q1: 5/7.5, Part 3 Q2: 6/7.5, Part 3 Q3: 5/7.5, Part 3 Q4: 5/7.5, Part 4: 11/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 8.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 11.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494174",
+    "full_name": "Participant 1494174 (Gina Lott)",
+    "grade": 63.0,
+    "feedback": "This is a good submission that demonstrates a solid understanding of the theoretical framework. However, some answers would benefit from greater precision and more explicit links to the formal model, particularly in the empirical and discussion sections. Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 4/5, Part 2 Q2: 4/7.5, Part 2 Q3: 4/7.5, Part 2 Q4: 3.5/5, Part 2 Q5: 2.5/5, Part 2 Q6: 6/10, Part 3 Q1: 4/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 5/7.5, Part 3 Q4: 4/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494012",
+    "full_name": "Participant 1494012 (Alice Daranijoh)",
+    "grade": 67.0,
+    "feedback": "This is a strong assignment that shows a good understanding of the framework. Most marks were lost in the Part 2 due to calculation errors and because the explanation of the model\u2019s mechanisms and resulting implications was not developed in sufficient depth, limiting the analytical strength of the theoretical analysis. Your grade breakdown is: Part 1: 12/15, Part 2 Q1: 3/5, Part 2 Q2: 4/7.5, Part 2 Q3: 4/7.5, Part 2 Q4: 3/5, Part 2 Q5: 2/5, Part 2 Q6: 7/10, Part 3 Q1: 5/7.5, Part 3 Q2: 6/7.5, Part 3 Q3: 5/7.5, Part 3 Q4: 5/7.5, Part 4: 11/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 12.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 11.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1493966",
+    "full_name": "Participant 1493966 (Alessandro Ungurean)",
+    "grade": 61.0,
+    "feedback": "This is a well-structured assignment that shows a solid understanding of the core concepts. To improve further, the theoretical mechanisms could be made more explicit, greater care taken with the algebra, and the identification strategy developed more clearly. Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 3.5/5, Part 2 Q2: 3.5/7.5, Part 2 Q3: 4/7.5, Part 2 Q4: 4/5, Part 2 Q5: 2/5, Part 2 Q6: 6/10, Part 3 Q1: 5/7.5, Part 3 Q2: 4/7.5, Part 3 Q3: 5/7.5, Part 3 Q4: 4/7.5, Part 4: 9/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 3.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 9.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494144",
+    "full_name": "Participant 1494144 (Hassan Shah)",
+    "grade": 79.0,
+    "feedback": "This is a very strong submission that shows great understanding of the theory and empirical approach. To improve even more, some arguments could be explained in more depth and be linked to the formal model more tightly.\u00a0 Your grade breakdown is: Part 1: 12/15, Part 2 Q1: 3/5, Part 2 Q2: 6/7.5, Part 2 Q3: 6.5/7.5, Part 2 Q4: 4.5/5, Part 2 Q5: 5/5, Part 2 Q6: 8/10, Part 3 Q1: 5/7.5, Part 3 Q2: 6.5/7.5, Part 3 Q3: 6/7.5, Part 3 Q4: 5.5/7.5, Part 4: 11/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 12.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 5.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 8.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 5.5,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 11.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494057",
+    "full_name": "Participant 1494057 (Thilakshi Laksman)",
+    "grade": 76.0,
+    "feedback": "This is a very strong submission that demonstrates an excellent understanding of the theoretical model. To improve even further, the empirical section would benefit from a clearer and more convincing identification strategy, along with a more critical discussion of its limitations. Your grade breakdown is: Part 1: 13/15, Part 2 Q1: 4/5, Part 2 Q2: 6.5/7.5, Part 2 Q3: 6.5/7.5, Part 2 Q4: 4.5/5, Part 2 Q5: 4/5, Part 2 Q6: 7.5/10, Part 3 Q1: 5/7.5, Part 3 Q2: 6/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 5/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 13.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494087",
+    "full_name": "Participant 1494087 (Emre Kaya)",
+    "grade": 60.0,
+    "feedback": "This is a good submission that demonstrates a solid understanding of the theoretical framework. However, some answers would benefit from greater precision and more explicit links to the formal model, particularly in the empirical and discussion sections. Your grade breakdown is: Part 1: 12/15, Part 2 Q1: 3/5, Part 2 Q2: 3.5/7.5, Part 2 Q3: 4.5/7.5, Part 2 Q4: 3/5, Part 2 Q5: 2/5, Part 2 Q6: 6/10, Part 3 Q1: 4/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 3/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 12.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 3.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 4.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494054",
+    "full_name": "Participant 1494054 (Fahima Ali)",
+    "grade": 67.0,
+    "feedback": "This submission demonstrates a good understanding of the theoretical framework. To improve further,\u00a0\u00a0some arguments could be explained in more depth, greater care taken with the algebra, and the identification strategy developed more clearly. Your grade breakdown is: Part 1: 12/15, Part 2 Q1: 3/5, Part 2 Q2: 3.5/7.5, Part 2 Q3: 4.5/7.5, Part 2 Q4: 4.5/5, Part 2 Q5: 3.5/5, Part 2 Q6: 6/10, Part 3 Q1: 5/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 5/7.5, Part 4: 11/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 12.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 3.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 4.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 11.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494167",
+    "full_name": "Participant 1494167 (AIAH BAROOM)",
+    "grade": 70.0,
+    "feedback": "This submission demonstrates a very good understanding of the theoretical framework. To improve further,\u00a0\u00a0some arguments could be explained in more depth, greater care taken with the algebra, and the identification strategy developed more clearly. Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 4/5, Part 2 Q2: 3.5/7.5, Part 2 Q3: 4.5/7.5, Part 2 Q4: 4.5/5, Part 2 Q5: 3.5/5, Part 2 Q6: 7/10, Part 3 Q1: 5/7.5, Part 3 Q2: 6/7.5, Part 3 Q3: 5/7.5, Part 3 Q4: 5/7.5, Part 4: 11/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 3.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 4.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 11.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494143",
+    "full_name": "Participant 1494143 (Alae El Hafedi)",
+    "grade": 71.0,
+    "feedback": "This is a very strong submission that demonstrates an good understanding of the theoretical model. To improve even further, the empirical section would benefit from a clearer and more convincing identification strategy, and some arguments could be explained in more depth and be linked to the formal model more tightly.\u00a0 Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 4/5, Part 2 Q2: 6.5/7.5, Part 2 Q3: 6.5/7.5, Part 2 Q4: 3/5, Part 2 Q5: 3/5, Part 2 Q6: 7/10, Part 3 Q1: 5/7.5, Part 3 Q2: 6/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 5/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494162",
+    "full_name": "Participant 1494162 (Samsoor Nasim)",
+    "grade": 62.0,
+    "feedback": "This assignment demonstrates good understanding of the core concepts. Overall, this work shows good engagement with the material and the model's intuitions. This work can be improved by clearly linking claims to specific model results, identification strategies, and greater care taken with the algebra. Your grade breakdown is: Part 1: 6/15, Part 2 Q1: 3/5, Part 2 Q2: 3.5/7.5, Part 2 Q3: 4.5/7.5, Part 2 Q4: 4/5, Part 2 Q5: 3/5, Part 2 Q6: 7/10, Part 3 Q1: 5/7.5, Part 3 Q2: 6/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 6/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 6.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 3.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 4.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494186",
+    "full_name": "Participant 1494186 (Apisan Rasiah)",
+    "grade": 64.0,
+    "feedback": "This is a very strong submission that demonstrates an good understanding of the theoretical model. To improve even further, the empirical section would benefit from a clearer and more convincing identification strategy, and some arguments could be explained in more depth. Unfortunately, Part 2.2 was missing.\u00a0 Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 4.5/5, Part 2 Q2: 0/7.5, Part 2 Q3: 6.5/7.5, Part 2 Q4: 4/5, Part 2 Q5: 3/5, Part 2 Q6: 7/10, Part 3 Q1: 5/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 4/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 0.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Regular submission point",
+    "identifier": "Participant 1494007",
+    "full_name": "Participant 1494007 (Maria Klenina)",
+    "grade": 62.0,
+    "feedback": "This work is clearly structred and demonstrates good understanding of the core ideas. Most marks were lost because arguments could have been linked more tightly to the model's mechanisms and results, and the empirical section more critically discussed.\u00a0 Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 3/5, Part 2 Q2: 3.5/7.5, Part 2 Q3: 6.5/7.5, Part 2 Q4: 2/5, Part 2 Q5: 3/5, Part 2 Q6: 6/10, Part 3 Q1: 4/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 5/7.5, Part 3 Q4: 4/7.5, Part 4: 9/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 3.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 9.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494267",
+    "full_name": "Participant 1494267 (Tasnim Mizan)",
+    "grade": 66.0,
+    "feedback": "Good work overall. You lost marks mainly in part 3 where you misunderstood some of the questions and the concept of endogeneity. Your grade breakdown is: Part 1: 13.5/15, Part 2 Q1: 4/5, Part 2 Q2: 6.5/7.5, Part 2 Q3: 6.5/7.5, Part 2 Q4: 4/5, Part 2 Q5: 2.5/5, Part 2 Q6: 6/10, Part 3 Q1: 4/7.5, Part 3 Q2: 2/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 3/7.5, Part 4: 11/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 13.5,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 2.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 11.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494366",
+    "full_name": "Participant 1494366 (Shahriyar Shahid)",
+    "grade": 62.0,
+    "feedback": "Some good elements, especially in parts 1 and 2 where you did very well. However you need to review part 3 and the related material carefully. The references to the course material you indicated were very misplaced which reveals a lack of understanding of the course material.  Your grade breakdown is: Part 1: 13/15, Part 2 Q1: 3/5, Part 2 Q2: 6/7.5, Part 2 Q3: 6/7.5, Part 2 Q4: 3.5/5, Part 2 Q5: 3.5/5, Part 2 Q6: 7/10, Part 3 Q1: 2/7.5, Part 3 Q2: 4/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 1/7.5, Part 4: 9/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 13.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 2.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 1.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 9.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494258",
+    "full_name": "Participant 1494258 (Hafsa Khawar)",
+    "grade": 78.0,
+    "feedback": "Excellent work. Well done. Your grade breakdown is: Part 1: 13.5/15, Part 2 Q1: 4.5/5, Part 2 Q2: 7/7.5, Part 2 Q3: 7/7.5, Part 2 Q4: 4.5/5, Part 2 Q5: 3.5/5, Part 2 Q6: 7/10, Part 3 Q1: 5/7.5, Part 3 Q2: 6.5/7.5, Part 3 Q3: 6.5/7.5, Part 3 Q4: 4/7.5, Part 4: 9/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 13.5,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 7.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 7.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 9.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494407",
+    "full_name": "Participant 1494407 (Giorgos Gkikokas)",
+    "grade": 67.0,
+    "feedback": "Some good answers, especially in parts 1 and 2 but part 3 and 4 contained too many imprecisions or were too vague. Your grade breakdown is: Part 1: 13/15, Part 2 Q1: 3/5, Part 2 Q2: 5/7.5, Part 2 Q3: 5/7.5, Part 2 Q4: 4/5, Part 2 Q5: 2.5/5, Part 2 Q6: 6.5/10, Part 3 Q1: 5/7.5, Part 3 Q2: 6.5/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 3/7.5, Part 4: 10.5/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 13.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.5,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494265",
+    "full_name": "Participant 1494265 (Shameenuz Zaman)",
+    "grade": 70.0,
+    "feedback": "Some very good answers in part 2 but part 3 and 4 required more careful analysis. Your grade breakdown is: Part 1: 12.5/15, Part 2 Q1: 2.5/5, Part 2 Q2: 6.5/7.5, Part 2 Q3: 7/7.5, Part 2 Q4: 4/5, Part 2 Q5: 2.5/5, Part 2 Q6: 7.5/10, Part 3 Q1: 6.5/7.5, Part 3 Q2: 6/7.5, Part 3 Q3: 4.5/7.5, Part 3 Q4: 1/7.5, Part 4: 9.5/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 12.5,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 7.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.5,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 1.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 9.5,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494282",
+    "full_name": "Participant 1494282 (Jama Keenan)",
+    "grade": 34.0,
+    "feedback": "You did a good job I part 1 but your answers in part 2 showed some important lack of understanding of how to solve this problem. Part 4 did not properly address the task even though you did make some interesting observations. You lost most marks due to not answering part 3. Overall, your work did not demonstrate that you have achieved the learning outcomes for this module. I would recommend reviewing carefully the lecture material, the solution, and the feedback on Turnitin as well as getting in touch with the module leader if you want additional feedback. Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 2/5, Part 2 Q2: 5/7.5, Part 2 Q3: 1/7.5, Part 2 Q4: 2/5, Part 2 Q5: 1/5, Part 2 Q6: 5/10, Part 3 Q1: na/7.5, Part 3 Q2: na/7.5, Part 3 Q3: na/7.5, Part 3 Q4: na/7.5, Part 4: 7/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 1.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 1.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 5.0,
+        "max_score": 10.0
+      },
+      "Part 4": {
+        "score": 7.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494312",
+    "full_name": "Participant 1494312 (Omeed Amini)",
+    "grade": 64.0,
+    "feedback": "You did very well in part 2, especially the first few questions. However, your discussions in part 2 Q6 and part 3 Q4 were too general and missed some important points. You lost marks for similar reasons in part 4. Your grade breakdown is: Part 1: 9/15, Part 2 Q1: 4/5, Part 2 Q2: 7.5/7.5, Part 2 Q3: 7.5/7.5, Part 2 Q4: 4/5, Part 2 Q5: 2.5/5, Part 2 Q6: 5/10, Part 3 Q1: 4/7.5, Part 3 Q2: 3/7.5, Part 3 Q3: 6/7.5, Part 3 Q4: 2/7.5, Part 4: 9.5/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 9.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 7.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 7.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 5.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 2.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 9.5,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494280",
+    "full_name": "Participant 1494280 (Zaineh Islam Ali Al Huneiti)",
+    "grade": 0.0,
+    "feedback": "Not submitted Your grade breakdown is: Part 1: 0/15, Part 2 Q1: /5, Part 2 Q2: /7.5, Part 2 Q3: /7.5, Part 2 Q4: /5, Part 2 Q5: /5, Part 2 Q6: /10, Part 3 Q1: /7.5, Part 3 Q2: /7.5, Part 3 Q3: /7.5, Part 3 Q4: /7.5, Part 4: /15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 0.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494385",
+    "full_name": "Participant 1494385 (Raed Mokdad)",
+    "grade": 70.0,
+    "feedback": "Good work overall but review carefully the concept of endogeneity and think more carefully about the regression you can implement. Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 4/5, Part 2 Q2: 6/7.5, Part 2 Q3: 6/7.5, Part 2 Q4: 3.5/5, Part 2 Q5: 3/5, Part 2 Q6: 7.5/10, Part 3 Q1: 5/7.5, Part 3 Q2: 6/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 3/7.5, Part 4: 11/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 11.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494196",
+    "full_name": "Participant 1494196 (Nadiya Motahir)",
+    "grade": 48.0,
+    "feedback": "Some good element and good intuition but your answers were too often incomplete or too superficial. You should review carefully the feedback on turnitin and the solution and contact the module leader if you would like additional feedback.  Your grade breakdown is: Part 1: 9/15, Part 2 Q1: 1/5, Part 2 Q2: 3.5/7.5, Part 2 Q3: 4.5/7.5, Part 2 Q4: 2.5/5, Part 2 Q5: 1.5/5, Part 2 Q6: 4/10, Part 3 Q1: 4/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 2/7.5, Part 3 Q4: 3/7.5, Part 4: 8/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 9.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 1.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 3.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 4.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 1.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 4.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 2.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 8.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494200",
+    "full_name": "Participant 1494200 (Tayyab Ali)",
+    "grade": 67.0,
+    "feedback": "Some good elements and a good understanding of the logic of the model but many answers were too imprecise. Explain more carefully what you do and review your answers carefully to ensure that they are clearly written. Your grade breakdown is: Part 1: 10/15, Part 2 Q1: 4/5, Part 2 Q2: 5/7.5, Part 2 Q3: 6/7.5, Part 2 Q4: 4/5, Part 2 Q5: 2.5/5, Part 2 Q6: 6.5/10, Part 3 Q1: 5/7.5, Part 3 Q2: 6.5/7.5, Part 3 Q3: 4.5/7.5, Part 3 Q4: 4/7.5, Part 4: 9/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 10.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.5,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 9.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494325",
+    "full_name": "Participant 1494325 (Zaid El-Majidi)",
+    "grade": 42.0,
+    "feedback": "You understood some of the logic behind the model and the main arguments around the policy but unfortunately your answers were too often imprecise and not sufficiently carefully explained. Your work also contained several important errors which reflected a lack of understanding of the course material. I would encourage you to review carefully the feedback on turnitin together with the solution and discuss with your module leader how you can improve future assignments. Your grade breakdown is: Part 1: 9/15, Part 2 Q1: 4/5, Part 2 Q2: 2/7.5, Part 2 Q3: 2/7.5, Part 2 Q4: 1/5, Part 2 Q5: 1/5, Part 2 Q6: 4/10, Part 3 Q1: 1/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 5/7.5, Part 3 Q4: 1/7.5, Part 4: 7/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 9.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 2.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 2.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 1.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 1.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 4.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 1.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 1.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 7.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494275",
+    "full_name": "Participant 1494275 (Kevin Uka)",
+    "grade": 50.0,
+    "feedback": "Some good intutition but many answers were incomplete, too vague, or imprecise. Many answers were also unclear and it would be worth investing more time in re-reading carefully your submission to improve its clarity. Contact the module leader if you would like advice on how to improve future assignments.  Your grade breakdown is: Part 1: 9/15, Part 2 Q1: 3/5, Part 2 Q2: 5/7.5, Part 2 Q3: 5/7.5, Part 2 Q4: 3/5, Part 2 Q5: 2/5, Part 2 Q6: 5/10, Part 3 Q1: 3/7.5, Part 3 Q2: 3/7.5, Part 3 Q3: 1/7.5, Part 3 Q4: 2/7.5, Part 4: 9/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 9.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 5.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 1.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 2.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 9.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494306",
+    "full_name": "Participant 1494306 (George Fascione)",
+    "grade": 0.0,
+    "feedback": "",
+    "part_scores": {}
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494341",
+    "full_name": "Participant 1494341 (Sabirah Miah)",
+    "grade": 57.0,
+    "feedback": "You did very well on some questions, especially parts 1 and 2 but the longer discussion questions such as Q6 and part 4 were generally too imprecise and poorly written. This made it difficult to understand your arguments and assess whether they were correct. Your grade breakdown is: Part 1: 12/15, Part 2 Q1: 4/5, Part 2 Q2: 6.5/7.5, Part 2 Q3: 6.5/7.5, Part 2 Q4: 4/5, Part 2 Q5: 2.5/5, Part 2 Q6: 2/10, Part 3 Q1: 4/7.5, Part 3 Q2: na/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 2/7.5, Part 4: 9.5/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 12.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 2.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 2.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 9.5,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494291",
+    "full_name": "Participant 1494291 (Aliabbas Suleiman)",
+    "grade": 50.0,
+    "feedback": "Some good answers especially in part 2, but some of the discussions were too superficial and not sufficiently connected to the model (part 2 Q6 and part 4). You also missed some important questions in part 3. Your grade breakdown is: Part 1: 10/15, Part 2 Q1: 3/5, Part 2 Q2: 6.5/7.5, Part 2 Q3: 6.5/7.5, Part 2 Q4: 3/5, Part 2 Q5: 2.5/5, Part 2 Q6: 5/10, Part 3 Q1: 4/7.5, Part 3 Q2: 1/7.5, Part 3 Q3: na/7.5, Part 3 Q4: na/7.5, Part 4: 8.5/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 10.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 5.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 1.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 8.5,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494293",
+    "full_name": "Participant 1494293 (Ahmed Hussein)",
+    "grade": 45.0,
+    "feedback": "While you understood some of the important mechanisms in the model, your coursework was hindered by important errors and lack of clarity throughout. Your explanations were too often either confusing, incomplete, or not relevant. To improve future coursework, my advice would be to focus on the core of the question: what are you asked to do and how can you formally justify your arguments. This was especially problematic in part 2 where explanations were missing or not relevant. Improving the clarity of your writing could go a long way in improving future assessments. Your grade breakdown is: Part 1: 6/15, Part 2 Q1: 1/5, Part 2 Q2: 2/7.5, Part 2 Q3: 2/7.5, Part 2 Q4: 3/5, Part 2 Q5: 2/5, Part 2 Q6: 6/10, Part 3 Q1: 4/7.5, Part 3 Q2: 3/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 3/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 6.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 1.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 2.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 2.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494235",
+    "full_name": "Participant 1494235 (Qasim Mohamed)",
+    "grade": 0.0,
+    "feedback": "",
+    "part_scores": {}
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494205",
+    "full_name": "Participant 1494205 (Melanie Caldeira)",
+    "grade": 63.0,
+    "feedback": "Some good answers, especially in part 2, but your answers to part 3 were often imprecise, unclear, or incomplete. Your grade breakdown is: Part 1: 12/15, Part 2 Q1: 3/5, Part 2 Q2: 5/7.5, Part 2 Q3: 5/7.5, Part 2 Q4: 3.5/5, Part 2 Q5: 4/5, Part 2 Q6: 6/10, Part 3 Q1: 5/7.5, Part 3 Q2: 3/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 4/7.5, Part 4: 8.5/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 12.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 8.5,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494202",
+    "full_name": "Participant 1494202 (Subhaan Zahoor)",
+    "grade": 73.0,
+    "feedback": "Good work overall. You lost some marks in part 3 which was too often imprecise. Your grade breakdown is: Part 1: 10/15, Part 2 Q1: 4/5, Part 2 Q2: 7.5/7.5, Part 2 Q3: 7.5/7.5, Part 2 Q4: 3.5/5, Part 2 Q5: 3.5/5, Part 2 Q6: 6.5/10, Part 3 Q1: 5/7.5, Part 3 Q2: 4/7.5, Part 3 Q3: 6/7.5, Part 3 Q4: 5/7.5, Part 4: 10.5/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 10.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 7.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 7.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.5,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494240",
+    "full_name": "Participant 1494240 (Daryll Amoakoh)",
+    "grade": 71.0,
+    "feedback": "Good work. Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 3/5, Part 2 Q2: 7/7.5, Part 2 Q3: 7/7.5, Part 2 Q4: 3.5/5, Part 2 Q5: 4/5, Part 2 Q6: 7.5/10, Part 3 Q1: 5/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 3/7.5, Part 4: 11/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 7.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 7.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 11.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494377",
+    "full_name": "Participant 1494377 (Mehmet Ozer)",
+    "grade": 35.0,
+    "feedback": "You did a very good job on questions 2 and 3 in part 2 but unfortunately missed many questions in the coursework which reduced your grade dramatically. The questions you did answer in part 3 were either incomplete or contained important errors. Your grade breakdown is: Part 1: 4/15, Part 2 Q1: 3/5, Part 2 Q2: 7.5/7.5, Part 2 Q3: 7.5/7.5, Part 2 Q4: na/5, Part 2 Q5: na/5, Part 2 Q6: na/10, Part 3 Q1: 5/7.5, Part 3 Q2: 2/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 3/7.5, Part 4: na/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 4.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 7.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 7.5,
+        "max_score": 7.5
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 2.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494222",
+    "full_name": "Participant 1494222 (Moosa Shaikh Hasan)",
+    "grade": 62.0,
+    "feedback": "Some good elements in your coursework, especially in part 2Q6 and in part 4. But some small errors or incomplete arguments throughout which limited your grade. Your grade breakdown is: Part 1: 10/15, Part 2 Q1: 2/5, Part 2 Q2: 5/7.5, Part 2 Q3: 5/7.5, Part 2 Q4: 3/5, Part 2 Q5: 4/5, Part 2 Q6: 7.5/10, Part 3 Q1: 5/7.5, Part 3 Q2: 4/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 3/7.5, Part 4: 10.5/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 10.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.5,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494303",
+    "full_name": "Participant 1494303 (Gurkaran Punni)",
+    "grade": 43.0,
+    "feedback": "Some good answers (e.g. in part 1) but your coursework was incomplete with many parts unanswered and the ones you did answer were too superficial and did not analyse the model sufficiently in depth. Your grade breakdown is: Part 1: 13/15, Part 2 Q1: 3.5/5, Part 2 Q2: 3/7.5, Part 2 Q3: 5/7.5, Part 2 Q4: 3/5, Part 2 Q5: na/5, Part 2 Q6: 6.5/10, Part 3 Q1: na/7.5, Part 3 Q2: na/7.5, Part 3 Q3: na/7.5, Part 3 Q4: na/7.5, Part 4: 9/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 13.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.5,
+        "max_score": 10.0
+      },
+      "Part 4": {
+        "score": 9.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494287",
+    "full_name": "Participant 1494287 (Viole Dedinca)",
+    "grade": 0.0,
+    "feedback": "",
+    "part_scores": {}
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494212",
+    "full_name": "Participant 1494212 (Mohammed Hussain)",
+    "grade": 0.0,
+    "feedback": ".",
+    "part_scores": {}
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494225",
+    "full_name": "Participant 1494225 (Shafi Rahman)",
+    "grade": 34.0,
+    "feedback": "Some evidence that you understood the key aspects of the policy, but your answers were generally incomplete, incorrect, or poorly explained. As a result, your coursework did not demonstrate that you had achieved the learning outcomes from the module. I would recommend that you review the solution carefully and contact the module leader to understand how to improve your performance in future assignments. Your grade breakdown is: Part 1: 8/15, Part 2 Q1: 1/5, Part 2 Q2: 1/7.5, Part 2 Q3: 1/7.5, Part 2 Q4: 2/5, Part 2 Q5: 2/5, Part 2 Q6: 2/10, Part 3 Q1: 2/7.5, Part 3 Q2: 2/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 2/7.5, Part 4: 7/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 8.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 1.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 1.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 1.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 2.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 2.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 2.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 2.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 7.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494344",
+    "full_name": "Participant 1494344 (Zakariya Hussein)",
+    "grade": 60.0,
+    "feedback": "A good understanding of the logic behind the policy but too many imprecisions and errors in your answers. You need to explain more carefully how you obtain your results and review carefully your answers after completing them. Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 2/5, Part 2 Q2: 5/7.5, Part 2 Q3: 5/7.5, Part 2 Q4: 3/5, Part 2 Q5: 1/5, Part 2 Q6: 6.5/10, Part 3 Q1: 4/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 3/7.5, Part 4: 10.5/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 1.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.5,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494259",
+    "full_name": "Participant 1494259 (Adil Latif)",
+    "grade": 62.0,
+    "feedback": "You generally had a good understanding of the policy and how to solve the model but many of your answers were too superficial: you did not explain clearly how you obtained some results or you gave some very generic definitions without linking them clearly to the task at hand. I would encourage you to take more time to understand the tasks you are asked and how to demonstrate a genuine understanding of the course material through your answers. Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 2/5, Part 2 Q2: 4/7.5, Part 2 Q3: 4/7.5, Part 2 Q4: 2.5/5, Part 2 Q5: 2/5, Part 2 Q6: 6.5/10, Part 3 Q1: 6/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 6/7.5, Part 3 Q4: 3/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494250",
+    "full_name": "Participant 1494250 (Halima Mohamed)",
+    "grade": 76.0,
+    "feedback": "Good work overall, though there were some imprecisions, especially in part 2. Your grade breakdown is: Part 1: 13/15, Part 2 Q1: 4/5, Part 2 Q2: 7.5/7.5, Part 2 Q3: 7.5/7.5, Part 2 Q4: 3/5, Part 2 Q5: 2.5/5, Part 2 Q6: 6.5/10, Part 3 Q1: 5.5/7.5, Part 3 Q2: 5.5/7.5, Part 3 Q3: 7/7.5, Part 3 Q4: 4/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 13.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 7.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 7.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.5,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.5,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 7.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494422",
+    "full_name": "Participant 1494422 (Sadeef Wadud)",
+    "grade": 61.0,
+    "feedback": "You did a good job in part 2 although there were some small errors which reduced your grade. You lost most marks in Part 3 where your answers were too imprecise and reflected a lack of understanding of important concepts in the course. I would encourage you to spend more time reviewing your answer and asking yourself whether they correctly reflect your understanding of the course material to improve your grade. Your grade breakdown is: Part 1: 10/15, Part 2 Q1: 4/5, Part 2 Q2: 5/7.5, Part 2 Q3: 5/7.5, Part 2 Q4: 4/5, Part 2 Q5: 2/5, Part 2 Q6: 5/10, Part 3 Q1: 5/7.5, Part 3 Q2: 4/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 3/7.5, Part 4: 11/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 10.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 5.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 11.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494401",
+    "full_name": "Participant 1494401 (Reiss Rai)",
+    "grade": 60.0,
+    "feedback": "Some good elements, especially in part 3 and the last question. However, you made some important mistakes in part 2 and misunderstood question 6 which was worth 10 marks. This limited the score you could achieve on this assignment. I would encourage you to read more carefully the instructions and review whether your answers correctly address them as this could have made a big difference to your grade. Your grade breakdown is: Part 1: 10/15, Part 2 Q1: 3/5, Part 2 Q2: 5/7.5, Part 2 Q3: 5/7.5, Part 2 Q4: 3/5, Part 2 Q5: 1/5, Part 2 Q6: 1/10, Part 3 Q1: 6/7.5, Part 3 Q2: 4/7.5, Part 3 Q3: 6/7.5, Part 3 Q4: 4/7.5, Part 4: 12/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 10.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 1.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 1.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 12.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494289",
+    "full_name": "Participant 1494289 (Pravin Virdee)",
+    "grade": 50.0,
+    "feedback": "You had a good understanding and intuition overall, but your coursework was too often superficial. Your ideas were not always clearly communicated and you did not make sufficiently specific links between the model and the discussion. Several of your answers were also incomplete. Your grade breakdown is: Part 1: 9/15, Part 2 Q1: 1/5, Part 2 Q2: 5/7.5, Part 2 Q3: 5/7.5, Part 2 Q4: 2/5, Part 2 Q5: 1/5, Part 2 Q6: 6/10, Part 3 Q1: 5/7.5, Part 3 Q2: 4/7.5, Part 3 Q3: 1/7.5, Part 3 Q4: 1/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 9.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 1.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 1.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 1.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 1.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494336",
+    "full_name": "Participant 1494336 (Ikhlas Abdulle)",
+    "grade": 71.0,
+    "feedback": "Good work. Your grade breakdown is: Part 1: 9/15, Part 2 Q1: 3/5, Part 2 Q2: 7/7.5, Part 2 Q3: 7/7.5, Part 2 Q4: 5/5, Part 2 Q5: 3/5, Part 2 Q6: 7/10, Part 3 Q1: 7/7.5, Part 3 Q2: 6/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 4/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 9.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 7.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 7.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 5.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 7.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494255",
+    "full_name": "Participant 1494255 (Abid Razvi)",
+    "grade": 64.0,
+    "feedback": "Some good answers, especially in part 2 and 3, but many answers suffered from a lack of precision and some important errors. Your grade breakdown is: Part 1: 10/15, Part 2 Q1: 3/5, Part 2 Q2: 6/7.5, Part 2 Q3: 5/7.5, Part 2 Q4: 3/5, Part 2 Q5: 2.5/5, Part 2 Q6: 5.5/10, Part 3 Q1: 4/7.5, Part 3 Q2: 6/7.5, Part 3 Q3: 6/7.5, Part 3 Q4: 3/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 10.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 5.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494338",
+    "full_name": "Participant 1494338 (Oluwasorefunmi Ogunmoyero)",
+    "grade": 50.0,
+    "feedback": "Some good elements, such as in part 4 and in some questions of part 2. However, many of your answers were not sufficiently well explained and contained some important errors. I would recommend that you spend more time reading through the instructions and think carefully about how you can demonstrate your understanding of the course material through your answers. Contact the module leader if you would like additional feedback to improve future assignments. Your grade breakdown is: Part 1: 9/15, Part 2 Q1: 2/5, Part 2 Q2: 4/7.5, Part 2 Q3: 4/7.5, Part 2 Q4: 2/5, Part 2 Q5: 2/5, Part 2 Q6: 3/10, Part 3 Q1: 3/7.5, Part 3 Q2: 3/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 3/7.5, Part 4: 11/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 9.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 3.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 11.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494273",
+    "full_name": "Participant 1494273 (Denisha Sivanathan)",
+    "grade": 78.0,
+    "feedback": "Excellent work. Well done. Your grade breakdown is: Part 1: 10/15, Part 2 Q1: 4/5, Part 2 Q2: 7.5/7.5, Part 2 Q3: 7.5/7.5, Part 2 Q4: 4/5, Part 2 Q5: 4/5, Part 2 Q6: 8/10, Part 3 Q1: 5/7.5, Part 3 Q2: 6.5/7.5, Part 3 Q3: 5/7.5, Part 3 Q4: 5.5/7.5, Part 4: 11/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 10.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 7.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 7.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 8.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 5.5,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 11.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494247",
+    "full_name": "Participant 1494247 (Maiesha Chowdhury)",
+    "grade": 66.0,
+    "feedback": "Some good points but also some important errors and many answers that were poorly explained. Take the time to review your answers carefully. Your grade breakdown is: Part 1: 13/15, Part 2 Q1: 3/5, Part 2 Q2: 5/7.5, Part 2 Q3: 5/7.5, Part 2 Q4: 3/5, Part 2 Q5: 3/5, Part 2 Q6: 5/10, Part 3 Q1: 5/7.5, Part 3 Q2: 6/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 4/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 13.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 5.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494402",
+    "full_name": "Participant 1494402 (Youssra Nekari)",
+    "grade": 40.0,
+    "feedback": "You covered some good points and some of your intuition was correct. However, your coursework revealed some important misunderstanding of the course material and of how to solve the type of problems we solved in tutorial 9. In part 1, you lost marks because you did not address the task that was asked. Questions 1-3 in part 2 revealed that you did not understand how the model works and contained several confusing statements without a clear approach. Part 3 also contained many important imprecisions and confusing statements, and you misunderstood the task in question 2. Part 4 was better, but you missed an important part of it and did not link properly to the model. I would recommend that you spend more time carefully going over the instructions and reviewing the course material when solving your coursework. Please get in touch with the module leader if you would like feedback on how to improve future assignments. Your grade breakdown is: Part 1: 9/15, Part 2 Q1: 1/5, Part 2 Q2: 4/7.5, Part 2 Q3: 0/7.5, Part 2 Q4: 1/5, Part 2 Q5: 1/5, Part 2 Q6: 4/10, Part 3 Q1: 3/7.5, Part 3 Q2: 2/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 2/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 9.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 1.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 0.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 1.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 1.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 4.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 2.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 2.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494346",
+    "full_name": "Participant 1494346 (Ishaac Choudhury)",
+    "grade": 76.0,
+    "feedback": "Excellent work. Well done. Your grade breakdown is: Part 1: 12/15, Part 2 Q1: 4.5/5, Part 2 Q2: 7.5/7.5, Part 2 Q3: 7.5/7.5, Part 2 Q4: 4/5, Part 2 Q5: 3/5, Part 2 Q6: 6.5/10, Part 3 Q1: 5/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 6.5/7.5, Part 3 Q4: 4/7.5, Part 4: 10.5/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 12.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 7.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 7.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.5,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494268",
+    "full_name": "Participant 1494268 (Mustafa Kakar)",
+    "grade": 0.0,
+    "feedback": "",
+    "part_scores": {}
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494223",
+    "full_name": "Participant 1494223 (Dominic Balysz)",
+    "grade": 61.0,
+    "feedback": "Some good answers, especially in part 2 but you lost most marks in part 3 which was incomplete. Question 4 in part 3 did not properly address the issue, while questions 1 and 2 were often unclear. Question 3 contained some important error. Your grade breakdown is: Part 1: 8/15, Part 2 Q1: 3/5, Part 2 Q2: 7/7.5, Part 2 Q3: 7/7.5, Part 2 Q4: 3/5, Part 2 Q5: 3/5, Part 2 Q6: 7/10, Part 3 Q1: 4/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 0.5/7.5, Part 4: 10.5/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 8.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 7.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 7.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 0.5,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.5,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494370",
+    "full_name": "Participant 1494370 (Ramisa Yeamin Ishika)",
+    "grade": 63.0,
+    "feedback": "You did well in the discussion questions such as Question 6 in part 2 and part 4. However, you made some important mistakes in the quantitative questions or your answers were incomplete. You should also carefully review the concept of endogeneity. Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 3.5/5, Part 2 Q2: 4/7.5, Part 2 Q3: 4/7.5, Part 2 Q4: 2.5/5, Part 2 Q5: 2/5, Part 2 Q6: 7/10, Part 3 Q1: 4/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 5/7.5, Part 3 Q4: 4/7.5, Part 4: 11/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 11.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494257",
+    "full_name": "Participant 1494257 (Shajeena Santhamurugan)",
+    "grade": 66.0,
+    "feedback": "Some good answers and a good understanding of the policy and the model but several answers were not clearly explained or contained errors. Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 3/5, Part 2 Q2: 6/7.5, Part 2 Q3: 6/7.5, Part 2 Q4: 2.5/5, Part 2 Q5: 2/5, Part 2 Q6: 7/10, Part 3 Q1: 4/7.5, Part 3 Q2: 6/7.5, Part 3 Q3: 5/7.5, Part 3 Q4: 3.5/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.5,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494335",
+    "full_name": "Participant 1494335 (Safwan Ali)",
+    "grade": 60.0,
+    "feedback": "You did well in some of the discussion questions such as question 6 in part 2 and question 4. However, you made some important mistakes ni part 2 and you did not demonstrate a good understanding of the regression analysis and endogeneity issues. Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 3/5, Part 2 Q2: 4/7.5, Part 2 Q3: 4/7.5, Part 2 Q4: 3/5, Part 2 Q5: 2/5, Part 2 Q6: 7/10, Part 3 Q1: 3/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 4/7.5, Part 4: 11/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 11.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494329",
+    "full_name": "Participant 1494329 (Kiruththikan Kirushnamohan)",
+    "grade": 56.0,
+    "feedback": "You did well in some of the discussion questions such as question 6 in part 2 and question 4. However, you made some important mistakes ni part 2 and you did not demonstrate a good understanding of the regression analysis and endogeneity issues. Your grade breakdown is: Part 1: 9/15, Part 2 Q1: 2.5/5, Part 2 Q2: 5/7.5, Part 2 Q3: 5/7.5, Part 2 Q4: 2/5, Part 2 Q5: 2/5, Part 2 Q6: 7/10, Part 3 Q1: 3/7.5, Part 3 Q2: 4/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 3/7.5, Part 4: 10.5/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 9.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.5,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494352",
+    "full_name": "Participant 1494352 (Yusuf Khan)",
+    "grade": 70.0,
+    "feedback": "Good work. Your grade breakdown is: Part 1: 12/15, Part 2 Q1: 1/5, Part 2 Q2: 7.5/7.5, Part 2 Q3: 7.5/7.5, Part 2 Q4: 4.5/5, Part 2 Q5: 2/5, Part 2 Q6: 7.5/10, Part 3 Q1: 4/7.5, Part 3 Q2: 4/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 4/7.5, Part 4: 12/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 12.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 1.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 7.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 7.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 12.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494398",
+    "full_name": "Participant 1494398 (Sung-Jun Kim)",
+    "grade": 61.0,
+    "feedback": "Some good answers, especially at the start of part 2, but your later answers in part 2 and in part 3 were often not sufficiently precise or well-explained. They revealed a lack of understanding of the course material. I would suggest spending time reviewing the content of the course. Your grade breakdown is: Part 1: 10/15, Part 2 Q1: 4/5, Part 2 Q2: 6.5/7.5, Part 2 Q3: 6.5/7.5, Part 2 Q4: 3/5, Part 2 Q5: 2/5, Part 2 Q6: 3/10, Part 3 Q1: 3/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 4/7.5, Part 4: 11/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 10.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 3.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 11.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494213",
+    "full_name": "Participant 1494213 (Cevdet Mayakan)",
+    "grade": 70.0,
+    "feedback": "Good work. You clearly put some effort into the coursework and had a good understanding of the policy and how to use the model to analyse it. You lost some marks due to some incomplete answers in part 2 and lack of clarity in part 3, especially around the issue of endogeneity. Your grade breakdown is: Part 1: 13/15, Part 2 Q1: 4/5, Part 2 Q2: 6/7.5, Part 2 Q3: 6/7.5, Part 2 Q4: 3/5, Part 2 Q5: 2/5, Part 2 Q6: 7.5/10, Part 3 Q1: 4/7.5, Part 3 Q2: 6.5/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 4/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 13.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494294",
+    "full_name": "Participant 1494294 (Azhar Zahed)",
+    "grade": 74.0,
+    "feedback": "Good work. Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 3.5/5, Part 2 Q2: 7.5/7.5, Part 2 Q3: 7.5/7.5, Part 2 Q4: 3/5, Part 2 Q5: 5/5, Part 2 Q6: 7.5/10, Part 3 Q1: 4/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 6/7.5, Part 3 Q4: 4/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 7.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 7.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 5.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494388",
+    "full_name": "Participant 1494388 (Maryo Munteanu)",
+    "grade": 56.0,
+    "feedback": "You did very well in part 2 (except question 5 which did not have enough explanations to understand what you were trying to do). However, parts 3 and 4 were generally incomplete, too vague, or contained some errors. You should review carefully the concept of endogeneity and look through the solutions to understand the sources of errors. Feel free to contact the module leader for additional feedback. Your grade breakdown is: Part 1: 10/15, Part 2 Q1: 2.5/5, Part 2 Q2: 7/7.5, Part 2 Q3: 7/7.5, Part 2 Q4: 4/5, Part 2 Q5: 1/5, Part 2 Q6: 5.5/10, Part 3 Q1: 2/7.5, Part 3 Q2: 4/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 2/7.5, Part 4: 8/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 10.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 7.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 7.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 1.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 5.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 2.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 2.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 8.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494241",
+    "full_name": "Participant 1494241 (Abu Rahim)",
+    "grade": 72.0,
+    "feedback": "Good work. Your grade breakdown is: Part 1: 12/15, Part 2 Q1: 4.5/5, Part 2 Q2: 7.5/7.5, Part 2 Q3: 7.5/7.5, Part 2 Q4: 4/5, Part 2 Q5: 3/5, Part 2 Q6: 6/10, Part 3 Q1: 5/7.5, Part 3 Q2: 6.5/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 3/7.5, Part 4: 9/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 12.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 7.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 7.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 9.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494297",
+    "full_name": "Participant 1494297 (Maryam Ali)",
+    "grade": 47.0,
+    "feedback": "You had a good intuition about how the policy works and its impact. However, your answers in part 2 were missing an important component (the public school utility) which brought down your grade throughout that section as all questions depended on it. Part 3 also contained some imprecisions and was incomplete. Review carefully the solutions and contact the module leader for more feedback. Your grade breakdown is: Part 1: 9/15, Part 2 Q1: 2.5/5, Part 2 Q2: 2/7.5, Part 2 Q3: 2/7.5, Part 2 Q4: 2/5, Part 2 Q5: 2/5, Part 2 Q6: 6/10, Part 3 Q1: 4/7.5, Part 3 Q2: 6/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: na/7.5, Part 4: 8.5/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 9.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 2.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 2.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 8.5,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494409",
+    "full_name": "Participant 1494409 (Ali Raza Abbas)",
+    "grade": 70.0,
+    "feedback": "Good work but some imprecisions in part 3. Your grade breakdown is: Part 1: 10/15, Part 2 Q1: 4/5, Part 2 Q2: 7/7.5, Part 2 Q3: 7/7.5, Part 2 Q4: 4/5, Part 2 Q5: 3/5, Part 2 Q6: 6/10, Part 3 Q1: 4/7.5, Part 3 Q2: 6/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 4/7.5, Part 4: 11/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 10.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 7.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 7.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 11.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494220",
+    "full_name": "Participant 1494220 (Taha Mahmudov)",
+    "grade": 62.0,
+    "feedback": "Some good points, especially in part 2 where you did well on the quantitative questions. However, your answers were significantly limited by a lack of explanations. While some answers appeared potentially correct, it was sometimes not possible to identify how you obtained the results and therefore could not receive full marks. I would encourage you to review carefully your answers before submitting them and asking yourself whether they would be clear to the reader. Feel free to contact the module leader to obtain additional feedback. Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 3/5, Part 2 Q2: 6/7.5, Part 2 Q3: 6/7.5, Part 2 Q4: 3/5, Part 2 Q5: 3/5, Part 2 Q6: 6.5/10, Part 3 Q1: 3/7.5, Part 3 Q2: 4/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 3.5/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.5,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494374",
+    "full_name": "Participant 1494374 (Eanna O'Kane)",
+    "grade": 43.0,
+    "feedback": "You had a good intuition about the policy and its effect but you misunderstood some key parts of the assignment. You were expected to solve the problem mathematically in part 2, in a similar way to how we solved problem set 9. The lack of rigorous analysis in part 2 then carried over to the rest of the coursework as you could not just rigorously justify the claims you made in subsequent questions. I would recommend that you review carefully the solution and contact the module leader if you were unable to solve the exercise and need additional support. Your grade breakdown is: Part 1: 10/15, Part 2 Q1: 2/5, Part 2 Q2: 1/7.5, Part 2 Q3: 1/7.5, Part 2 Q4: 2/5, Part 2 Q5: 2/5, Part 2 Q6: 6/10, Part 3 Q1: 3/7.5, Part 3 Q2: 3/7.5, Part 3 Q3: 2/7.5, Part 3 Q4: 3/7.5, Part 4: 8/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 10.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 1.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 1.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 2.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 8.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494432",
+    "full_name": "Participant 1494432 (Samanda Pepushaj)",
+    "grade": 34.0,
+    "feedback": "While you seemed to have understood the key trade offs with the policy, your answers were too often incomplete, incorrect, or vague to warranty a higher grade. Unfortunately, your submission did not demonstrate that you have achieved the learning outcomes of this module. I would encourage you to spend some time reviewing the course material and the solution and to prepare for future assignments by allocating more time to go carefully over the coursework. Your grade breakdown is: Part 1: 10/15, Part 2 Q1: 1/5, Part 2 Q2: 2/7.5, Part 2 Q3: 2/7.5, Part 2 Q4: 2/5, Part 2 Q5: 1/5, Part 2 Q6: 1/10, Part 3 Q1: 3/7.5, Part 3 Q2: 2/7.5, Part 3 Q3: 1/7.5, Part 3 Q4: 1/7.5, Part 4: 8/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 10.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 1.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 2.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 2.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 1.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 1.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 2.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 1.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 1.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 8.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494261",
+    "full_name": "Participant 1494261 (Yasmine Haroon A Alireza)",
+    "grade": 66.0,
+    "feedback": "You had a good intuition of the policy and your answers to qualitative questions (part 1 and part 4) were very good. However, you made some mistakes in some of the quantitative questions and your answers generally lacked clarity with too little explanations. I would encourage you to focus on explaining more the steps you are taking to improve your grade. Your grade breakdown is: Part 1: 13/15, Part 2 Q1: 3/5, Part 2 Q2: 6/7.5, Part 2 Q3: 5.5/7.5, Part 2 Q4: 2/5, Part 2 Q5: 2/5, Part 2 Q6: 5/10, Part 3 Q1: 4/7.5, Part 3 Q2: 4/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 5/7.5, Part 4: 12.5/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 13.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 5.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 5.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 12.5,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494319",
+    "full_name": "Participant 1494319 (Laksiyah Kanthithasan)",
+    "grade": 57.0,
+    "feedback": "Some good elements in your answers, especially in part 2. However, your answers very often lacked clarity. The arguments were poorly explained and some irrelevant points or lecture references were included in various places. This reflected a lack of care put into answering the questions and a poor understanding of the course material. I would encourage you to review carefully the course material. Your grade breakdown is: Part 1: 10/15, Part 2 Q1: 4/5, Part 2 Q2: 5.5/7.5, Part 2 Q3: 5.5/7.5, Part 2 Q4: 2/5, Part 2 Q5: 1/5, Part 2 Q6: 5/10, Part 3 Q1: 3/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 4/7.5, Part 4: 9/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 10.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 5.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 5.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 1.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 5.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 9.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494317",
+    "full_name": "Participant 1494317 (Alim Ali)",
+    "grade": 62.0,
+    "feedback": "You gave some good answers, especially in part 1 andin part 2 question 6. However, several of your answers lacked clear explanations and were confusing as a result. This made it hard to evaluate how well you had understood the course material and whether you understood how to solve the problem. I would encourage you to review carefully the solution and reflect on potential ways you could improve future assignments using the feedback on turnitin. Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 3/5, Part 2 Q2: 4.5/7.5, Part 2 Q3: 4.5/7.5, Part 2 Q4: 4/5, Part 2 Q5: 2.5/5, Part 2 Q6: 7/10, Part 3 Q1: 4/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 3/7.5, Part 4: 10.5/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 4.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 4.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.5,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494283",
+    "full_name": "Participant 1494283 (Mustafa Warsama)",
+    "grade": 0.0,
+    "feedback": "",
+    "part_scores": {}
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494349",
+    "full_name": "Participant 1494349 (Laksha Dassarath)",
+    "grade": 71.0,
+    "feedback": "Good work overall, but review part 3 carefully as your answers showed some limited understanding of the course material. Your grade breakdown is: Part 1: 13.5/15, Part 2 Q1: 3/5, Part 2 Q2: 7/7.5, Part 2 Q3: 7/7.5, Part 2 Q4: 3/5, Part 2 Q5: 3/5, Part 2 Q6: 7.5/10, Part 3 Q1: 4/7.5, Part 3 Q2: 6/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 3/7.5, Part 4: 11/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 13.5,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 7.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 7.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 11.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494316",
+    "full_name": "Participant 1494316 (Bryan Carrillo Vega)",
+    "grade": 53.0,
+    "feedback": "You did a good job in part 1 and provided some interesting answers in part 2. However, your answeres were too often incomplete, vague, or not sufficiently well explained. In fact, it was difficult to evaluate some of your answers as it was not clear what part of the question you were addressing or what your calculations were meant to capture. You also demonstrated a limited understanding of some of the course content. I would encourage you to review carefully the solution and the course material. Your grade breakdown is: Part 1: 12/15, Part 2 Q1: 4/5, Part 2 Q2: 4/7.5, Part 2 Q3: 5/7.5, Part 2 Q4: 2.5/5, Part 2 Q5: 2/5, Part 2 Q6: 5.5/10, Part 3 Q1: 0/7.5, Part 3 Q2: 4/7.5, Part 3 Q3: 2/7.5, Part 3 Q4: 3/7.5, Part 4: 9/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 12.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 5.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 0.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 2.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 9.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494233",
+    "full_name": "Participant 1494233 (Mohammed Ali)",
+    "grade": 66.0,
+    "feedback": "Some good answers, especially in part 2 where you did well in both the qualitative and quantitative questions but your answers in part 3 were too imprecise and the explanations lacked clarity. Your grade breakdown is: Part 1: 10/15, Part 2 Q1: 3/5, Part 2 Q2: 6/7.5, Part 2 Q3: 6/7.5, Part 2 Q4: 2.5/5, Part 2 Q5: 3/5, Part 2 Q6: 7.5/10, Part 3 Q1: 4/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 6/7.5, Part 3 Q4: 4/7.5, Part 4: 9/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 10.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 9.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494271",
+    "full_name": "Participant 1494271 (Amina Kalokoh)",
+    "grade": 25.0,
+    "feedback": "You made some interesting observations, especially in part 4, but your coursework had many missing answers and several of the questions were misunderstood, which unfortunately limited your grade. Please contact the module leader if you would like to discuss how to improve future assignments.  Your grade breakdown is: Part 1: 4/15, Part 2 Q1: 3/5, Part 2 Q2: 1/7.5, Part 2 Q3: 1/7.5, Part 2 Q4: na/5, Part 2 Q5: na/5, Part 2 Q6: na/10, Part 3 Q1: 1/7.5, Part 3 Q2: na/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 1/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 4.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 1.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 1.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q1": {
+        "score": 1.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 1.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494198",
+    "full_name": "Participant 1494198 (Mouad El Mrabet Hilali)",
+    "grade": 14.0,
+    "feedback": "A good attempt on the first few questions, but unfortunately the rest of the assignment was missing. Your grade breakdown is: Part 1: 10/15, Part 2 Q1: 1/5, Part 2 Q2: 3/7.5, Part 2 Q3: na/7.5, Part 2 Q4: na/5, Part 2 Q5: na/5, Part 2 Q6: na/10, Part 3 Q1: na/7.5, Part 3 Q2: na/7.5, Part 3 Q3: na/7.5, Part 3 Q4: na/7.5, Part 4: na/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 10.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 1.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 3.0,
+        "max_score": 7.5
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494278",
+    "full_name": "Participant 1494278 (Ridwan Dualeh)",
+    "grade": 70.0,
+    "feedback": "Good work. Your grade breakdown is: Part 1: 12/15, Part 2 Q1: 4/5, Part 2 Q2: 7.5/7.5, Part 2 Q3: 7.5/7.5, Part 2 Q4: 4/5, Part 2 Q5: 3/5, Part 2 Q6: 6.5/10, Part 3 Q1: 4/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 6.5/7.5, Part 3 Q4: na/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 12.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 7.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 7.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494324",
+    "full_name": "Participant 1494324 (Hamzah Elmi)",
+    "grade": 63.0,
+    "feedback": "You did a good job at the start of part 2 and in question 6, but many other questions lacked clear explanations or were too imprecise. You should review carefully the concept of endogeneity. Your grade breakdown is: Part 1: 10/15, Part 2 Q1: 2/5, Part 2 Q2: 6.5/7.5, Part 2 Q3: 7/7.5, Part 2 Q4: 2.5/5, Part 2 Q5: 3/5, Part 2 Q6: 7/10, Part 3 Q1: 5/7.5, Part 3 Q2: 3/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 3/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 10.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 7.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494426",
+    "full_name": "Participant 1494426 (Pirakathees Pathmanathan)",
+    "grade": 36.0,
+    "feedback": "Some good answers but you lost marks due to too many unanswered questions. Your grade breakdown is: Part 1: 12/15, Part 2 Q1: 1/5, Part 2 Q2: 4.5/7.5, Part 2 Q3: 4.5/7.5, Part 2 Q4: 3/5, Part 2 Q5: na/5, Part 2 Q6: 6/10, Part 3 Q1: 5/7.5, Part 3 Q2: na/7.5, Part 3 Q3: na/7.5, Part 3 Q4: na/7.5, Part 4: na/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 12.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 1.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 4.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 4.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494342",
+    "full_name": "Participant 1494342 (Blerina Ferizolli)",
+    "grade": 61.0,
+    "feedback": "You did well in some questions (e.g. Q6 in part 2 and Q4 in part 3), but many of your answers lacked clarity to a point where it was difficult to assess whether you had genuinely understood the task. My suggestion would be to spend more time reviewing carefully your answers and improving your writing so that your correct results get rewarded better. Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 3/5, Part 2 Q2: 3/7.5, Part 2 Q3: 4/7.5, Part 2 Q4: 4/5, Part 2 Q5: 2.5/5, Part 2 Q6: 6.5/10, Part 3 Q1: 3/7.5, Part 3 Q2: 3/7.5, Part 3 Q3: 5/7.5, Part 3 Q4: 6/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494310",
+    "full_name": "Participant 1494310 (Yanis Anantheeswaran)",
+    "grade": 60.0,
+    "feedback": "Good work overall. You lost marks because many of your answers were either imcomplete, lacked explanations, or contained small errors. You should review carefully the solution and review carefully future assignments before submitting them to ensure that all questions have been fully answered and are clear. Your grade breakdown is: Part 1: 6/15, Part 2 Q1: 3/5, Part 2 Q2: 5/7.5, Part 2 Q3: 5/7.5, Part 2 Q4: 4/5, Part 2 Q5: 2.5/5, Part 2 Q6: 6.5/10, Part 3 Q1: 4/7.5, Part 3 Q2: 4/7.5, Part 3 Q3: 6/7.5, Part 3 Q4: 3/7.5, Part 4: 11/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 6.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 11.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494243",
+    "full_name": "Participant 1494243 (Mahinur Rahman)",
+    "grade": 68.0,
+    "feedback": "Good work but some errors in part 2 and a general lack of clarity in your answers which limited the grade you could obtain. You should provide more concise answers that go straight to the point and avoid long-winded side discussions. This would improve the clarity of your answers and your grade. Your grade breakdown is: Part 1: 10/15, Part 2 Q1: 3/5, Part 2 Q2: 5.5/7.5, Part 2 Q3: 5.5/7.5, Part 2 Q4: 3.5/5, Part 2 Q5: 3/5, Part 2 Q6: 6.5/10, Part 3 Q1: 5/7.5, Part 3 Q2: 5/7.5, Part 3 Q3: 6.5/7.5, Part 3 Q4: 4/7.5, Part 4: 10.5/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 10.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 5.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 5.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 6.5,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.5,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494361",
+    "full_name": "Participant 1494361 (Faiza Dayala)",
+    "grade": 60.0,
+    "feedback": "Some good answers, specially in part 2, but many answers were either incomplete, poorly explained, or contained some important errors. Review carefully the solution and contact the module leader if you would like additional feedback. Your grade breakdown is: Part 1: 7/15, Part 2 Q1: 3/5, Part 2 Q2: 5/7.5, Part 2 Q3: 5/7.5, Part 2 Q4: 4/5, Part 2 Q5: 2.5/5, Part 2 Q6: 6.5/10, Part 3 Q1: 4/7.5, Part 3 Q2: 6/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 3/7.5, Part 4: 10/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 7.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 10.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494234",
+    "full_name": "Participant 1494234 (Niveen Surchi)",
+    "grade": 50.0,
+    "feedback": "You did a good job in the first question and knew how to solve questions 2 and 3 in part 2. However, too many of your questions were incomplete or not sufficiently well explained. I would encourage you to spend more time reviewing the answers you provide and checking that they properly answer the questions asked in the clearest possible way. Your grade breakdown is: Part 1: 12/15, Part 2 Q1: 2/5, Part 2 Q2: 5/7.5, Part 2 Q3: 5/7.5, Part 2 Q4: 1/5, Part 2 Q5: 1/5, Part 2 Q6: 4/10, Part 3 Q1: 3/7.5, Part 3 Q2: 3/7.5, Part 3 Q3: 5/7.5, Part 3 Q4: 1/7.5, Part 4: 8/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 12.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 1.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 1.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 4.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 5.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 1.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 8.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494263",
+    "full_name": "Participant 1494263 (Sahiba Ghai)",
+    "grade": 67.0,
+    "feedback": "Some good answers, especially in part 2, but many of your answers lacked clarity with some incomplete arguments or some questions that were misunderstood.  Your grade breakdown is: Part 1: 11/15, Part 2 Q1: 3/5, Part 2 Q2: 6/7.5, Part 2 Q3: 6/7.5, Part 2 Q4: 3/5, Part 2 Q5: 3/5, Part 2 Q6: 8/10, Part 3 Q1: 3/7.5, Part 3 Q2: 6/7.5, Part 3 Q3: 4/7.5, Part 3 Q4: 3/7.5, Part 4: 11/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 11.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 8.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 6.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 11.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494308",
+    "full_name": "Participant 1494308 (Maria Kotzia)",
+    "grade": 64.0,
+    "feedback": "You did a very good job in part 2 but unfortunately lost marks in part 3 and 4 were your answers were often too imprecise and contained some important errors. I would generally encourage you to explain the steps you are following more carefully. Your grade breakdown is: Part 1: 12/15, Part 2 Q1: 2.5/5, Part 2 Q2: 7.5/7.5, Part 2 Q3: 7.5/7.5, Part 2 Q4: 3.5/5, Part 2 Q5: 3/5, Part 2 Q6: 6.5/10, Part 3 Q1: 4.5/7.5, Part 3 Q2: 3/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 2/7.5, Part 4: 9/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 12.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 7.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 7.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 3.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 6.5,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.5,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 2.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 9.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494288",
+    "full_name": "Participant 1494288 (Abdirizak Aideed)",
+    "grade": 41.0,
+    "feedback": "Some good answers, and a good understanding of the policy, but you lost many marks by failing to answer several questions in part 2 and by giving answers that were either vague, incomplete, or unclear in the rest of the coursework. Review carefully your solutions and contact the module leader if you would like to discuss how to improve future assignments. Your grade breakdown is: Part 1: 9/15, Part 2 Q1: 2/5, Part 2 Q2: 4/7.5, Part 2 Q3: 4/7.5, Part 2 Q4: na/5, Part 2 Q5: na/5, Part 2 Q6: na/10, Part 3 Q1: 4/7.5, Part 3 Q2: 3/7.5, Part 3 Q3: 3/7.5, Part 3 Q4: 3/7.5, Part 4: 9/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 9.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q1": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q3": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q4": {
+        "score": 3.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 9.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494413",
+    "full_name": "Participant 1494413 (Mai Anh Tran)",
+    "grade": 24.0,
+    "feedback": "Some good points, but unfortunately the coursework you submitted was missing too many questions to achieve a higher grade, while the questions you did answer were either incorrect or too vague. Your grade breakdown is: Part 1: 7/15, Part 2 Q1: 2/5, Part 2 Q2: 3.5/7.5, Part 2 Q3: 3.5/7.5, Part 2 Q4: 2/5, Part 2 Q5: 3/5, Part 2 Q6: na/10, Part 3 Q1: 1/7.5, Part 3 Q2: 2/7.5, Part 3 Q3: na/7.5, Part 3 Q4: na/7.5, Part 4: na/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 7.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 3.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 3.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 2.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 3 Q1": {
+        "score": 1.0,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 2.0,
+        "max_score": 7.5
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494421",
+    "full_name": "Participant 1494421 (Lixa Sessanga)",
+    "grade": 55.0,
+    "feedback": "You understood the policy well and did a good job in part 2, though some of your anwers could have been clearer. You lost a lot of marks because you did not answer question 3 and 4 in part 3 and lost a few more marks for answers that were unclear or too vague. Your grade breakdown is: Part 1: 10/15, Part 2 Q1: 3/5, Part 2 Q2: 5.5/7.5, Part 2 Q3: 5.5/7.5, Part 2 Q4: 4/5, Part 2 Q5: 2.5/5, Part 2 Q6: 7/10, Part 3 Q1: 4.5/7.5, Part 3 Q2: 4/7.5, Part 3 Q3: na/7.5, Part 3 Q4: na/7.5, Part 4: 9/15.",
+    "part_scores": {
+      "Part 1": {
+        "score": 10.0,
+        "max_score": 15.0
+      },
+      "Part 2 Q1": {
+        "score": 3.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q2": {
+        "score": 5.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q3": {
+        "score": 5.5,
+        "max_score": 7.5
+      },
+      "Part 2 Q4": {
+        "score": 4.0,
+        "max_score": 5.0
+      },
+      "Part 2 Q5": {
+        "score": 2.5,
+        "max_score": 5.0
+      },
+      "Part 2 Q6": {
+        "score": 7.0,
+        "max_score": 10.0
+      },
+      "Part 3 Q1": {
+        "score": 4.5,
+        "max_score": 7.5
+      },
+      "Part 3 Q2": {
+        "score": 4.0,
+        "max_score": 7.5
+      },
+      "Part 4": {
+        "score": 9.0,
+        "max_score": 15.0
+      }
+    }
+  },
+  {
+    "sheet": "Extension submission point",
+    "identifier": "Participant 1494386",
+    "full_name": "Participant 1494386 (Jahlik Stephenson)",
+    "grade": 0.0,
+    "feedback": "",
+    "part_scores": {}
+  }
+]

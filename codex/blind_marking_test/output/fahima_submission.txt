@@ -1,0 +1,763 @@
+Final assessment 2026 Economics and Society 
+Part 1 [15 marks] 
+ 
+1.11 AI prompt 
+ 
+Generate a 300-word summary of the UK government proposal to apply VAT to private school fees. 
+Explain the main policy change and discuss its potential economic costs and benefits. 
+ 
+1.12 Chat GPT output 
+ 
+The UK government has proposed a policy to apply Value Added Tax (VAT) to private school fees. 
+This proposal would remove the existing VAT exemption for private education and require private 
+schools to charge VAT at the standard rate on tuition fees. The primary purpose of the policy is to 
+generate additional government revenue and to eliminate disparities in tax treatment between 
+private and state education. The government has stated that the revenue raised could be used to 
+increase spending on state schools. 
+The policy has several potential economic benefits. One benefit is that applying VAT to private 
+school fees would broaden the tax base. This may improve the consistency of the tax system, as 
+most goods and services are already subject to VAT. Another benefit is that the policy could raise a 
+significant amount of revenue for the government. This revenue could be used to fund public 
+services, particularly education. In addition, higher private school fees may reduce demand for 
+private education. This could lead to a shift of some pupils into the state school sector, potentially 
+increasing social integration. 
+However, there are also potential economic costs associated with the policy. Demand for private 
+schooling may be inelastic, meaning that many families may continue to pay private school fees 
+despite higher prices. As a result, the tax burden may fall on parents. Private schools may experience 
+lower enrolment, which could lead to financial difficulties, school closures, or job losses. If some 
+pupils move from private to state schools, this could increase pressure on state school capacity and 
+public spending. There may also be administrative costs related to implementing VAT for private 
+schools. 
+Overall, the proposal to apply VAT to private school fees has both potential benefits and potential 
+costs. The policy involves trade-offs between revenue generation, efficiency, equity, and impacts on 
+the education system. 
+ 
+1.2 Comments on accuracy  
+The AI-generated output provides a reasonable overview of the proposed VAT reform, but while 
+many of its claims are directionally correct, several are either incomplete or overstated when 
+assessed against the IFS report and course material. 
+
+ 
+ 
+The description of the policy itself is accurate. The AI correctly states that private school fees are 
+currently exempt from VAT and that the reform would remove this exemption. This is directly 
+supported by the IFS, which states that “independent school fees are currently VAT exempt” and 
+that Labour proposes levying VAT on these fees (IFS, Executive Summary, p.3). As a factual 
+description of the policy change, the output is therefore dependable. 
+However, the AI output becomes less accurate when discussing the size of the price increase faced 
+by households. By referring to VAT at the standard rate without further qualification, it implicitly 
+suggests a 20% rise in fees. The IFS explicitly cautions against this interpretation, noting that “the 
+effective VAT rate would be around 15% rather than the full 20%” once input deductions and 
+exemptions are considered (IFS, Executive Summary, p.3; Table 2, pp.16-17). This distinction matters 
+economically, as overstating the price increase can lead to exaggerated predictions about demand 
+responses. 
+The claim that the policy would raise substantial government revenue is supported by the evidence. 
+The IFS estimates gross revenues of around £1.6 billion per year, with a net gain of £1.3-£1.5 billion 
+after allowing for additional state school spending (IFS, pp.24-25). From a public finance perspective, 
+this suggests the revenue argument for the policy is strong and credible. (Mirrlees et al., 2011). 
+Where the AI output is weakest is in its treatment of behavioural effects. It suggests that higher fees 
+could trigger widespread school closures and major disruption. The IFS evidence does not support 
+this. Based on observed behaviour and elasticity estimates, the report suggests a 3-7% fall in private 
+school attendance, equivalent to 20,000–40,000 pupils, occurring gradually over time (IFS, pp.21-
+22). The IFS also notes that demand for private schooling appears price-inelastic, implying that many 
+families will absorb higher costs rather than exit the sector, making “large-scale closures unlikely in 
+the short run” (IFS, pp.21-23). 
+In the course's terms, the policy debate is best framed as an equity–efficiency trade-off: removing a 
+VAT exemption targets a service disproportionately consumed by higher-income households, while 
+raising funds for a publicly provided service with large distributional implications. This links directly 
+to the course discussion of why public and private schooling co-exist and how a two-tier system can 
+amplify inequality even when ‘choice’ is given. 
+Overall, while the AI output captures the broad trade-offs involved in the policy, it lacks the nuance 
+provided by empirical evidence. Applying concepts from the course, particularly tax incidence and 
+elasticity of demand, suggests that the policy is more likely to raise revenue with limited behavioural 
+disruption than the AI output implies. (Atkinson and Stiglitz, 1980; Mirrlees et al., 2011). 
+ 
+1.3 Rewritten summary 
+ 
+The UK government has proposed applying Value Added Tax (VAT) to private school fees by 
+removing the existing VAT exemption for private education. While the statutory VAT rate is 20%, 
+evidence from the Institute for Fiscal Studies (IFS) suggests that the effective increase in fees would 
+be closer to 15%, once deductions for input VAT, exemptions for specialist provision, and the 
+treatment of boarding fees are taken into account (IFS, Executive Summary, p.3; Table 2, pp.16-17). 
+From a public finance perspective, the policy is primarily motivated by revenue generation and by 
+concerns about horizontal and vertical equity in the tax system, rather than by an explicit attempt to 
+eliminate private schooling. 
+
+ 
+ 
+A key economic benefit of the policy is revenue generation. According to the IFS estimates, removing 
+tax exemptions from private schools would raise around £1.6 billion per year, with a net gain of 
+£1.3-£1.5 billion after accounting for additional state school spending (IFS, pp.24-25). Since private 
+school attendance is heavily concentrated among higher-income households, applying VAT to 
+private school fees is likely to increase the progressivity of the tax system, aligning with equity-based 
+arguments discussed in the course. (IFS, 2024) 
+Concerns have been raised that higher fees could significantly reduce demand for private schooling. 
+However, the evidence presented in the IFS report suggests that demand for private education is 
+price inelastic. Based on plausible elasticity estimates, the policy is expected to result in a 3-7% 
+reduction in private school enrolment, equivalent to 20,000–40,000 pupils, occurring gradually over 
+time rather than immediately (IFS, pp.21-22). As a result, large-scale private school closures are 
+considered unlikely in the short run (IFS, pp.21-23). 
+If some pupils move into the state sector, this will create additional public spending pressures. 
+However, the IFS estimates that the required increase in state school spending would be modest 
+relative to the revenue raised, suggesting that the policy would still result in a substantial net fiscal 
+gain (IFS, pp.24-25). 
+Overall, once realistic behavioural responses and effective tax rates are considered, the policy 
+appears far more likely to function as a revenue-raising and redistributive instrument than as a 
+disruptive reform of the education system. The VAT reform is likely to raise significant revenue, 
+improve tax fairness, and generate limited disruption to the education system. From an economic 
+perspective, this suggests that much of the burden of the tax is likely to be borne by higher-income 
+households rather than translated into large behavioural responses. 
+ 
+ Part 2 [40 marks] 
+2.1 [5 marks] 
+ 
+Let private school tuition fees be 𝑡, The VAT rate is 𝜏. Let 𝑦 be the number of families attending private 
+school and 𝐹 the total fee revenue received by the private school. Since each private -school family 
+pays tuition 𝑡, total fee revenue is. 
+𝐹 =  𝑦𝑡. 
+For a family of type 𝑖 ∈ {𝐿, 𝑀, 𝐻}, the gross benefit from private school is given by: 
+𝑈𝑖
+𝑏𝑒𝑛𝑒𝑓𝑖𝑡 = 𝑃𝑖 + 10√𝐹
+𝑦 . 
+Because, 
+𝐹
+𝑦 = 𝑦𝑡
+𝑦 = 𝑡, 
+This simplifies (regardless of how many families attend) to: 
+
+ 
+ 
+𝑢𝑖 = 𝑃𝑖 + 10√𝑡. 
+Note that because 𝐹/𝑦 = 𝑡, the private -school ‘quality’ term does not depend on the number of 
+private-school families 𝑦. This implies no congestion or peer effect in private schooling within this 
+model; all strategic interaction operates through the public -school crowding term . 𝑆/𝑥 and the 
+redistribution term 5𝑇/𝑥. 
+The monetary cost of private schooling is tuition plus VAT: 
+Cost = 𝑡 + 𝜏𝑡 = 𝑡(1 + 𝜏). 
+Therefore, the payoff from sending the child to private school is: 
+𝑈𝑖
+𝑝𝑟𝑖𝑣 = 𝑢𝑖 − 𝑡(1 + 𝜏) = 𝑃𝑖 + 10√𝑡 − 𝑡(1 + 𝜏),  
+𝑖 ∈ {𝐿, 𝑀, 𝐻}. 
+ 
+Explicitly: 
+𝑈𝐿
+𝑝𝑟𝑖𝑣 = 𝑃𝐿 + 10√𝑡 − 𝑡(1 + 𝜏), 
+𝑈𝑀
+𝑝𝑟𝑖𝑣 = 𝑃𝑀 + 10√𝑡 − 𝑡(1 + 𝜏), 𝑈𝐻
+𝑝𝑟𝑖𝑣 = 𝑃𝐻 + 10√𝑡 − 𝑡(1 + 𝜏). 
+ 
+Economic interpretation of each term 
+𝑃𝐿 < 𝑃𝑀 < 𝑃𝐻 are type-specific valuations of private schooling, capturing that higher-income 
+families obtain larger private benefits (e.g. preferences, ability to pay, perceived returns). 10√𝑡 𝐼𝑡 is 
+a quality term that increases with resources but exhibits diminishing returns. Finally, 𝑡(1 + 𝜏) is the 
+VAT-inclusive price faced by families; increasing 𝜏 raises the private cost directly, discouraging 
+private-school attendance through the price channel, while any quality response operates separately 
+through VAT-financed public-school funding. The payoff structure highlights that VAT operates 
+purely through prices on the private side, while quality responses arise only through public funding. 
+This structure mirrors the general choice framework introduced in lecture four, where agents 
+compare net utilities across discrete alternatives. Here, VAT affects behaviour exclusively through 
+the price channel on the private side, while distribution operates through publicly provided quality, 
+consistent with the course’s treatment of policy-induced price distortions. (Mirrlees et al., 2011). 
+This is shown in the standard models of consumption taxation, where VAT enters as a wedge 
+between marginal benefit and marginal cost. 
+The private-school payoff consists of a type-based valuation. 𝑃𝑖, a diminishing-returns quality 
+component 10√𝑡, and the VAT-inclusive price 𝑡(1 + 𝜏). A higher VAT rate reduces 𝑈𝑖
+𝑝𝑟𝑖𝑣 and 
+therefore weakens incentives to choose private schooling. 
+ 
+2.2 [7.5 marks] 
+ 
+In scenario one, the low-income family 𝐿 attends public school while the middle and high-income 
+families 𝑀 and 𝐻 attend private. Hence, 
+
+ 
+ 
+𝑥 = 1 𝑎𝑛𝑑 𝑦 = 2. 
+This equilibrium concept follows the static Nash equilibrium framework discussed in Lecture 5, 
+where agents choose simultaneously and no individual has an incentive to deviate given others’ 
+choices. 
+ 
+VAT revenue and public-school payoff 
+Total VAT revenue equals VAT per private pupil (𝜏𝑡) times the number of private pupils (𝑦): 
+𝑇 = 𝜏𝑡𝑦 = 2𝜏𝑡. 
+ 
+Public-school utility (for any family in public school) is given by: 
+𝑈𝑝𝑢𝑏 = 𝑆
+𝑥 + 5𝑇
+𝑥 . 
+ 
+Substituting 𝑥 = 1 and 𝑇 = 2𝜏𝑡, 
+𝑈𝑝𝑢𝑏(1,2) = 𝑆 + 10𝜏𝑡. 
+ 
+Hence 𝐿’s payoff in public under Scenario 1 is: 
+𝑈𝐿
+𝑝𝑢𝑏 = 𝑆 + 10𝜏𝑡. 
+ 
+Nash equilibrium conditions 
+To characterise equilibrium, it is sufficient to check unilateral deviation, since families choose 
+schools simultaneously and take others’ choices as given. 
+ 
+i) Low-income family 
+If 𝐿 deviates to private school, then all three families attend private school, 𝑥 = 0 and 𝑦 = 3, so 
+public school utility is not defined, and L must compare her private payoff to her current public 
+payoff under scenario one. The private payoff for 𝐿 would still be: 
+𝑈𝐿
+𝑝𝑟𝑖𝑣 = 𝑃𝐿 + 10√𝑡 − 𝑡(1 + 𝜏). 
+Therefore 𝐿 stays in public if: 
+𝑈𝐿
+𝑝𝑢𝑏(1,2) ≥ 𝑈𝐿
+𝑝𝑟𝑖𝑣 ⟺ 𝑆 + 10𝜏𝑡 ≥ 𝑃𝐿 + 10√𝑡 − 𝑡(1 + 𝜏).   (S1 − L)  
+ 
+ii) Middle-income family  
+If 𝑀 deviates to public school, then 𝑥 = 2, 𝑦 = 1, and VAT revenue becomes, 
+𝑇′ = 𝜏𝑡 ⋅ 1 = 𝜏𝑡. 
+
+ 
+ 
+So, the public payoff upon deviation is: 
+𝑈𝑝𝑢𝑏(2,1) = 𝑆
+2 + 5𝑇′
+2 = 𝑆
+2 + 5𝜏𝑡
+2 . 
+Thus 𝑀 remains in private if: 
+𝑈𝑀
+𝑝𝑟𝑖𝑣 ≥ 𝑈𝑝𝑢𝑏(2,1) ⟺ 𝑃𝑀 + 10√𝑡 − 𝑡(1 + 𝜏) ≥ 𝑆
+2 + 5𝜏𝑡
+2 . (S1-M) 
+ 
+iii) High-income family 
+The same deviation environment applies, so 𝐻stays private if: 
+𝑈𝐻
+𝑝𝑟𝑖𝑣 ≥ 𝑈𝑝𝑢𝑏(2,1) ⟺ 𝑃𝐻 + 10√𝑡 − 𝑡(1 + 𝜏) ≥ 𝑆
+2 + 5𝜏𝑡
+2 . (S1-H) 
+Since 𝑃𝐻 > 𝑃𝑀, condition (S1-H) is weaker than (S1-M). Hence the binding “upper bound” is driven 
+by 𝑀’s incentive. 
+ 
+Parameter range 
+Rearranging (S1-L) gives a lower bound on 𝑆: 
+𝑆 ≥ 𝑃𝐿 + 10√𝑡 − 𝑡(1 + 𝜏) − 10𝜏𝑡. 
+Rearranging (S1-M) gives an upper bound on 𝑆: 
+𝑆 ≤ 2 (𝑃𝑀 + 10√𝑡 − 𝑡(1 + 𝜏)) − 5𝜏𝑡. 
+Therefore, Scenario 1 is a Nash equilibrium whenever, 
+𝑃𝐿 + 10√𝑡 − 𝑡(1 + 𝜏) − 10𝜏𝑡   ≤   𝑆   ≤   2 (𝑃𝑀 + 10√𝑡 − 𝑡(1 + 𝜏)) − 5𝜏𝑡, 
+With, 
+0 ≤ 𝑃𝐿 < 𝑃𝑀 < 𝑃𝐻. 
+ 
+Numerical example  
+For simplicity, units are interpreted so that tuition is to be measured in tens rather than pounds. 
+Let: 
+ 𝑡 = 10, 𝜏 = 0.2, 𝑃𝐿 = 2,          𝑃𝑀 = 5, 𝑃𝐻 = 8 , 𝑆 = 20. 
+Then: 
+ 10√𝑡 ≈ 31.623, 𝑡(1 + 𝜏) = 12. 
+Private utilities: 
+𝑈𝐿
+priv ≈ 21.62, 𝑈𝑀
+priv ≈ 24.62, 𝑈𝐻
+priv ≈ 27.62. 
+Public utilities: 
+
+ 
+ 
+𝑈𝐿
+pub = 20 + 20 = 40, 𝑈pub(2,1) = 10 + 5 = 15. 
+Thus 𝐿 prefers public school, while 𝑀 and 𝐻 prefer private school. No family wishes to deviate, 
+confirming Scenario 1 as a Nash equilibrium. 
+ 
+2.3 [7.5 marks] 
+Allocation  
+In scenario two, families 𝐿 and 𝑀 attend public school, while 𝐻 attends private school.  
+Hence, 
+𝑥 = 2 𝑎𝑛𝑑 𝑦 = 1. 
+Public school payoff 
+VAT revenue is: 
+𝑇 = 𝜏𝑡𝑦 = 𝜏𝑡. 
+Public payoff utility is therefore: 
+𝑈𝑝𝑢𝑏(2,1) = 𝑆
+2 + 5𝑇
+2 = 𝑆
+2 + 5𝜏𝑡
+2 . 
+ 
+ 
+Private-school payoff remains: 
+𝑈𝐿
+𝑝𝑟𝑖𝑣 = 𝑃𝐿 + 10√𝑡 − 𝑡(1 + 𝜏), 
+𝑖 ∈ {𝐿, 𝑀, 𝐻}. 
+ 
+Nash equilibrium conditions 
+i) Low-income family  
+𝑈𝑝𝑢𝑏(2,1) ≥ 𝑈𝐿
+𝑝𝑟𝑖𝑣 ⟺ 𝑆
+2 + 5𝜏𝑡
+2 ≥ 𝑃𝐿 + 10√𝑡 − 𝑡(1 + 𝜏). (S2-L) 
+ 
+ii) Middle-income family (binding condition because 𝑃𝑀 > 𝑃𝐿) 
+𝑆
+2 + 5𝜏𝑡
+2 ≥ 𝑃𝑀 + 10√𝑡 − 𝑡(1 + 𝜏). (S2-M) 
+ 
+iii) High-income family  
+If 𝐻 deviates to public, then 𝑥 = 3, 𝑦 = 0, so 𝑇 = 0 and 
+
+ 
+ 
+𝑈𝑝𝑢𝑏(3,0) = 𝑆
+3. 
+Thus 𝐻remains private if: 
+𝑈𝐻
+𝑝𝑟𝑖𝑣 ≥ 𝑆
+3 ⟺ 𝑃𝐻 + 10√𝑡 − 𝑡(1 + 𝜏) ≥ 𝑆
+3 . (S2-H) 
+ 
+Parameter range 
+Scenario two is a Nash equilibrium whenever: 
+2 (𝑃𝑀 + 10√𝑡 − 𝑡(1 + 𝜏)) − 5𝜏𝑡   ≤   𝑆   ≤   3 (𝑃𝐻 + 10√𝑡 − 𝑡(1 + 𝜏)). 
+Compared to scenario one, the lower bound on 𝑆 is higher, reflection the fact that sustaining two 
+families in public schooling requires stronger public provision. 
+  
+Numerical example 
+Let: 
+𝑡 = 10, 𝜏 = 0.2,           𝑃𝐿 = 2, 𝑃𝑀 = 5, 𝑃𝐻 = 8, 𝑆 = 42. 
+Public utilities: 
+𝑈𝐿,𝑀
+pub = 21 + 5 = 26. 
+Private utilities unchanged: 
+𝑈𝐿
+priv ≈ 21.62, 𝑈𝑀
+priv ≈ 24.62, 𝑈𝐻
+priv ≈ 27.62. 
+ 
+Deviation payoff for 𝐻: 
+𝑈𝐻
+pub(3,0) = 14. 
+Hence 𝐿and 𝑀prefer public school and 𝐻 prefers private school, confirming Scenario 2 as a Nash 
+equilibrium. 
+ 
+2.4 [5 marks] 
+ 
+The comparative statics are most naturally understood by focusing on the middle-income family, 
+whose decision differs across the two scenarios. The difference between Scenario 1 and Scenario 2 
+lies in the schooling decision of the middle-income family 𝑀. In Scenario 1, 𝑀 attends private school, 
+while in Scenario 2, 𝑀 attends public school. This follows the approach outlined in Lecture 6, which 
+emphasises analysing policy changes through marginal responses of agents at the boundary 
+between choices, rather than focusing on infra-marginal behaviour. Consequently, this on how 
+changes in the model’s parameters affect the relative attractiveness of public versus private 
+
+ 
+ 
+schooling for family 𝑀, holding the behaviour of 𝐿 and 𝐻 fixed. (Epple and Romano, 1998; Nechyba, 
+2000). 
+Baseline public-school quality 𝑺 
+Public-school utility increases in 𝑆 through the term 𝑆/𝑥. An increase in 𝑆 raises the payoff from 
+public schooling for all families and makes the public-school participation constraints in Scenario 2 
+easier to satisfy. At the same time, a higher 𝑆 makes it more difficult to sustain Scenario 1, since the 
+middle-income family’s payoff from deviating to public school increases. Therefore, higher 𝑆 shifts 
+the equilibrium towards Scenario 2, while lower 𝑆 makes Scenario 1 more likely. 
+VAT rate 𝝉 
+An increase in 𝜏 raises the private-school cost 𝑡(1 + 𝜏), reducing private-school utility, and 
+simultaneously increases VAT revenue, which improves public-school quality through the term 
+5𝜏𝑡𝑦/𝑥. Both effects reduce the relative attractiveness of private schooling for the middle-income 
+family. Consequently, a higher VAT rate makes Scenario 2 more likely, whereas a lower VAT rate 
+favours Scenario 1. 
+Tuition fees 𝒕 
+Changes in 𝑡 affect both private-school quality, through the term 10√𝑡, and private-school costs, 
+through 𝑡(1 + 𝜏), as well as public-school quality via VAT revenue. The effect of 𝑡 on the equilibrium 
+is therefore ambiguous. If the quality effect dominates, higher 𝑡 can increase the attractiveness of 
+private schooling and support Scenario 1. If the cost and tax effects dominate, higher 𝑡 pushes the 
+middle-income family towards public schooling and favours Scenario 2. 
+Type-specific valuations 𝑷𝑳, 𝑷𝑴, 𝑷𝑯 
+The parameter 𝑃𝑀 plays a significant role since the middle-income family switches sectors across 
+scenarios. A higher 𝑃𝑀 raises the private-school payoff for 𝑀, making Scenario 1 more likely. A lower 
+𝑃𝑀 makes public schooling more attractive, favouring Scenario 2. Changes in 𝑃𝐿 and 𝑃𝐻 mainly affect 
+whether the low-income family continues to prefer public school and the high-income family 
+continues to prefer private school; if these conditions hold, they do not determine which scenario 
+arises. 
+Taken together, higher baseline public quality 𝑆 and a higher VAT rate 𝜏 shift the equilibrium 
+towards Scenario 2 (both 𝐿 and 𝑀 in public school), while lower 𝑆 and lower 𝜏 favour Scenario 1 
+(only 𝐿 in public school). The valuation parameter 𝑃𝑀 tilts the balance between the two scenarios, 
+and the effect of tuition fees 𝑡 is ambiguous, depending on whether quality or cost effects dominate. 
+Intuitively, this reflects that the middle-income family is the only group whose schooling decision 
+responds on the extensive margin. Overall, the model predicts that policies improving public 
+provision or raising private- school costs tend to shift the equilibrium along the extensive margin of 
+middle-income participation. This highlights that the extensive margin of school choice is driven 
+primarily by middle-income households rather than by uniform responses across all income groups. 
+ 
+2.5 [5 marks] 
+ 
+Let social welfare be defined as the sum of utilities of all three families: 
+
+ 
+ 
+𝑊 = 𝑈𝐿 + 𝑈𝑀 + 𝑈𝐻. 
+Effect of VAT on individual utilities 
+For a family attending private school, the payoff is: 
+𝑈𝑖
+priv = 𝑃𝑖 + 10√𝑡 − 𝑡(1 + 𝜏), 𝑖 ∈ {𝐿, 𝑀, 𝐻}. 
+Differentiating with respect to the VAT rate 𝜏 yields: 
+∂𝑈𝑖
+priv
+∂𝜏 = −𝑡 < 0. 
+Thus, an increase in VAT reduces the utility of any family attending private school, since it raises the 
+effective price of private education. 
+For a family attending public school, the payoff is: 
+𝑈𝑖
+pub = 𝑆
+𝑥 + 5𝜏𝑡𝑦
+𝑥 . 
+Differentiating with respect to 𝜏, 
+∂𝑈𝑖
+pub
+∂𝜏 = 5𝑡𝑦
+𝑥 > 0. 
+Hence, a higher VAT rate increases the utility of public-school families through increased public-
+school funding. 
+ 
+Effect on social welfare 
+Let 𝑥 denote the number of families attending public school and 𝑦 = 3 − 𝑥 the number attending 
+private school. The total effect of a marginal increase in VAT on social welfare is: 
+𝑑𝑊
+𝑑𝜏 = 𝑥 (5𝑡𝑦
+𝑥 ) + 𝑦(−𝑡) = 5𝑡𝑦 − 𝑡𝑦 = 4𝑡𝑦. 
+It is worth emphasising that this welfare result is local and holds only when the schooling allocation 
+is fixed. It reflects the standard partial equilibrium welfare analysis from Lecture 7, where marginal 
+tax changes are welfare improving when they relax a binding public finance constraint without 
+inducing large behavioural distortions. (Mirrlees et al., 2011). This highlights the standard result that 
+small tax changes can be welfare improving even when substantial changes are distortionary. 
+In conclusion, if at least one family attends a private school (𝑦 > 0), then 
+𝑑𝑊
+𝑑𝜏 > 0, so a marginal 
+increase in VAT raises social welfare. If no family attends private school (𝑦 = 0VAT has no effect on 
+welfare since no revenue is raised. Welfare may decrease only if a sufficiently large VAT increase 
+alters schooling choices and leads to congestion effects in public schools. Thus, small increases in 
+VAT are welfare-enhancing, while large increases may not be. This result abstracts from general 
+equilibrium effects such as changes in class size or teacher supply, which could matter for larger 
+policy changes. 
+ 
+2.6 [10 marks] 
+
+ 
+ 
+ 
+Whether introducing VAT on private school fees is a desirable policy depends on the trade-off 
+between equity and efficiency. (Atkinson and Stiglitz, 1980; Mirrlees et al., 2011). The theoretical 
+model highlights two opposing effects of VAT. First, VAT increases the cost of private schooling to 
+𝑡(1 + 𝜏), reducing the utility of families who attend private schools. This effect is strongest for high- 
+and middle-income families, who place higher valuations on private education (𝑃𝐻 > 𝑃𝑀 > 𝑃𝐿). 
+Second, VAT revenue is redistributed to the public education system, raising public-school quality via 
+the term. 5𝜏𝑡𝑦/𝑥. This benefits families who attend public schools, particularly low-income 
+households. 
+In Scenario 1, where only the low-income family attends public school, a marginal increase in VAT 
+raises social welfare if some families remain in private school. The result 
+𝑑𝑊
+𝑑𝜏 = 4𝑡𝑦 > 0 shows that 
+the gains from improved public-school funding outweigh the losses borne by private-school families. 
+This mirrors the distinction between efficiency and redistribution discussed in the lectures on 
+taxation and public spending. 
+In Scenario 2, where both low- and middle-income families attend public school, the same 
+mechanism applies, but the welfare gain from increasing VAT is smaller because fewer families pay 
+the tax. Nonetheless, the policy continues to shift resources from higher-income households toward 
+public education. 
+A potential drawback arises if VAT is set too high. Large increases in VAT may induce middle-income 
+families to switch from private to public schooling, increasing congestion and reducing per-pupil 
+resources in public schools. In this case, the efficiency costs of overcrowding may offset the 
+redistributive benefits. This equity efficiency trade-off shows the broader policy evaluation 
+framework, which was mentioned in Lecture 3, where redistributive gains must be weighed against 
+potential efficiency losses arising from congestion and capacity restraints. 
+Overall, the model suggests that VAT on private schools can improve both equity and social welfare 
+if implemented moderately and if the additional revenue is used effectively. However, excessively 
+high VAT rates risk undermining efficiency by overburdening the public education system. The model 
+supports VAT on private schooling as a potentially effective redistributive tool, but only when 
+applied cautiously and alongside sufficient public-sector capacity. 
+ 
+ 
+Part 3 [30 marks] 
+ 
+3.1 [7.5 marks] 
+ 
+Below are testable predictions implied by the model in Part 2. Each prediction is stated in the 
+required “when X increases, Y changes” format and links directly to the mechanisms in the payoff 
+functions. 
+Prediction 1: VAT and private-school attendance 
+
+ 
+ 
+Holding other parameters fixed, an increase in the VAT rate 𝜏lowers the payoff from private 
+schooling for any family: 
+∂𝑈𝑖
+𝑝𝑟𝑖𝑣
+∂𝜏 = −𝑡 < 0, 
+and raises the payoff from public schooling for those in public school (when 𝑦 > 0): 
+∂𝑈𝑝𝑢𝑏
+∂𝜏 = 5𝑡𝑦
+𝑥 > 0. 
+Therefore, when 𝜏 increases, private-school attendance (the share 𝑦) decreases, especially among 
+“marginal” families (most plausibly middle-income families).  
+Prediction 2: Public-school baseline quality and school choice 
+An increase in the baseline public-school quality parameter 𝑆 increases public-school utility through 
+𝑆/𝑥. 
+Therefore, when 𝑆 increases, public-school attendance (the share 𝑥) increases and private-school 
+attendance falls, again most strongly among families close to indifference between sectors. 
+Prediction 3: Private-school fees and private-school attendance 
+Private-school utility contains a quality term 10√𝑡 (increasing in 𝑡with diminishing returns) and a 
+cost term −𝑡(1 + 𝜏)(linear and increasing in 𝑡). Hence: 
+∂𝑈𝑖
+𝑝𝑟𝑖𝑣
+∂𝑡 = 5
+√𝑡 − (1 + 𝜏), 
+So, the sign is ambiguous and depends on parameter values. 
+Therefore: 
+If (1 + 𝜏) >
+5
+√𝑡  (i.e. cost dominates), then higher 𝑡 reduces private-school attendance. 
+If (1 + 𝜏) <
+5
+√𝑡  (quality dominates), then higher 𝑡 could increase private-school attendance. 
+This yields a conditional (“only if…”) prediction, which reflects the competing quality and cost 
+mechanisms highlighted by the model. 
+Prediction 4: Heterogeneity by income type 
+Since 𝑃𝐻 > 𝑃𝑀 > 𝑃𝐿Higher-income families have systematically higher private-school valuation. 
+Therefore, when 𝜏 increases, high-income families are more likely to remain in private schooling 
+than middle- and low-income families; switching from private to public is more concentrated among 
+lower-valuation groups. This implies heterogeneous treatment effects of VAT by income group. 
+Prediction 5: VAT and social welfare (local prediction) 
+From Part 2, holding the allocation fixed: 
+𝑑𝑊
+𝑑𝜏 = 4𝑡𝑦. 
+
+ 
+ 
+Therefore, when 𝜏 increases, social welfare increases locally whenever 𝑦 > 0 (i.e. when some 
+families remain in private school). However, this prediction is local: sufficiently large VAT changes 
+may alter the equilibrium allocation and potentially introduce congestion effects in public schools. 
+The key implication is that the model predicts that higher VAT rates and higher baseline public 
+quality reduce private-school attendance, with stronger responses among marginal (middle-income) 
+families, and it yields a conditional prediction that the effect of tuition 𝑡 on private attendance 
+depends on whether cost or quality effects dominate. These predictions are directly testable and 
+map cleanly from the models to observable enrolment and price outcomes, following the positive 
+analysis approach emphasised in Lecture 8, where theory is used to generate falsifiable empirical 
+implications rather than normative conclusions. (Angrist and Pischke, 2009). 
+ 
+3.2 [7.5 marks] 
+ 
+This section maps theoretical variables into measurable real-world counterparts and identifies 
+credible data sources to operationalise them. 
+School-choice outcomes (𝑥 and 𝑦). The model’s central outcomes are the numbers (or shares) in 
+public versus private schooling. Empirically, 𝑦 can be measured as the share (or count) of pupils in 
+independent schools, and 𝑥 as the complementary share in state-funded schools. (Institute for Fiscal 
+Studies, 2024; OECD, 2019). Independent-school pupil counts and regional breakdowns can be 
+obtained from the Independent Schools Council (ISC) annual census reports, which provide pupil 
+totals and changes over time. If y is the share of pupils in independent schools, this can be measured 
+using the Independent Schools Council census, which covers over 1,400 schools and reports detailed 
+pupil numbers and characteristics. (Independent Schools Council, 2025). Public-school enrolment, 
+class sizes, and pupil characteristics are available from the Department for Education (DfE) School 
+Census statistical releases. (Department for Education, 2025). 
+VAT policy variable (𝜏). The policy can be coded as a post-reform indicator (0 before VAT applies to 
+fees; one after), and/or as the statutory VAT rate applied to fees. (Institute for Fiscal Studies, 2024). 
+The mechanism is that 𝜏 raises the VAT-inclusive price 𝑡(1 + 𝜏). (Mirrlees et al., 2011). 
+Private-school fees (𝑡). The theoretical tuition fee 𝑡 can be proxied by average private-school fees 
+(day and boarding) reported in ISC publications (or fee schedules) and then converted into a VAT-
+inclusive measure by multiplying by (1 + 𝜏). (Independent Schools Council, 2025). The relevant 
+regressor in price-based specifications is thus 𝑡(1 + 𝜏). (Institute for Fiscal Studies, 2024). 
+Public-school “quality/resources” (𝑆 and VAT-funded spending). The model captures public quality 
+with 𝑆 and with VAT-financed funding per pupil. In practice, these can be substituted using class size 
+measures and other pupil/resource statistics from DfE releases. (OECD, 2019; Glennerster, 2003). 
+When focusing on outcomes rather than inputs, public-school performance can be proxied using 
+inspection and performance measures. 
+Income heterogeneity (proxying 𝑃𝐿, 𝑃𝑀, 𝑃𝐻). Since the 𝑃𝑖 terms are unobserved valuations that vary 
+with income; income type can be represented using local-area household income. (OECD, 2019; 
+Glennerster, 2003). A suitable source is the ONS small area income estimates, which provide 
+household income measures at the MSOA/local area level and can be matched geographically to 
+education outcomes.  
+
+ 
+ 
+Outcome proxies related to welfare (optional extension). Social welfare is not directly observed, but 
+model-relevant welfare proxies include public-school outcomes (e.g., inspection outcomes). 
+(Atkinson and Stiglitz, 1980). Ofsted provides inspection outcomes and related statistics that can be 
+aggregated by provider type or geography.  
+The theory’s key objects (𝜏, 𝑡, 𝑥, 𝑦, and income heterogeneity) can be measured using a combination 
+of ISC census data, DfE school census statistics, and ONS income estimates, with public-sector 
+outcomes proxied using Ofsted inspection outcome data. These sources are appropriate because 
+they align closely with the model’s theoretical objects rather than relying on indirect proxies. While 
+these measures are imperfect proxies for the model’s theoretical objects, they capture the key 
+variation relevant for evaluating the model’s predictions. 
+ 
+3.3 [7.5 marks] 
+ 
+Consider Prediction 1: when the VAT-inclusive price of private schooling rises, private-school 
+attendance falls. 
+Let 𝑟 index local areas (e.g., local authorities) and 𝑡 index years. Define: 
+𝑃𝑟𝑖𝑣𝑎𝑡𝑒𝑆ℎ𝑎𝑟𝑒𝑟𝑡: share of pupils attending independent schools in the area 𝑟, year 𝑡 (constructed 
+from ISC and DfE enrolment counts). (Independent Schools Council, 2025; Department for 
+Education, 2025). 
+𝑃𝑜𝑠𝑡𝑡: indicator equal to 1 after VAT is applied to private-school fees, zero before. 
+𝐸𝑥𝑝𝑜𝑠𝑢𝑟𝑒𝑟: pre-reform exposure to private schooling in the area 𝑟 (e.g., baseline independent-
+school share). 
+𝑋𝑟𝑡: controls (e.g., local income from ONS, demographics).  
+𝛿𝑟: area fixed effects, 𝜆𝑡: year fixed effects. 
+A feasible specification that exploits differential exposure is: 
+𝑃𝑟𝑖𝑣𝑎𝑡𝑒𝑆ℎ𝑎𝑟𝑒𝑟𝑡 = 𝛼 + 𝛽(𝑃𝑜𝑠𝑡𝑡 × 𝐸𝑥𝑝𝑜𝑠𝑢𝑟𝑒𝑟) + 𝛿𝑟 + 𝜆𝑡 + 𝑋𝑟𝑡
+′ 𝛾 + 𝜀𝑟𝑡. 
+This specification closely reflects the model’s comparative statics since variation in 𝜏 It is policy-
+driven rather than chosen by schools or households. (Angrist and Pischke, 2009; Imbens and 
+Wooldridge, 2009). 
+Interpretation of terms 
+𝛿𝑟controls for time-invariant local differences in preferences or schooling culture (capturing 
+persistent differences in 𝑃𝑖-type valuation across areas. 
+𝜆𝑡 controls for national shocks and trends affecting all areas equally (macro conditions, national 
+education reforms). 
+𝑃𝑜𝑠𝑡𝑡 × 𝐸𝑥𝑝𝑜𝑠𝑢𝑟𝑒𝑟 captures that areas with higher baseline private-school reliance face a larger 
+“effective shock” to the local private-school market after VAT. 
+
+ 
+ 
+Coefficient of interest and hypothesis. The coefficient of interest is 𝛽. The theory predicts 𝛽 < 0: 
+VAT increases the effective cost of private schooling and raises the relative attractiveness of public 
+schooling, so high-exposure areas should experience larger declines in private-school share post-
+reform. 
+A key identifying assumption is that, absent the VAT reform, high- and low-exposure areas would 
+have followed parallel trends in independent-school share. This can be assessed by plotting/event-
+studying pre-trends and estimating leads/lags of the interaction term. 
+Thus, the hypothesis test is: 
+𝐻0: 𝛽 = 0 vs 𝐻𝐴: 𝛽 < 0. 
+This regression tests whether the VAT reform reduced private-school enrolment more in areas that 
+were more exposed to private schooling before the reform, as predicted by the model’s comparative 
+statics. It mirrors the model’s logic by exploiting exogenous variation in 𝜏 rather than endogenous 
+variation in fees.  
+ 
+3.4 [7.5 marks] 
+ 
+Even with fixed effects, the regression may suffer from endogeneity for several reasons. This reflects 
+the module’s wider point that education outcomes are hard to interpret causally because private-
+school attendance is strongly selected on family characteristics and estimated ‘private school effects’ 
+fall once income and parental education are controlled for. 
+i) Omitted variables correlated with exposure and trends 
+Areas with high baseline private-school shares may also differ in unobserved ways that evolve over 
+time (e.g., local housing market dynamics, changing school quality, peer effects). In the theoretical 
+model, these map into shifts in effective valuations 𝑃𝑖 and in the attractiveness of public schooling, 
+potentially making 𝜀𝑟𝑡 correlated with 𝐸𝑥𝑝𝑜𝑠𝑢𝑟𝑒𝑟 × 𝑃𝑜𝑠𝑡𝑡. 
+ii) Simultaneity in fee-setting and demand. Although the Part 2 model treats 𝑡 as a parameter, 
+private schools may adjust fees in response to demand. High demand (unobserved parental 
+preferences) can raise both fees and enrolment, biasing price-based estimates if one uses 𝑡(1 + 𝜏) 
+directly as a regressor. 
+iii) Policy endogeneity and concurrent reforms 
+The timing of VAT could coincide with other national policy changes affecting schooling choices 
+(public school funding reforms, bursary policies). If these reforms are correlated with 𝑃𝑜𝑠𝑡𝑡, the 
+estimated effect may conflate VAT with other changes. 
+ 
+Solutions and feasibility 
+Difference-in-differences with robustness checks 
+The exposure based DiD framework above is a practical way to mitigate simultaneity in fees because 
+it relies on a policy discontinuity and pre-determined exposure rather than endogenous 
+
+ 
+ 
+contemporaneous fees. To support credibility, one would evaluate parallel pre-trends in private-
+school shares between high- and low-exposure areas. 
+Instrumental variables (IV) for price-based regressions 
+If the empirical approach uses the VAT-inclusive fee 𝑡(1 + 𝜏) directly, variation in 𝜏 induced by policy 
+can serve as an instrument for the VAT-inclusive price component (conceptually consistent with the 
+model where 𝜏 is policy-driven. The practicality depends on having sufficient variation and a strong 
+first stage. 
+Augmenting controls and using outcomes data  
+Incorporating time-varying controls (income, demographics) and proxies for public-school quality 
+(class size indicators, inspection outcomes) can reduce omitted variable bias.  
+The main threats are omitted variables, fee endogeneity, and contemporaneous reforms. A policy-
+based DiD strategy with exposure, supported by pre-trend checks and rich controls, is the most 
+implementable approach in practice, with IV as a complementary strategy for price-based 
+specifications. (Angrist and Pischke, 2009). These concerns highlight why policy-driven variation, 
+rather than cross-sectional price difference, is the most credible way to assess the models’ 
+predictions. This reflects a broader theme discussed in the lectures, namely that policy evaluation 
+must distinguish price effects from selection effects driven by underlying social and income 
+heterogeneity.  
+ 
+Part 4 [15 marks] 
+ 
+The theoretical model developed in Part 2 provides a useful framework for evaluating several of the 
+arguments raised in the two YouTube videos discussing the introduction of VAT on private school 
+fees. In particular, the model clarifies the economic mechanisms linking higher private schooling 
+costs, public school funding, and school choice behaviour. 
+In the course framing, the arguments in the videos can be organised around an equity–efficiency 
+trade-off: who bears the burden of the tax and who benefits from the implied change in public 
+funding, versus whether the policy creates distortions through switching and pressure on capacity. 
+A central claim made in the videos is that applying VAT to private school fees will increase the 
+financial burden on families using private education and may push some pupils into the state sector. 
+This mechanism is directly captured in the model through the VAT-inclusive price. 𝑡(1 + 𝜏), which 
+lowers the utility of private schooling as the VAT rate increases. The model predicts that middle-
+income families are most likely to switch from private to public schooling, since they are closest to 
+indifference between the two sectors. This aligns closely with concerns in the videos about families 
+“at the margin” being disproportionately affected. The empirical strategy outlined in Part 3 allows 
+this prediction to be assessed by examining whether private-school enrolment falls more sharply in 
+areas with greater exposure to private education following the VAT reform. THIS shows a contrast 
+between theoretical mechanisms and real-world complexity reflects the course’s broader emphasis, 
+which is a good example of the course’s broader emphasis on linking a positive mechanism (how 
+incentives change) to an empirical strategy (what we would observe in data), before moving to 
+normative claims about whether the policy is ‘good’. 
+
+ 
+ 
+The videos also argue that VAT revenue could improve state school funding but may be insufficient 
+to offset the pressure created by increased demand. This trade-off is reflected in the public-school 
+payoff term. 𝑆/𝑥 + 5𝜏𝑡𝑦/𝑥, which shows that funding gains from VAT are shared among public-
+school pupils and therefore depend on enrolment. However, the model abstracts from short-run 
+capacity constraints, teacher shortages, and adjustment costs, all of which are emphasised in the 
+videos but not explicitly modelled. (Sibieta, 2025). This matters because, as discussed in the 
+education lecture, state-school running costs are funded from general taxation (government 
+budget), so the policy effectively shifts part of education financing from general revenues towards a 
+tax concentrated on private-school users. This mirrors broader debates on state capacity, where the 
+effectiveness of the redistributive policy depends not only on revenue raised but also on institutional 
+ability to absorb increased demands.  
+Several arguments raised in the videos, therefore, fall outside the scope of the current framework. 
+These include transitional disruption effects, heterogeneity in public-school quality, and broader 
+social considerations such as peer effects. (Hoxby, 2000). To analyse these issues, the model could 
+be extended by allowing public-school quality to depend non-linearly on enrolment, or by 
+introducing capacity constraints in the public sector. Another extension would be to introduce 
+dynamic adjustment costs, distinguishing short-run disruptions from long-run equilibria. (Hoxby, 
+2000). 
+What I find most persuasive in the videos is the focus on the ‘squeezed middle’ response: the model 
+makes it clear that the largest behavioural movement should come from families close to 
+indifference, not from the very highest-income households. Overall, the model provides a disciplined 
+way to interpret the main economic arguments raised in the videos, while also highlighting which 
+elasticity of concerns require additional modelling beyond the current framework.  
+ 
+References 
+Atkinson, A.B. and Stiglitz, J.E. (1980) Lectures on Public Economics. London: McGraw-Hill. 
+ 
+Angrist, J.D. and Pischke, J.-S. (2009) Mostly Harmless Econometrics: An Empiricist’s Companion. 
+Princeton: Princeton University Press. 
+ 
+Department for Education (2025) Schools, pupils and their characteristics, January 2025. London: 
+Department for Education. 
+ 
+Epple, D. and Romano, R. (1998) ‘Competition between private and public schools, vouchers, and 
+peer-group effects’, American Economic Review, 88(1), pp. 33–62. (“School Choice and Competition 
+| SpringerLink”) 
+ 
+Glennerster, H. (2003). Understanding the Finance of Welfare: What Welfare Costs and How to Pay 
+for It. Bristol: Policy Press. 
+ 
+
+ 
+ 
+Hoxby, C.M. (two thousand) ‘Peer effects in the classroom: Learning from gender and race variation,’ 
+NBER Working Paper No. 7867. 
+ 
+Imbens, G.W. and Wooldridge, J.M. (2009) ‘Recent developments in the econometrics of program 
+evaluation’, Journal of Economic Literature, 47(1), pp. 5–86. 
+ 
+Independent Schools Council (2025). ISC Annual Census 2025. London: Independent Schools Council. 
+ 
+Institute for Fiscal Studies (IFS) (2024). Tax, private school fees, and state school spending. (“Tax, 
+private school fees and state school spending”) London: IFS. 
+ 
+Mirrlees, J.A. et al. (2011) Tax by Design: The Mirrlees Review. Oxford: Oxford University Press. 
+ 
+Nechyba, T.J. (two thousand) ‘Mobility, targeting, and private-school vouchers,’ American Economic 
+Review, 90(1), pp. 130–146. 
+ 
+OECD (2019) Education Briefly. Paris: OECD Publishing. 
+ 
+Sibieta, L. (2025). Demographic change and schools across the UK: lessons from history. London: 
+Institute for Fiscal Studies.
