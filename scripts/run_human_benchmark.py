@@ -59,7 +59,7 @@ DEFAULT_SAMPLE_PATHS = [
     ),
 ]
 DEFAULT_OUTPUT_DIR = ROOT_DIR / "output" / "human_benchmark_ec3040"
-MODEL_NAME = "qwen2:7b"
+DEFAULT_MODEL_NAME = "qwen2:7b"
 
 
 @dataclass
@@ -140,6 +140,8 @@ def parse_args() -> argparse.Namespace:
         help="Optional model name used to verify section payload and cap generous scores, for example qwen2:7b.",
     )
     parser.add_argument("--debug-script", action="store_true", help="Run one script with detailed stage timing logs.")
+    parser.add_argument("--model", default=DEFAULT_MODEL_NAME, help="Model name for main scoring analysis, e.g. qwen2:7b or llama3.1:8b")
+    parser.add_argument("--compare-models", action="store_true", help="Run both qwen2:7b and llama3.1:8b on all samples in single pass for comparison")
     return parser.parse_args()
 
 
@@ -243,6 +245,7 @@ def run_single_submission(
     human_record: HumanRecord,
     variant: str,
     run_index: int,
+    model_name: str = DEFAULT_MODEL_NAME,
     task_type_model: str | None = None,
     part_verifier_model: str | None = None,
 ) -> BenchmarkResult:
@@ -256,7 +259,7 @@ def run_single_submission(
     detected_parts = detect_submission_parts(
         structure_input_text,
         path.name,
-        MODEL_NAME,
+        model_name,
         context=context,
         ollama_url=DEFAULT_OLLAMA_URL,
     )
@@ -264,7 +267,7 @@ def run_single_submission(
 
     stage_started = time.perf_counter()
     parts = segment_submission_parts(script_text, detected_parts)
-    parts = refine_submission_granularity(parts, context, path.name, MODEL_NAME, DEFAULT_OLLAMA_URL)
+    parts = refine_submission_granularity(parts, context, path.name, model_name, DEFAULT_OLLAMA_URL)
     if task_type_model:
         parts = refine_part_task_types_with_model(parts, task_type_model, ollama_url=DEFAULT_OLLAMA_URL)
     parts = apply_variant_to_parts(parts, prepared_assessment_map, variant)
@@ -282,7 +285,7 @@ def run_single_submission(
             part=part,
             context=context,
             filename=path.name,
-            model_name=MODEL_NAME,
+            model_name=model_name,
             ollama_url=DEFAULT_OLLAMA_URL,
         )
         if part_verifier_model:
@@ -307,7 +310,7 @@ def run_single_submission(
             parts=parts,
             part_analyses=part_analyses,
             assessment_map=prepared_assessment_map.prepared_map,
-            model_name=MODEL_NAME,
+            model_name=model_name,
             ollama_url=DEFAULT_OLLAMA_URL,
         )
     latency_moderation = round(time.perf_counter() - stage_started, 2)
@@ -376,6 +379,7 @@ def run_single_submission_debug(
     preparation_seconds: float,
     human_record: HumanRecord,
     variant: str,
+    model_name: str = DEFAULT_MODEL_NAME,
     task_type_model: str | None = None,
     part_verifier_model: str | None = None,
 ) -> dict[str, Any]:
@@ -398,7 +402,7 @@ def run_single_submission_debug(
     detected_parts = detect_submission_parts(
         structure_input_text,
         path.name,
-        MODEL_NAME,
+        model_name,
         context=context,
         ollama_url=DEFAULT_OLLAMA_URL,
     )
@@ -419,7 +423,7 @@ def run_single_submission_debug(
     )
 
     started = time.perf_counter()
-    parts = refine_submission_granularity(parts, context, path.name, MODEL_NAME, DEFAULT_OLLAMA_URL)
+    parts = refine_submission_granularity(parts, context, path.name, model_name, DEFAULT_OLLAMA_URL)
     if task_type_model:
         parts = refine_part_task_types_with_model(parts, task_type_model, ollama_url=DEFAULT_OLLAMA_URL)
     refine_seconds = log_debug_stage(
@@ -464,7 +468,7 @@ def run_single_submission_debug(
                 part=part,
                 context=context,
                 filename=path.name,
-                model_name=MODEL_NAME,
+                model_name=model_name,
                 ollama_url=DEFAULT_OLLAMA_URL,
             )
             if part_verifier_model:
@@ -507,7 +511,7 @@ def run_single_submission_debug(
             parts=parts,
             part_analyses=part_analyses,
             assessment_map=prepared_assessment_map.prepared_map,
-            model_name=MODEL_NAME,
+            model_name=model_name,
             ollama_url=DEFAULT_OLLAMA_URL,
         )
         moderation_seconds = log_debug_stage(
@@ -698,6 +702,7 @@ def main() -> None:
             preparation_seconds=preparation_seconds,
             human_record=human_record,
             variant=debug_variant,
+            model_name=args.model,
             task_type_model=args.task_type_model,
             part_verifier_model=args.part_verifier_model,
         )
@@ -709,42 +714,54 @@ def main() -> None:
 
     results: list[BenchmarkResult] = []
     preparation_by_variant: dict[str, float] = {}
-    for variant in variants:
-        clear_prepared_assessment_map_cache()
-        prep_started = time.perf_counter()
-        prepared_assessment_map = prepare_assessment_map(
-            context=context,
-            verifier_model_name=args.verifier_model,
-        )
-        preparation_seconds = round(time.perf_counter() - prep_started, 2)
-        preparation_by_variant[variant] = preparation_seconds
-        for run_index in range(1, args.repeats + 1):
-            for index, path in enumerate(sample_paths, start=1):
-                participant_id = participant_id_from_path(path)
-                human_record = human_records[participant_id]
-                print(f"[{variant} run {run_index} {index}/{len(sample_paths)}] {path.name} :: {human_record.full_name}")
-                row = run_single_submission(
-                    path=path,
-                    context=context,
-                    prepared_assessment_map=prepared_assessment_map,
-                    preparation_seconds=preparation_seconds,
-                    human_record=human_record,
-                    variant=variant,
-                    run_index=run_index,
-                    task_type_model=args.task_type_model,
-                    part_verifier_model=args.part_verifier_model,
-                )
-                results.append(row)
-                print(json.dumps(asdict(row), ensure_ascii=True))
+
+    # Determine which models to run
+    models_to_run = ["qwen2:7b", "llama3.1:8b"] if args.compare_models else [args.model]
+
+    for model_name in models_to_run:
+        for variant in variants:
+            clear_prepared_assessment_map_cache()
+            prep_started = time.perf_counter()
+            prepared_assessment_map = prepare_assessment_map(
+                context=context,
+                verifier_model_name=args.verifier_model,
+            )
+            preparation_seconds = round(time.perf_counter() - prep_started, 2)
+            # Track preparation by variant only (same for all models)
+            if variant not in preparation_by_variant:
+                preparation_by_variant[variant] = preparation_seconds
+            for run_index in range(1, args.repeats + 1):
+                for index, path in enumerate(sample_paths, start=1):
+                    participant_id = participant_id_from_path(path)
+                    human_record = human_records[participant_id]
+                    model_label = model_name.replace(":", "_").replace(".", "_")
+                    variant_label = f"{variant}_{model_label}" if args.compare_models else variant
+                    print(f"[{variant_label} run {run_index} {index}/{len(sample_paths)}] {path.name} :: {human_record.full_name}")
+                    row = run_single_submission(
+                        path=path,
+                        context=context,
+                        prepared_assessment_map=prepared_assessment_map,
+                        preparation_seconds=preparation_seconds,
+                        human_record=human_record,
+                        variant=variant_label,
+                        run_index=run_index,
+                        model_name=model_name,
+                        task_type_model=args.task_type_model,
+                        part_verifier_model=args.part_verifier_model,
+                    )
+                    results.append(row)
+                    print(json.dumps(asdict(row), ensure_ascii=True))
 
     results_df = pd.DataFrame(asdict(item) for item in results)
     summary_rows = build_summary_rows(results)
     comparison_rows = build_variant_comparison_rows(results)
     assessment_context_ref = str(LAST_INGEST_MANIFEST) if LAST_INGEST_MANIFEST.exists() else ""
+    models_list = ["qwen2:7b", "llama3.1:8b"] if args.compare_models else [args.model]
     payload = {
         "assessment_context": assessment_context_ref,
         "workbook": str(workbook_path),
-        "model_name": MODEL_NAME,
+        "model_name": models_list[0] if len(models_list) == 1 else None,
+        "models": models_list if args.compare_models else [],
         "verifier_model_name": args.verifier_model,
         "task_type_model_name": args.task_type_model,
         "part_verifier_model_name": args.part_verifier_model,
