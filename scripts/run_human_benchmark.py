@@ -455,6 +455,7 @@ def run_single_submission_debug(
     part_debug_rows: list[dict[str, Any]] = []
     for index, part in enumerate(parts, start=1):
         started = time.perf_counter()
+        analysis_error = ""
         if not part.section_text.strip():
             analysis = build_missing_part_analysis(part)
             seconds = log_debug_stage(
@@ -464,29 +465,43 @@ def run_single_submission_debug(
                 f"{index}/{len(parts)} {part.label}",
             )
         else:
-            analysis = _run_part_analysis_with_retry(
-                part=part,
-                context=context,
-                filename=path.name,
-                model_name=model_name,
-                ollama_url=DEFAULT_OLLAMA_URL,
-            )
-            if part_verifier_model:
-                verifier_result = verify_part_analysis(
+            try:
+                analysis = _run_part_analysis_with_retry(
                     part=part,
                     context=context,
                     filename=path.name,
-                    part_analysis=analysis,
-                    model_name=part_verifier_model,
+                    model_name=model_name,
                     ollama_url=DEFAULT_OLLAMA_URL,
                 )
-                analysis = apply_part_verifier_result(analysis, verifier_result)
-            seconds = log_debug_stage(
-                debug_records,
-                "part_analysis_model",
-                started,
-                f"{index}/{len(parts)} {part.label}",
-            )
+                if part_verifier_model:
+                    verifier_result = verify_part_analysis(
+                        part=part,
+                        context=context,
+                        filename=path.name,
+                        part_analysis=analysis,
+                        model_name=part_verifier_model,
+                        ollama_url=DEFAULT_OLLAMA_URL,
+                    )
+                    analysis = apply_part_verifier_result(analysis, verifier_result)
+                seconds = log_debug_stage(
+                    debug_records,
+                    "part_analysis_model",
+                    started,
+                    f"{index}/{len(parts)} {part.label}",
+                )
+            except Exception as exc:
+                analysis_error = str(exc)
+                analysis = build_missing_part_analysis(part)
+                analysis["coverage_comment"] = (
+                    f"Model analysis failed in debug run ({type(exc).__name__}); "
+                    "recorded as missing for fail-fast artifact continuity."
+                )
+                seconds = log_debug_stage(
+                    debug_records,
+                    "part_analysis_error",
+                    started,
+                    f"{index}/{len(parts)} {part.label}: {type(exc).__name__}",
+                )
         part_analyses.append(analysis)
         part_debug_rows.append(
             {
@@ -496,6 +511,7 @@ def run_single_submission_debug(
                 "word_count": len(part.section_text.split()),
                 "score": analysis.get("provisional_score"),
                 "score_pct": analysis.get("provisional_score_0_to_100"),
+                "error": analysis_error,
             }
         )
 

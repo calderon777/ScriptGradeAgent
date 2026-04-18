@@ -827,6 +827,46 @@ class NormalizationTests(unittest.TestCase):
 
         self.assertEqual([part.label for part in parts], ["Part 1", "Part 2"])
         mock_call.assert_called_once()
+        self.assertEqual(mock_call.call_args.kwargs["model_name"], "mistral:7b")
+        self.assertEqual(mock_call.call_args.kwargs["profile"], "detector_small")
+
+    @patch("marking_pipeline.core._call_ollama_json")
+    def test_detect_submission_parts_falls_back_to_primary_model_when_preferred_detector_fails(self, mock_call: Mock) -> None:
+        context = prepare_marking_context(
+            rubric_text=(
+                "Part 1 (15 marks)\nDiscuss the first issue.\n"
+                "Part 2 (10 marks)\nDiscuss the second issue.\nout of 25"
+            ),
+            brief_text="",
+            marking_scheme_text="",
+            graded_sample_text="",
+            other_context_text="",
+        )
+        mock_call.side_effect = [
+            RuntimeError("mistral unavailable"),
+            {
+                "sections": [
+                    {"label": "Part 1", "focus_hint": "First issue", "anchor_text": "Part 1"},
+                    {"label": "Part 2", "focus_hint": "Second issue", "anchor_text": "Part 2"},
+                ]
+            },
+        ]
+
+        parts = detect_submission_parts(
+            "Student answer with no visible section headings.",
+            "student.txt",
+            "qwen2:7b",
+            context=context,
+        )
+
+        self.assertEqual([part.label for part in parts], ["Part 1", "Part 2"])
+        self.assertEqual(mock_call.call_count, 2)
+        first = mock_call.call_args_list[0].kwargs
+        second = mock_call.call_args_list[1].kwargs
+        self.assertEqual(first["model_name"], "mistral:7b")
+        self.assertEqual(second["model_name"], "qwen2:7b")
+        self.assertEqual(first["profile"], "detector_small")
+        self.assertEqual(second["profile"], "detector_small")
 
     def test_describe_structure_detection_mode_reports_fast_path(self) -> None:
         context = prepare_marking_context(
@@ -989,6 +1029,108 @@ class SubmissionStructureTests(unittest.TestCase):
         segmented = segment_submission_parts(script, parts)
         self.assertIn("Answer one.", segmented[0].section_text)
         self.assertIn("Answer two.", segmented[1].section_text)
+
+    def test_segments_top_level_parts_from_headers_before_inline_cross_references(self) -> None:
+        repeated_part_2 = " ".join(["alpha"] * 40)
+        repeated_part_3 = " ".join(["beta"] * 40)
+        repeated_part_4 = " ".join(["gamma"] * 40)
+        script = (
+            "PART 2\n"
+            "Question 1\n"
+            f"Part 2 answer text {repeated_part_2}.\n"
+            "PART 3:\n"
+            "Question 1\n"
+            f"Part 3 answer text {repeated_part_3}.\n"
+            "PART 4\n"
+            f"This synthesis references Part 2 and Part 3 later in the prose {repeated_part_4}.\n"
+        )
+        parts = [
+            SubmissionPart(label="Part 2", focus_hint="Second part", anchor_text="Part 2"),
+            SubmissionPart(label="Part 3", focus_hint="Third part", anchor_text="Part 3"),
+            SubmissionPart(label="Part 4", focus_hint="Fourth part", anchor_text="Part 4"),
+        ]
+
+        segmented = segment_submission_parts(script, parts)
+
+        self.assertEqual([part.label for part in segmented], ["Part 2", "Part 3", "Part 4"])
+        self.assertIn("Part 2 answer text", segmented[0].section_text)
+        self.assertNotIn("PART 4", segmented[0].section_text)
+        self.assertIn("Part 3 answer text", segmented[1].section_text)
+        self.assertIn("This synthesis references Part 2 and Part 3", segmented[2].section_text)
+
+    def test_segments_prefers_body_header_over_toc_entry(self) -> None:
+        # A TOC-like block near the top lists all parts; the real headers appear
+        # further into the document.  The segmenter must skip the TOC entries.
+        body = " ".join(["word"] * 60)
+        script = (
+            "Contents\n"
+            "Part 1 ......... 1\n"
+            "Part 2 ......... 3\n"
+            "Part 3 ......... 6\n"
+            "\n"
+            f"PART 1\n{body}\n"
+            f"PART 2\n{body}\n"
+            f"PART 3\n{body}\n"
+        )
+        parts = [
+            SubmissionPart(label="Part 1", focus_hint="First", anchor_text="Part 1"),
+            SubmissionPart(label="Part 2", focus_hint="Second", anchor_text="Part 2"),
+            SubmissionPart(label="Part 3", focus_hint="Third", anchor_text="Part 3"),
+        ]
+
+        segmented = segment_submission_parts(script, parts)
+
+        self.assertEqual([p.label for p in segmented], ["Part 1", "Part 2", "Part 3"])
+        # Each body slice must start with its real PART N header, not the TOC line.
+        self.assertTrue(
+            segmented[0].section_text.lstrip().startswith("PART 1"),
+            f"Part 1 should start at body header, got: {segmented[0].section_text[:80]!r}",
+        )
+        self.assertTrue(
+            segmented[1].section_text.lstrip().startswith("PART 2"),
+            f"Part 2 should start at body header, got: {segmented[1].section_text[:80]!r}",
+        )
+
+    def test_segment_subparts_keeps_empty_slice_for_unanswered_question(self) -> None:
+        # Q2 and Q3 are bare header lines with no answer text — the student left
+        # them blank.  Correct behaviour: the slice for Q2/Q3 should contain only
+        # the header (not borrowed content from Q4).  The scoring loop will then
+        # call build_missing_part_analysis (no AI call) and award 0 marks.
+        body = " ".join(["answer"] * 40)
+        section_text = (
+            f"Question 1\n{body}\n"
+            "Question 2\n"
+            "Question 3\n"
+            f"Question 4\n{body}\n"
+        )
+        parent = SubmissionPart(
+            label="Part 2",
+            anchor_text="Part 2",
+            section_text=section_text,
+            max_mark=40.0,
+        )
+        child_specs = [
+            SubmissionPart(label="Part 2 Q1", anchor_text="Q1", focus_hint="Q1"),
+            SubmissionPart(label="Part 2 Q2", anchor_text="Q2", focus_hint="Q2"),
+            SubmissionPart(label="Part 2 Q3", anchor_text="Q3", focus_hint="Q3"),
+            SubmissionPart(label="Part 2 Q4", anchor_text="Q4", focus_hint="Q4"),
+        ]
+        from marking_pipeline.core import _segment_subparts_within_section
+
+        result = _segment_subparts_within_section(parent, child_specs)
+
+        self.assertIsNotNone(result)
+        assert result is not None
+        self.assertEqual([p.label for p in result], ["Part 2 Q1", "Part 2 Q2", "Part 2 Q3", "Part 2 Q4"])
+        # Q1 and Q4 must contain their body text.
+        self.assertGreater(len(result[0].section_text.split()), 10, "Q1 should have body content")
+        self.assertGreater(len(result[3].section_text.split()), 10, "Q4 should have body content")
+        # Q2 and Q3 must NOT contain Q4's answer content — they were blank.
+        q4_body_word = "answer"
+        self.assertNotIn(q4_body_word, result[1].section_text,
+                 f"Q2 should not contain Q4 content; got: {result[1].section_text!r}")
+        self.assertNotIn(q4_body_word, result[2].section_text,
+                 f"Q3 should not contain Q4 content; got: {result[2].section_text!r}")
 
     def test_extracts_only_useful_structure_guidance(self) -> None:
         context = prepare_marking_context(
@@ -1752,7 +1894,7 @@ class SubmissionStructureTests(unittest.TestCase):
                 "strengths": ["one"],
                 "weaknesses": ["weak one", "weak two"],
                 "evidence": ["line 1"],
-                "coverage_comment": "Covers the section.",
+                "coverage_comment": "",
             },
             {
                 "section_label": "Question 1",
@@ -1806,6 +1948,30 @@ class SubmissionStructureTests(unittest.TestCase):
         self.assertEqual(result["criterion_notes"][2]["status"], "missing_or_wrong")
         self.assertEqual(result["criterion_notes"][2]["normalized_status"], "missed")
         self.assertLessEqual(len(result["criterion_notes"][1]["note"].split()), 5)
+
+    def test_normalize_part_analysis_pads_single_item_weaknesses(self) -> None:
+        part = SubmissionPart(label="Question 1", section_text="Student answer text", max_mark=20.0)
+        result = normalize_part_analysis(
+            {
+                "section_label": "Question 1",
+                "provisional_score": 10,
+                "criterion_notes": [
+                    {"criterion_name": "criterion_1", "status": "met", "note": "direct answer"},
+                    {"criterion_name": "criterion_2", "status": "partial", "note": "accuracy uneven"},
+                    {"criterion_name": "criterion_3", "status": "partial", "note": "support limited"},
+                    {"criterion_name": "criterion_4", "status": "partial", "note": "judgement basic"},
+                    {"criterion_name": "criterion_5", "status": "met", "note": "coverage mostly complete"},
+                ],
+                "strengths": ["Strong framing and structure.", "Uses relevant concepts."],
+                "weaknesses": ["Needs deeper supporting detail."],
+                "evidence": ["References the model setup accurately."],
+                "coverage_comment": "Covers the section with room for deeper development.",
+            },
+            part=part,
+        )
+        self.assertEqual(len(result["weaknesses"]), 2)
+        self.assertEqual(result["weaknesses"][0], "Needs deeper supporting detail.")
+        self.assertIn("Additional concrete weakness", result["weaknesses"][1])
 
     @patch("marking_pipeline.core._call_ollama_json")
     def test_rubric_verifier_fails_soft_and_keeps_original_rubric(self, mock_call: Mock) -> None:

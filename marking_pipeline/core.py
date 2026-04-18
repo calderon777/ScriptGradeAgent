@@ -1,6 +1,7 @@
 import io
 import hashlib
 import json
+import os
 import re
 import time
 import zipfile
@@ -18,15 +19,22 @@ try:
     from docx2python import docx2python
 except ImportError:  # pragma: no cover - optional dependency
     docx2python = None
-try:
-    import pymupdf4llm
-except ImportError:  # pragma: no cover - optional dependency
-    pymupdf4llm = None
+
+# `pymupdf4llm` is optional, but importing it eagerly has proven unstable in this
+# environment. Keep PDF structure extraction on the safer fallback path unless a
+# future change reintroduces a guarded lazy import.
+pymupdf4llm = None
 
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 DEFAULT_OLLAMA_URL = "http://localhost:11434/api/chat"
 SUPPORTED_TEXT_SUFFIXES = {".pdf", ".docx", ".txt"}
+DEFAULT_DETECTOR_MODEL_NAME = "mistral:7b"
+DEFAULT_OLLAMA_TIMEOUT_SECONDS = 300
+
+_STRUCTURE_CUE_PATTERN = re.compile(
+    r"(?im)^\s*(?:part|question|section|task|item)\s+[a-z0-9ivx]+(?:\s*q\d+)?(?:\b|\s*[:.)\]-])"
+)
 
 DEFAULT_CONTEXT_PATTERNS = {
     "rubric": ("rubric",),
@@ -310,10 +318,13 @@ def build_submission_texts_from_path(path: Path) -> tuple[str, str | None]:
         structure_text = extract_docx_structure_text(raw) or None
         return script_text, structure_text
 
-    script_text = read_path_text(path)
     structure_text: str | None = None
     if path.suffix.lower() == ".pdf":
-        structure_text = extract_pdf_structure_text(path.read_bytes()) or None
+        raw = path.read_bytes()
+        pdf_text = extract_pdf_structure_text(raw)
+        script_text = pdf_text if pdf_text else read_path_text(path)
+    else:
+        script_text = read_path_text(path)
     return script_text, structure_text
 
 
@@ -325,10 +336,12 @@ def build_submission_texts_from_upload(uploaded_file: Any) -> tuple[str, str | N
         structure_text = extract_docx_structure_text(raw) or None
         return script_text, structure_text
 
-    script_text = read_file_bytes(uploaded_file.name, raw)
     structure_text: str | None = None
     if lowered.endswith(".pdf"):
-        structure_text = extract_pdf_structure_text(raw) or None
+        pdf_text = extract_pdf_structure_text(raw)
+        script_text = pdf_text if pdf_text else read_file_bytes(uploaded_file.name, raw)
+    else:
+        script_text = read_file_bytes(uploaded_file.name, raw)
     return script_text, structure_text
 
 
@@ -1284,11 +1297,111 @@ def build_structure_messages(script_text: str, filename: str) -> list[dict[str, 
     return build_structure_messages_with_guidance(script_text, filename, "")
 
 
+def _build_structure_detection_chunks(script_text: str, max_chunks: int = 8) -> str:
+    text = script_text.replace("\r\n", "\n")
+    if not text.strip():
+        return ""
+
+    spans: list[tuple[int, int]] = []
+    spans.append((0, min(len(text), 700)))
+    for match in _STRUCTURE_CUE_PATTERN.finditer(text):
+        start = max(0, match.start() - 100)
+        end = min(len(text), match.start() + 420)
+        spans.append((start, end))
+        if len(spans) >= max_chunks:
+            break
+
+    merged: list[tuple[int, int]] = []
+    for start, end in sorted(spans):
+        if not merged or start > merged[-1][1]:
+            merged.append((start, end))
+        else:
+            merged[-1] = (merged[-1][0], max(merged[-1][1], end))
+
+    chunks = []
+    for index, (start, end) in enumerate(merged[:max_chunks], start=1):
+        snippet = text[start:end].strip()
+        if not snippet:
+            continue
+        chunks.append(f"[Chunk {index} @ {start}:{end}]\\n{snippet}")
+    return "\n\n---\n\n".join(chunks)
+
+
+def _build_subpart_detection_chunks(section_text: str, child_specs: list[SubmissionPart], max_chunks: int = 8) -> str:
+    text = section_text.replace("\r\n", "\n")
+    if not text.strip():
+        return ""
+
+    spans: list[tuple[int, int]] = [(0, min(len(text), 650))]
+    for child in child_specs:
+        candidate = (child.anchor_text or child.label).strip()
+        if not candidate:
+            continue
+        pattern = re.compile(rf"(?im)^\\s*{re.escape(candidate)}(?:\\b|\\s*[:.)\\]-])")
+        for match in pattern.finditer(text):
+            start = max(0, match.start() - 90)
+            end = min(len(text), match.start() + 360)
+            spans.append((start, end))
+            if len(spans) >= max_chunks:
+                break
+        if len(spans) >= max_chunks:
+            break
+
+    merged: list[tuple[int, int]] = []
+    for start, end in sorted(spans):
+        if not merged or start > merged[-1][1]:
+            merged.append((start, end))
+        else:
+            merged[-1] = (merged[-1][0], max(merged[-1][1], end))
+
+    chunks = []
+    for index, (start, end) in enumerate(merged[:max_chunks], start=1):
+        snippet = text[start:end].strip()
+        if not snippet:
+            continue
+        chunks.append(f"[Chunk {index} @ {start}:{end}]\\n{snippet}")
+    return "\n\n---\n\n".join(chunks)
+
+
+def _preferred_detector_model(primary_model_name: str) -> str:
+    preferred = DEFAULT_DETECTOR_MODEL_NAME.strip()
+    if preferred:
+        return preferred
+    return primary_model_name
+
+
+def _call_structure_detector_with_fallback(
+    primary_model_name: str,
+    messages: list[dict[str, str]],
+    ollama_url: str,
+) -> dict[str, Any]:
+    detector_model = _preferred_detector_model(primary_model_name)
+    attempted: list[str] = []
+    last_error: Exception | None = None
+    for candidate in (detector_model, primary_model_name):
+        candidate = candidate.strip()
+        if not candidate or candidate in attempted:
+            continue
+        attempted.append(candidate)
+        try:
+            return _call_ollama_json(
+                model_name=candidate,
+                messages=messages,
+                ollama_url=ollama_url,
+                profile="detector_small",
+            )
+        except Exception as exc:
+            last_error = exc
+    if last_error is not None:
+        raise last_error
+    raise ValueError("No detection model available for structure extraction call.")
+
+
 def build_structure_messages_with_guidance(script_text: str, filename: str, structure_guidance: str) -> list[dict[str, str]]:
+    chunked_answer = _build_structure_detection_chunks(script_text)
     system = (
-        "You are detecting the assessment structure of a student's submission. "
-        "Identify the substantive questions, parts, or sections the student is answering. "
-        "Do not grade the work."
+        "You are a fast structure detector for small local models. "
+        "Use only the supplied chunks, keep reasoning local, and do not grade."
     )
     guidance_block = ""
     if structure_guidance.strip():
@@ -1299,49 +1412,49 @@ def build_structure_messages_with_guidance(script_text: str, filename: str, stru
     user = (
         f"STUDENT FILE NAME: {filename}\n\n"
         f"{guidance_block}"
-        "FULL STUDENT ANSWER:\n"
-        f"\"\"\"{script_text}\"\"\"\n\n"
+        "TARGETED SUBMISSION CHUNKS (not full script):\n"
+        f"\"\"\"{chunked_answer}\"\"\"\n\n"
         "Return only one JSON object with exactly this structure:\n"
         '{ "sections": [ { "label": string, "focus_hint": string, "anchor_text": string } ] }\n\n'
         "Rules:\n"
-        "1. Use the structure hints from marking documents only when they contain useful section labels, marks, or weights.\n"
-        "2. If the structure hints are vague or irrelevant, rely on the student's submission instead.\n"
-        "3. Choose the finest grading granularity that is clearly supported by both the marking documents and the student's submission.\n"
-        "4. If subquestions are clearly separated and should be graded separately, return them individually; otherwise keep the coarser part.\n"
-        "5. If you are not confident that a finer split is correct, prefer the coarser structure.\n"
-        "6. label should be short, such as 'Question 1', 'Part 2', or 'Part 2 Q3'.\n"
-        "7. focus_hint should briefly say what content belongs to that section.\n"
-        "8. anchor_text must be a short exact quote copied verbatim from near the start of that section in the student submission.\n"
-        "9. If the script does not clearly separate sections, return one section labelled 'Whole Submission'.\n"
-        "10. Do not include markdown fences or any text outside the JSON object."
+        "1. Use structure hints only when they are specific and relevant; otherwise rely on the chunks.\n"
+        "2. Prefer coarse structure when uncertain; split only when chunk evidence is clear.\n"
+        "3. label should be short, e.g., 'Question 1', 'Part 2', 'Part 2 Q3'.\n"
+        "4. focus_hint must be <= 18 words and action-specific.\n"
+        "5. anchor_text must be a short verbatim quote from a chunk near that section start.\n"
+        "6. Return at most 16 sections.\n"
+        "7. If separation is unclear, return one section labelled 'Whole Submission'.\n"
+        "8. Do not include markdown fences or any text outside JSON."
     )
     return [{"role": "system", "content": system}, {"role": "user", "content": user}]
 
 
 def build_subpart_structure_messages(parent_part: SubmissionPart, filename: str, child_specs: list[SubmissionPart]) -> list[dict[str, str]]:
+    chunked_parent_text = _build_subpart_detection_chunks(parent_part.section_text, child_specs)
     child_labels = ", ".join(
         f"{child.label} ({_format_number(child.max_mark) if child.max_mark is not None else '?'})"
         for child in child_specs
     )
     system = (
-        "You are refining the grading structure inside one section of a student's submission. "
-        "Only split this section into smaller grading units when the split is clearly supported by the section text. "
-        "If you are not confident, keep the original parent section as one unit."
+        "You are a fast subpart detector for small local models. "
+        "Only use the supplied chunks and keep output compact."
     )
     user = (
         f"STUDENT FILE NAME: {filename}\n"
         f"PARENT SECTION: {parent_part.label}\n"
         f"EXPECTED CHILD UNITS FROM MARKING DOCUMENTS: {child_labels}\n\n"
-        "PARENT SECTION TEXT:\n"
-        f"\"\"\"{parent_part.section_text}\"\"\"\n\n"
+        "PARENT SECTION CHUNKS (not full section):\n"
+        f"\"\"\"{chunked_parent_text}\"\"\"\n\n"
         "Return only one JSON object with exactly this structure:\n"
         '{ "sections": [ { "label": string, "focus_hint": string, "anchor_text": string } ] }\n\n'
         "Rules:\n"
         "1. Use child labels only when the student's section text clearly separates them.\n"
         "2. If the split is unclear, return one section with the parent label.\n"
-        "3. anchor_text must be a short exact quote copied verbatim from near the start of that child section.\n"
-        "4. Do not invent labels beyond the parent and expected child units.\n"
-        "5. Do not include markdown fences or any text outside the JSON object."
+        "3. anchor_text must be a short exact quote copied verbatim from a chunk near the start of that child section.\n"
+        "4. focus_hint must be <= 14 words and specific.\n"
+        "5. Do not invent labels beyond the parent and expected child units.\n"
+        "6. Return at most the number of expected child units.\n"
+        "7. Do not include markdown fences or any text outside the JSON object."
     )
     return [{"role": "system", "content": system}, {"role": "user", "content": user}]
 
@@ -1745,11 +1858,10 @@ def detect_submission_parts(
     if context_fast_path is not None:
         return context_fast_path
     structure_guidance = extract_structure_guidance(context) if context is not None else ""
-    data = _call_ollama_json(
-        model_name=model_name,
+    data = _call_structure_detector_with_fallback(
+        primary_model_name=model_name,
         messages=build_structure_messages_with_guidance(script_text, filename, structure_guidance),
         ollama_url=ollama_url,
-        profile="structure_extraction",
     )
     return reconcile_detected_parts(normalize_detected_parts(data), context)
 
@@ -1854,10 +1966,11 @@ def segment_submission_parts(script_text: str, detected_parts: list[SubmissionPa
         return [SubmissionPart(label="Whole Submission", focus_hint=detected_parts[0].focus_hint, anchor_text="", section_text=script_text.strip(), max_mark=detected_parts[0].max_mark, marking_guidance=detected_parts[0].marking_guidance, question_text_exact=detected_parts[0].question_text_exact, task_type=detected_parts[0].task_type)]
 
     normalized_text = script_text.replace("\r\n", "\n")
+    toc_range = _detect_toc_block_range(normalized_text, detected_parts)
     anchors: list[tuple[int, SubmissionPart]] = []
     used_positions: set[int] = set()
     for part in detected_parts:
-        position = _find_part_anchor_position(normalized_text, part)
+        position = _find_part_anchor_position(normalized_text, part, toc_range=toc_range)
         if position == -1 or position in used_positions:
             continue
         used_positions.add(position)
@@ -3737,9 +3850,27 @@ def normalize_part_analysis(data: dict[str, Any], part: SubmissionPart) -> dict[
         expected_criteria=expected_criteria,
         expected_label=expected_label,
     )
-    strengths = _normalize_string_list(data.get("strengths"), "strengths", expected_label, minimum=2)
-    weaknesses = _normalize_string_list(data.get("weaknesses"), "weaknesses", expected_label, minimum=2)
-    evidence = _normalize_string_list(data.get("evidence"), "evidence", expected_label, minimum=1)
+    strengths = _normalize_string_list(
+        data.get("strengths"),
+        "strengths",
+        expected_label,
+        minimum=2,
+        pad_missing=True,
+    )
+    weaknesses = _normalize_string_list(
+        data.get("weaknesses"),
+        "weaknesses",
+        expected_label,
+        minimum=2,
+        pad_missing=True,
+    )
+    evidence = _normalize_string_list(
+        data.get("evidence"),
+        "evidence",
+        expected_label,
+        minimum=1,
+        pad_missing=True,
+    )
     coverage_comment = data.get("coverage_comment")
     if not isinstance(coverage_comment, str) or not coverage_comment.strip():
         raise ValueError(f"Model did not return a coverage_comment for {expected_label}: {data}")
@@ -4921,6 +5052,7 @@ def _call_ollama_json(
     ollama_url: str,
     profile: str = "default",
 ) -> dict[str, Any]:
+    timeout_seconds = _ollama_timeout_seconds()
     payload = {
         "model": model_name,
         "format": "json",
@@ -4928,11 +5060,22 @@ def _call_ollama_json(
         "stream": False,
         "options": _ollama_options_for_profile(profile),
     }
-    response = requests.post(ollama_url, json=payload, timeout=300)
+    response = requests.post(ollama_url, json=payload, timeout=timeout_seconds)
     response.raise_for_status()
     response_json = response.json()
     content = extract_message_content(response_json)
     return parse_json_object(content)
+
+
+def _ollama_timeout_seconds() -> int:
+    raw = os.getenv("OLLAMA_HTTP_TIMEOUT_SECONDS", "").strip()
+    if not raw:
+        return DEFAULT_OLLAMA_TIMEOUT_SECONDS
+    try:
+        parsed = int(raw)
+    except ValueError:
+        return DEFAULT_OLLAMA_TIMEOUT_SECONDS
+    return max(10, min(900, parsed))
 
 
 def _ollama_options_for_profile(profile: str) -> dict[str, Any]:
@@ -4948,6 +5091,13 @@ def _ollama_options_for_profile(profile: str) -> dict[str, Any]:
             **base,
             "top_p": 0.8,
             "num_predict": 700,
+        }
+    if profile == "detector_small":
+        return {
+            **base,
+            "num_ctx": 4096,
+            "top_p": 0.75,
+            "num_predict": 320,
         }
     if profile in {"part_scoring", "moderation", "final_result"}:
         return {
@@ -5199,12 +5349,29 @@ def _normalize_feedback_text(value: Any) -> str:
     return " ".join(lines).strip()
 
 
-def _normalize_string_list(value: Any, field_name: str, label: str, minimum: int) -> list[str]:
+def _normalize_string_list(
+    value: Any,
+    field_name: str,
+    label: str,
+    minimum: int,
+    pad_missing: bool = False,
+) -> list[str]:
     if not isinstance(value, list):
         raise ValueError(f"Model did not return a list for {field_name} in {label}: {value}")
     normalized = [str(item).strip() for item in value if str(item).strip()]
     if len(normalized) < minimum:
-        raise ValueError(f"Model returned too few items for {field_name} in {label}: {value}")
+        if not pad_missing:
+            raise ValueError(f"Model returned too few items for {field_name} in {label}: {value}")
+        # Keep part-level scoring resilient when the model returns undersized bullet lists.
+        while len(normalized) < minimum:
+            if field_name == "strengths":
+                normalized.append("Additional concrete strength was not provided in the model response.")
+            elif field_name == "weaknesses":
+                normalized.append("Additional concrete weakness was not provided in the model response.")
+            elif field_name == "evidence":
+                normalized.append("Concrete supporting evidence was not provided in the model response.")
+            else:
+                normalized.append("Additional required item was not provided in the model response.")
     return normalized
 
 
@@ -5545,11 +5712,18 @@ def _detect_subparts_with_model(
     model_name: str,
     ollama_url: str,
 ) -> list[SubmissionPart] | None:
-    data = _call_ollama_json(
-        model_name=model_name,
+    # Refuse to call the model on very short sections — there is not enough
+    # content to reliably split into subparts, and the call would waste time
+    # or assign wrong text under the wrong label.
+    _MIN_WORDS_PER_CHILD = 10
+    word_count = len(parent_part.section_text.split())
+    if word_count < len(child_specs) * _MIN_WORDS_PER_CHILD:
+        return None
+
+    data = _call_structure_detector_with_fallback(
+        primary_model_name=model_name,
         messages=build_subpart_structure_messages(parent_part, filename, child_specs),
         ollama_url=ollama_url,
-        profile="structure_extraction",
     )
     detected = normalize_detected_parts(data)
     if len(detected) == 1 and _normalize_label_key(detected[0].label) == _normalize_label_key(parent_part.label):
@@ -5604,16 +5778,100 @@ def _normalize_label_key(label: str) -> str:
     return " ".join(label.lower().split())
 
 
-def _find_part_anchor_position(normalized_text: str, part: SubmissionPart) -> int:
+_TOC_MIN_LABELS = 3
+_TOC_MAX_FRACTION = 0.18
+# A TOC entry line ends with 2+ dotted leaders (or dashes/em-dashes) followed by
+# an optional space and a 1-3 digit page number, with no further non-space text.
+_TOC_LINE_RE = re.compile(r"(?m)^\s*\S[^\n]*?[.\u2026\u2014\u2013-]{2,}\s*\d{1,3}\s*$")
+
+
+def _detect_toc_block_range(
+    normalized_text: str,
+    parts: list["SubmissionPart"],
+) -> tuple[int, int] | None:
+    """Return (start, end) character offsets of a probable table-of-contents block.
+
+    Identifies TOC *entry* lines — lines whose content matches a known part label
+    AND that end with dotted leaders + a page number (e.g. "Part 1 ......... 3").
+    If _TOC_MIN_LABELS or more such lines appear in the first _TOC_MAX_FRACTION
+    of the document, returns a tight range spanning just those lines (+ a small
+    buffer), so that real body headers immediately following the TOC are NOT
+    included in the exclusion zone.
+    Returns None if no TOC cluster is found.
+    """
+    if not parts or not normalized_text:
+        return None
+    scan_limit = max(0, int(len(normalized_text) * _TOC_MAX_FRACTION))
+    labels = [p.label.strip() for p in parts if p.label.strip()]
+    if len(labels) < _TOC_MIN_LABELS:
+        return None
+
+    toc_matches = [
+        m
+        for m in _TOC_LINE_RE.finditer(normalized_text[:scan_limit])
+        if any(
+            re.search(rf"\b{re.escape(label)}\b", m.group(0), flags=re.IGNORECASE)
+            for label in labels
+        )
+    ]
+    if len(toc_matches) >= _TOC_MIN_LABELS:
+        toc_start = toc_matches[0].start()
+        toc_end = toc_matches[-1].end()
+        return toc_start, toc_end
+    return None
+
+
+def _find_part_anchor_position(
+    normalized_text: str,
+    part: "SubmissionPart",
+    toc_range: tuple[int, int] | None = None,
+) -> int:
+    """Return the character offset of the best anchor for *part*.
+
+    Priority (descending):
+    1. Line-start / header-style match **outside** the TOC block.
+    2. Word-boundary match outside the TOC.
+    3. Line-start / header-style match inside the TOC (last resort).
+    4. Any word-boundary match inside the TOC.
+    """
+    toc_start, toc_end = toc_range if toc_range else (-1, -1)
+
+    def _in_toc(pos: int) -> bool:
+        return toc_start != -1 and toc_start <= pos < toc_end
+
+    header_outside: int = -1
+    word_outside: int = -1
+    header_inside: int = -1
+    word_inside: int = -1
+
     candidates = [part.anchor_text.strip(), part.label.strip()]
     for candidate in candidates:
         if not candidate:
             continue
-        exact = normalized_text.find(candidate)
-        if exact != -1:
-            return exact
-        pattern = re.compile(re.escape(candidate), flags=re.IGNORECASE)
-        match = pattern.search(normalized_text)
-        if match:
-            return match.start()
+        header_pattern = re.compile(
+            rf"(?im)^\s*{re.escape(candidate)}(?:\b|\s*[:.)\]-])",
+            flags=re.IGNORECASE,
+        )
+        for m in header_pattern.finditer(normalized_text):
+            pos = m.start()
+            if not _in_toc(pos):
+                if header_outside == -1:
+                    header_outside = pos
+            else:
+                if header_inside == -1:
+                    header_inside = pos
+
+        word_pattern = re.compile(rf"\b{re.escape(candidate)}\b", flags=re.IGNORECASE)
+        for m in word_pattern.finditer(normalized_text):
+            pos = m.start()
+            if not _in_toc(pos):
+                if word_outside == -1:
+                    word_outside = pos
+            else:
+                if word_inside == -1:
+                    word_inside = pos
+
+    for pos in (header_outside, word_outside, header_inside, word_inside):
+        if pos != -1:
+            return pos
     return -1
