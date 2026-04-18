@@ -1,0 +1,46 @@
+name: Task
+description: Track a scoped engineering task with closure-ready summary fields.
+title: "[Task] "
+labels:
+  - task
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What needs to change and why?
+      placeholder: Describe the current problem.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: What must be true before this task is done?
+      placeholder: List the completion conditions.
+    validations:
+      required: true
+  - type: textarea
+    id: what_changed
+    attributes:
+      label: What Changed
+      description: Fill this in before closing the issue. The close-note workflow will use it.
+      placeholder: Summarize the implemented changes.
+      value: "Update this section before closing."
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification
+      description: Fill this in before closing the issue. Include tests, benchmarks, or checks.
+      placeholder: Example: `python -m unittest discover -s tests` passed.
+      value: "Update this section before closing."
+    validations:
+      required: true
+  - type: textarea
+    id: remaining_risk
+    attributes:
+      label: Remaining Risk
+      description: Optional residual risk or caveats that should stay visible after closure.
+      placeholder: Note any known gaps or follow-up work.

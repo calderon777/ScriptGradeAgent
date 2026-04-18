@@ -1,0 +1,317 @@
+{
+  "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Fahima Ali_1494054_assignsubmission_file\\Final assessment 2026 Economics and Society.pdf",
+  "participant_id": "1494054",
+  "full_name": "Participant 1494054 (Fahima Ali)",
+  "variant": "cached_map_only",
+  "preparation_seconds": 0.02,
+  "extraction_seconds": 2.67,
+  "structure_detect_seconds": 0.01,
+  "structure_detection_mode": {
+    "mode": "context_fast_path",
+    "expected_part_count": 4,
+    "detected_part_count": 4
+  },
+  "segment_seconds": 0.01,
+  "refine_seconds": 40.44,
+  "apply_artifact_seconds": 0.0,
+  "diagnostics_seconds": 0.0,
+  "moderation_seconds": 0.0,
+  "finalize_seconds": 0.0,
+  "scoring_total_seconds": 654.16,
+  "total_wall_seconds": 656.85,
+  "detected_part_labels": [
+    "Part 1 Q1",
+    "Part 1 Q2",
+    "Part 1 Q3",
+    "Part 2 Q1",
+    "Part 2 Q2",
+    "Part 2 Q3",
+    "Part 2 Q4",
+    "Part 2 Q5",
+    "Part 2 Q6",
+    "Part 3 Q1",
+    "Part 3 Q2",
+    "Part 3 Q3",
+    "Part 3 Q4",
+    "Part 4"
+  ],
+  "human_total": 67.0,
+  "model_total": 72.5,
+  "abs_total_delta": 5.5,
+  "part_abs_delta_sum": 40.5,
+  "part_abs_delta_mean": 2.7,
+  "validation_notes": [
+    "part_score_spread=13.00",
+    "math_total_used"
+  ],
+  "part_debug_rows": [
+    {
+      "index": 1,
+      "label": "Part 1 Q1",
+      "seconds": 37.9,
+      "word_count": 1241,
+      "score": 3.5,
+      "score_pct": null,
+      "error": ""
+    },
+    {
+      "index": 2,
+      "label": "Part 1 Q2",
+      "seconds": 33.88,
+      "word_count": 1241,
+      "score": 4.0,
+      "score_pct": null,
+      "error": ""
+    },
+    {
+      "index": 3,
+      "label": "Part 1 Q3",
+      "seconds": 35.69,
+      "word_count": 1241,
+      "score": 4.0,
+      "score_pct": null,
+      "error": ""
+    },
+    {
+      "index": 4,
+      "label": "Part 2 Q1",
+      "seconds": 36.16,
+      "word_count": 2076,
+      "score": 4.0,
+      "score_pct": null,
+      "error": ""
+    },
+    {
+      "index": 5,
+      "label": "Part 2 Q2",
+      "seconds": 73.46,
+      "word_count": 2076,
+      "score": 0.0,
+      "score_pct": null,
+      "error": "Model returned too few items for weaknesses in Part 2 Q2: ['No specific weaknesses identified in this response based on the provided criteria.']"
+    },
+    {
+      "index": 6,
+      "label": "Part 2 Q3",
+      "seconds": 41.02,
+      "word_count": 2076,
+      "score": 6.0,
+      "score_pct": null,
+      "error": ""
+    },
+    {
+      "index": 7,
+      "label": "Part 2 Q4",
+      "seconds": 35.66,
+      "word_count": 2076,
+      "score": 3.0,
+      "score_pct": null,
+      "error": ""
+    },
+    {
+      "index": 8,
+      "label": "Part 2 Q5",
+      "seconds": 39.96,
+      "word_count": 2076,
+      "score": 3.0,
+      "score_pct": null,
+      "error": ""
+    },
+    {
+      "index": 9,
+      "label": "Part 2 Q6",
+      "seconds": 61.04,
+      "word_count": 2076,
+      "score": 7.0,
+      "score_pct": null,
+      "error": ""
+    },
+    {
+      "index": 10,
+      "label": "Part 3 Q1",
+      "seconds": 36.8,
+      "word_count": 1767,
+      "score": 6.5,
+      "score_pct": null,
+      "error": ""
+    },
+    {
+      "index": 11,
+      "label": "Part 3 Q2",
+      "seconds": 45.53,
+      "word_count": 1767,
+      "score": 7.5,
+      "score_pct": null,
+      "error": ""
+    },
+    {
+      "index": 12,
+      "label": "Part 3 Q3",
+      "seconds": 63.23,
+      "word_count": 1767,
+      "score": 6.0,
+      "score_pct": null,
+      "error": ""
+    },
+    {
+      "index": 13,
+      "label": "Part 3 Q4",
+      "seconds": 38.79,
+      "word_count": 1767,
+      "score": 5.0,
+      "score_pct": null,
+      "error": ""
+    },
+    {
+      "index": 14,
+      "label": "Part 4",
+      "seconds": 34.54,
+      "word_count": 811,
+      "score": 13.0,
+      "score_pct": null,
+      "error": ""
+    }
+  ],
+  "moderation_debug_rows": [
+    {
+      "seconds": 0.0,
+      "part_count": 14,
+      "dependency_group": "part 2",
+      "part_labels": [
+        "Part 2 Q1",
+        "Part 2 Q2",
+        "Part 2 Q3",
+        "Part 2 Q4",
+        "Part 2 Q5",
+        "Part 2 Q6"
+      ],
+      "should_moderate": false,
+      "reason": "wide_score_spread:80.00"
+    },
+    {
+      "seconds": 0.0,
+      "part_count": 14,
+      "dependency_group": "part 3",
+      "part_labels": [
+        "Part 3 Q1",
+        "Part 3 Q2",
+        "Part 3 Q3",
+        "Part 3 Q4"
+      ],
+      "should_moderate": false,
+      "reason": "wide_score_spread:33.33"
+    }
+  ],
+  "debug_stages": [
+    {
+      "stage": "extract_submission_text",
+      "seconds": 2.67,
+      "detail": "scoring_words=5895, structure_words=5895"
+    },
+    {
+      "stage": "detect_submission_parts",
+      "seconds": 0.01,
+      "detail": "mode=context_fast_path, detected_parts=4"
+    },
+    {
+      "stage": "segment_submission_parts",
+      "seconds": 0.01,
+      "detail": "segmented_parts=4"
+    },
+    {
+      "stage": "refine_submission_granularity",
+      "seconds": 40.44,
+      "detail": "refined_parts=14"
+    },
+    {
+      "stage": "apply_assessment_artifact",
+      "seconds": 0.0,
+      "detail": "variant=cached_map_only"
+    },
+    {
+      "stage": "build_submission_diagnostics",
+      "seconds": 0.0,
+      "detail": "detected_part_count=14"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 37.9,
+      "detail": "1/14 Part 1 Q1"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 33.88,
+      "detail": "2/14 Part 1 Q2"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 35.69,
+      "detail": "3/14 Part 1 Q3"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 36.16,
+      "detail": "4/14 Part 2 Q1"
+    },
+    {
+      "stage": "part_analysis_error",
+      "seconds": 73.46,
+      "detail": "5/14 Part 2 Q2: ValueError"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 41.02,
+      "detail": "6/14 Part 2 Q3"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 35.66,
+      "detail": "7/14 Part 2 Q4"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 39.96,
+      "detail": "8/14 Part 2 Q5"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 61.04,
+      "detail": "9/14 Part 2 Q6"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 36.8,
+      "detail": "10/14 Part 3 Q1"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 45.53,
+      "detail": "11/14 Part 3 Q2"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 63.23,
+      "detail": "12/14 Part 3 Q3"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 38.79,
+      "detail": "13/14 Part 3 Q4"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 34.54,
+      "detail": "14/14 Part 4"
+    },
+    {
+      "stage": "moderate_linked_part_analyses",
+      "seconds": 0.0,
+      "detail": "part 2=wide_score_spread:80.00; part 3=wide_score_spread:33.33"
+    },
+    {
+      "stage": "build_local_final_result",
+      "seconds": 0.0,
+      "detail": ""
+    }
+  ]
+}
