@@ -1,0 +1,6 @@
+variant,sample_count,repeat_count,mean_abs_total_delta,mean_abs_part_delta,mean_model_total,mean_human_total,mean_extraction_seconds,mean_script_latency_seconds,mean_preparation_seconds,amortized_batch_size,amortized_total_seconds_per_script
+cached_map_only,50,1,14.49,2.86,70.88,61.7,0.93,416.44,0.01,1,417.37
+cached_map_only,50,1,14.49,2.86,70.88,61.7,0.93,416.44,0.01,5,417.37
+cached_map_only,50,1,14.49,2.86,70.88,61.7,0.93,416.44,0.01,10,417.37
+cached_map_only,50,1,14.49,2.86,70.88,61.7,0.93,416.44,0.01,25,417.36
+cached_map_only,50,1,14.49,2.86,70.88,61.7,0.93,416.44,0.01,50,417.36

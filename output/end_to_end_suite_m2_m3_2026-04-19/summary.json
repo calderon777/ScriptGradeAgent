@@ -1,0 +1,522 @@
+{
+  "workbook": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040 deanonymised grades.xlsx",
+  "model_name": "qwen2:7b",
+  "verifier_model_name": null,
+  "task_type_model_name": null,
+  "part_verifier_model_name": null,
+  "variants": [
+    "cached_map_only"
+  ],
+  "repeats": 1,
+  "sample_paths": [
+    "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Sadik Ulusow_1494125_assignsubmission_file\\Economics and Society Coursework (60^L1) (Final).pdf",
+    "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Federica Alvarez-Ossorio Zaldo_1494127_assignsubmission_file\\Econ and society FINAL.pdf",
+    "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Fahima Ali_1494054_assignsubmission_file\\Final assessment 2026 Economics and Society.pdf",
+    "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Maria Klenina_1494007_assignsubmission_file\\Economics and society coursework  .pdf",
+    "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Amirah Jeylani_1493974_assignsubmission_file\\ES complete final.pdf"
+  ],
+  "aggregate": {
+    "cached_map_only": {
+      "sample_count": 5,
+      "mean_abs_total_delta": 8.4,
+      "mean_abs_part_delta": 2.67,
+      "mean_latency_total": 389.32,
+      "mean_latency_wall_total": 390.71,
+      "by_type": {
+        ".pdf": {
+          "count": 5,
+          "mean_abs_total_delta": 8.4
+        }
+      }
+    }
+  },
+  "summary_rows": [
+    {
+      "variant": "cached_map_only",
+      "sample_count": 5,
+      "repeat_count": 1,
+      "mean_abs_total_delta": 8.4,
+      "mean_abs_part_delta": 2.67,
+      "mean_model_total": 64.2,
+      "mean_human_total": 63.6,
+      "mean_extraction_seconds": 1.37,
+      "mean_script_latency_seconds": 389.32,
+      "mean_preparation_seconds": 0.01,
+      "amortized_batch_size": 1,
+      "amortized_total_seconds_per_script": 390.71
+    },
+    {
+      "variant": "cached_map_only",
+      "sample_count": 5,
+      "repeat_count": 1,
+      "mean_abs_total_delta": 8.4,
+      "mean_abs_part_delta": 2.67,
+      "mean_model_total": 64.2,
+      "mean_human_total": 63.6,
+      "mean_extraction_seconds": 1.37,
+      "mean_script_latency_seconds": 389.32,
+      "mean_preparation_seconds": 0.01,
+      "amortized_batch_size": 5,
+      "amortized_total_seconds_per_script": 390.7
+    },
+    {
+      "variant": "cached_map_only",
+      "sample_count": 5,
+      "repeat_count": 1,
+      "mean_abs_total_delta": 8.4,
+      "mean_abs_part_delta": 2.67,
+      "mean_model_total": 64.2,
+      "mean_human_total": 63.6,
+      "mean_extraction_seconds": 1.37,
+      "mean_script_latency_seconds": 389.32,
+      "mean_preparation_seconds": 0.01,
+      "amortized_batch_size": 10,
+      "amortized_total_seconds_per_script": 390.7
+    },
+    {
+      "variant": "cached_map_only",
+      "sample_count": 5,
+      "repeat_count": 1,
+      "mean_abs_total_delta": 8.4,
+      "mean_abs_part_delta": 2.67,
+      "mean_model_total": 64.2,
+      "mean_human_total": 63.6,
+      "mean_extraction_seconds": 1.37,
+      "mean_script_latency_seconds": 389.32,
+      "mean_preparation_seconds": 0.01,
+      "amortized_batch_size": 25,
+      "amortized_total_seconds_per_script": 390.7
+    },
+    {
+      "variant": "cached_map_only",
+      "sample_count": 5,
+      "repeat_count": 1,
+      "mean_abs_total_delta": 8.4,
+      "mean_abs_part_delta": 2.67,
+      "mean_model_total": 64.2,
+      "mean_human_total": 63.6,
+      "mean_extraction_seconds": 1.37,
+      "mean_script_latency_seconds": 389.32,
+      "mean_preparation_seconds": 0.01,
+      "amortized_batch_size": 50,
+      "amortized_total_seconds_per_script": 390.7
+    }
+  ],
+  "comparison_rows": [],
+  "issue_summary": {
+    "m2_scoring": {
+      "scripts_with_any_part_error": 1,
+      "part_errors_total": 6,
+      "top_error_signatures": [
+        {
+          "error_signature": "Model did not return a numeric provisional score for Part <section>: {'summary': {'title': 'Taxation of Private Schools', 'key_points': ['The introduction of Value Added Tax (VAT) on private school fees can have both efficiency and equity i",
+          "count": 6
+        }
+      ],
+      "worst_total_delta_runs": [
+        {
+          "variant": "cached_map_only",
+          "run_index": 1,
+          "participant_id": "1494054",
+          "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Fahima Ali_1494054_assignsubmission_file\\Final assessment 2026 Economics and Society.pdf",
+          "abs_total_delta": 16.5,
+          "model_total": 50.5,
+          "human_total": 67.0
+        },
+        {
+          "variant": "cached_map_only",
+          "run_index": 1,
+          "participant_id": "1493974",
+          "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Amirah Jeylani_1493974_assignsubmission_file\\ES complete final.pdf",
+          "abs_total_delta": 12.0,
+          "model_total": 79.0,
+          "human_total": 67.0
+        },
+        {
+          "variant": "cached_map_only",
+          "run_index": 1,
+          "participant_id": "1494125",
+          "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Sadik Ulusow_1494125_assignsubmission_file\\Economics and Society Coursework (60^L1) (Final).pdf",
+          "abs_total_delta": 6.5,
+          "model_total": 70.5,
+          "human_total": 64.0
+        },
+        {
+          "variant": "cached_map_only",
+          "run_index": 1,
+          "participant_id": "1494127",
+          "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Federica Alvarez-Ossorio Zaldo_1494127_assignsubmission_file\\Econ and society FINAL.pdf",
+          "abs_total_delta": 4.0,
+          "model_total": 62.0,
+          "human_total": 58.0
+        },
+        {
+          "variant": "cached_map_only",
+          "run_index": 1,
+          "participant_id": "1494007",
+          "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Maria Klenina_1494007_assignsubmission_file\\Economics and society coursework  .pdf",
+          "abs_total_delta": 3.0,
+          "model_total": 59.0,
+          "human_total": 62.0
+        }
+      ]
+    },
+    "m3_latency": {
+      "mean_scoring_total_seconds": 389.32,
+      "mean_moderation_seconds": 6.43,
+      "moderation_groups_total": 10,
+      "moderation_groups_eligible": 1,
+      "moderation_groups_changed": 0,
+      "moderation_groups_zero_delta": 10,
+      "top_moderation_reasons": [
+        {
+          "reason": "wide_score_spread:20.00",
+          "count": 3
+        },
+        {
+          "reason": "wide_score_spread:40.00",
+          "count": 2
+        },
+        {
+          "reason": "wide_score_spread:70.00",
+          "count": 2
+        },
+        {
+          "reason": "eligible",
+          "count": 1
+        },
+        {
+          "reason": "wide_score_spread:33.33",
+          "count": 1
+        },
+        {
+          "reason": "wide_score_spread:66.67",
+          "count": 1
+        }
+      ]
+    }
+  },
+  "results": [
+    {
+      "variant": "cached_map_only",
+      "run_index": 1,
+      "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Sadik Ulusow_1494125_assignsubmission_file\\Economics and Society Coursework (60^L1) (Final).pdf",
+      "participant_id": "1494125",
+      "full_name": "Participant 1494125 (Sadik Ulusow)",
+      "file_type": ".pdf",
+      "human_total": 64.0,
+      "model_total": 70.5,
+      "total_delta": 6.5,
+      "abs_total_delta": 6.5,
+      "human_part_breakdown": {},
+      "model_part_breakdown": {
+        "Part 1 Q1": 2.5,
+        "Part 1 Q2": 3.5,
+        "Part 1 Q3": 4.5,
+        "Part 2 Q1": 3.5,
+        "Part 2 Q2": 4.0,
+        "Part 2 Q3": 6.0,
+        "Part 2 Q4": 2.0,
+        "Part 2 Q5": 3.0,
+        "Part 2 Q6": 7.5,
+        "Part 3 Q1": 5.0,
+        "Part 3 Q2": 4.5,
+        "Part 3 Q3": 7.5,
+        "Part 3 Q4": 5.0,
+        "Part 4": 12.0
+      },
+      "part_abs_delta_sum": 34.5,
+      "part_abs_delta_mean": 2.3,
+      "detected_part_labels": [
+        "Part 1 Q1",
+        "Part 1 Q2",
+        "Part 1 Q3",
+        "Part 2 Q1",
+        "Part 2 Q2",
+        "Part 2 Q3",
+        "Part 2 Q4",
+        "Part 2 Q5",
+        "Part 2 Q6",
+        "Part 3 Q1",
+        "Part 3 Q2",
+        "Part 3 Q3",
+        "Part 3 Q4",
+        "Part 4"
+      ],
+      "scoring_word_count": 4258,
+      "structure_word_count": 3835,
+      "preparation_seconds": 0.01,
+      "extraction_seconds": 1.38,
+      "latency_total": 349.77,
+      "latency_wall_total": 351.16,
+      "latency_structure_detect": 0.01,
+      "latency_part_refine": 0.01,
+      "latency_part_analysis": 349.73,
+      "latency_moderation": 0.0,
+      "latency_finalize": 0.0,
+      "validation_notes": [
+        "part_score_spread=10.00",
+        "math_total_used"
+      ],
+      "human_feedback_excerpt": "",
+      "model_feedback_excerpt": "This script is classified from part-level evidence rather than a separate final-language pass. The deterministic overall mark is 70.5 out of 100, computed as the sum of the part scores. Part 1 Q1 scored 2.5/5 and was pla..."
+    },
+    {
+      "variant": "cached_map_only",
+      "run_index": 1,
+      "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Federica Alvarez-Ossorio Zaldo_1494127_assignsubmission_file\\Econ and society FINAL.pdf",
+      "participant_id": "1494127",
+      "full_name": "Participant 1494127 (Federica Alvarez-Ossorio Zaldo)",
+      "file_type": ".pdf",
+      "human_total": 58.0,
+      "model_total": 62.0,
+      "total_delta": 4.0,
+      "abs_total_delta": 4.0,
+      "human_part_breakdown": {},
+      "model_part_breakdown": {
+        "Part 1 Q1": 3.5,
+        "Part 1 Q2": 4.0,
+        "Part 1 Q3": 4.0,
+        "Part 2 Q1": 3.0,
+        "Part 2 Q2": 0.0,
+        "Part 2 Q3": 0.0,
+        "Part 2 Q4": 3.0,
+        "Part 2 Q5": 3.0,
+        "Part 2 Q6": 7.0,
+        "Part 3 Q1": 5.0,
+        "Part 3 Q2": 6.0,
+        "Part 3 Q3": 6.5,
+        "Part 3 Q4": 5.0,
+        "Part 4": 12.0
+      },
+      "part_abs_delta_sum": 36.0,
+      "part_abs_delta_mean": 2.4,
+      "detected_part_labels": [
+        "Part 1 Q1",
+        "Part 1 Q2",
+        "Part 1 Q3",
+        "Part 2 Q1",
+        "Part 2 Q2",
+        "Part 2 Q3",
+        "Part 2 Q4",
+        "Part 2 Q5",
+        "Part 2 Q6",
+        "Part 3 Q1",
+        "Part 3 Q2",
+        "Part 3 Q3",
+        "Part 3 Q4",
+        "Part 4"
+      ],
+      "scoring_word_count": 4662,
+      "structure_word_count": 3850,
+      "preparation_seconds": 0.01,
+      "extraction_seconds": 1.1,
+      "latency_total": 379.5,
+      "latency_wall_total": 380.61,
+      "latency_structure_detect": 0.01,
+      "latency_part_refine": 0.01,
+      "latency_part_analysis": 379.48,
+      "latency_moderation": 0.0,
+      "latency_finalize": 0.0,
+      "validation_notes": [
+        "part_score_spread=12.00",
+        "math_total_used"
+      ],
+      "human_feedback_excerpt": "",
+      "model_feedback_excerpt": "This script is classified from part-level evidence rather than a separate final-language pass. The deterministic overall mark is 62 out of 100, computed as the sum of the part scores. Part 1 Q1 scored 3.5/5 and was place..."
+    },
+    {
+      "variant": "cached_map_only",
+      "run_index": 1,
+      "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Fahima Ali_1494054_assignsubmission_file\\Final assessment 2026 Economics and Society.pdf",
+      "participant_id": "1494054",
+      "full_name": "Participant 1494054 (Fahima Ali)",
+      "file_type": ".pdf",
+      "human_total": 67.0,
+      "model_total": 50.5,
+      "total_delta": -16.5,
+      "abs_total_delta": 16.5,
+      "human_part_breakdown": {},
+      "model_part_breakdown": {
+        "Part 1 Q1": 3.5,
+        "Part 1 Q2": 3.5,
+        "Part 1 Q3": 4.5,
+        "Part 2 Q1": 0.0,
+        "Part 2 Q2": 0.0,
+        "Part 2 Q3": 0.0,
+        "Part 2 Q4": 0.0,
+        "Part 2 Q5": 0.0,
+        "Part 2 Q6": 0.0,
+        "Part 3 Q1": 6.0,
+        "Part 3 Q2": 7.5,
+        "Part 3 Q3": 7.5,
+        "Part 3 Q4": 5.0,
+        "Part 4": 13.0
+      },
+      "part_abs_delta_sum": 57.5,
+      "part_abs_delta_mean": 3.83,
+      "detected_part_labels": [
+        "Part 1 Q1",
+        "Part 1 Q2",
+        "Part 1 Q3",
+        "Part 2 Q1",
+        "Part 2 Q2",
+        "Part 2 Q3",
+        "Part 2 Q4",
+        "Part 2 Q5",
+        "Part 2 Q6",
+        "Part 3 Q1",
+        "Part 3 Q2",
+        "Part 3 Q3",
+        "Part 3 Q4",
+        "Part 4"
+      ],
+      "scoring_word_count": 26624,
+      "structure_word_count": 6326,
+      "preparation_seconds": 0.01,
+      "extraction_seconds": 2.31,
+      "latency_total": 488.04,
+      "latency_wall_total": 490.36,
+      "latency_structure_detect": 0.01,
+      "latency_part_refine": 17.07,
+      "latency_part_analysis": 438.77,
+      "latency_moderation": 32.15,
+      "latency_finalize": 0.0,
+      "validation_notes": [
+        "part_score_spread=13.00",
+        "part_moderation_max_delta=0.00",
+        "math_total_used"
+      ],
+      "human_feedback_excerpt": "",
+      "model_feedback_excerpt": "This script is classified from part-level evidence rather than a separate final-language pass. The deterministic overall mark is 50.5 out of 100, computed as the sum of the part scores. Part 1 Q1 scored 3.5/5 and was pla..."
+    },
+    {
+      "variant": "cached_map_only",
+      "run_index": 1,
+      "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Maria Klenina_1494007_assignsubmission_file\\Economics and society coursework  .pdf",
+      "participant_id": "1494007",
+      "full_name": "Participant 1494007 (Maria Klenina)",
+      "file_type": ".pdf",
+      "human_total": 62.0,
+      "model_total": 59.0,
+      "total_delta": -3.0,
+      "abs_total_delta": 3.0,
+      "human_part_breakdown": {},
+      "model_part_breakdown": {
+        "Part 1 Q1": 3.5,
+        "Part 1 Q2": 4.0,
+        "Part 1 Q3": 4.0,
+        "Part 2 Q1": 0.0,
+        "Part 2 Q2": 0.0,
+        "Part 2 Q3": 4.5,
+        "Part 2 Q4": 3.0,
+        "Part 2 Q5": 3.0,
+        "Part 2 Q6": 7.0,
+        "Part 3 Q1": 6.0,
+        "Part 3 Q2": 5.0,
+        "Part 3 Q3": 7.5,
+        "Part 3 Q4": 2.5,
+        "Part 4": 9.0
+      },
+      "part_abs_delta_sum": 39.0,
+      "part_abs_delta_mean": 2.6,
+      "detected_part_labels": [
+        "Part 1 Q1",
+        "Part 1 Q2",
+        "Part 1 Q3",
+        "Part 2 Q1",
+        "Part 2 Q2",
+        "Part 2 Q3",
+        "Part 2 Q4",
+        "Part 2 Q5",
+        "Part 2 Q6",
+        "Part 3 Q1",
+        "Part 3 Q2",
+        "Part 3 Q3",
+        "Part 3 Q4",
+        "Part 4"
+      ],
+      "scoring_word_count": 8267,
+      "structure_word_count": 2614,
+      "preparation_seconds": 0.01,
+      "extraction_seconds": 1.03,
+      "latency_total": 384.31,
+      "latency_wall_total": 385.35,
+      "latency_structure_detect": 0.01,
+      "latency_part_refine": 18.82,
+      "latency_part_analysis": 365.44,
+      "latency_moderation": 0.0,
+      "latency_finalize": 0.0,
+      "validation_notes": [
+        "part_score_spread=9.00",
+        "math_total_used"
+      ],
+      "human_feedback_excerpt": "",
+      "model_feedback_excerpt": "This script is classified from part-level evidence rather than a separate final-language pass. The deterministic overall mark is 59 out of 100, computed as the sum of the part scores. Part 1 Q1 scored 3.5/5 and was place..."
+    },
+    {
+      "variant": "cached_map_only",
+      "run_index": 1,
+      "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Amirah Jeylani_1493974_assignsubmission_file\\ES complete final.pdf",
+      "participant_id": "1493974",
+      "full_name": "Participant 1493974 (Amirah Jeylani)",
+      "file_type": ".pdf",
+      "human_total": 67.0,
+      "model_total": 79.0,
+      "total_delta": 12.0,
+      "abs_total_delta": 12.0,
+      "human_part_breakdown": {},
+      "model_part_breakdown": {
+        "Part 1 Q1": 3.5,
+        "Part 1 Q2": 4.5,
+        "Part 1 Q3": 4.5,
+        "Part 2 Q1": 4.0,
+        "Part 2 Q2": 5.0,
+        "Part 2 Q3": 5.0,
+        "Part 2 Q4": 3.5,
+        "Part 2 Q5": 3.0,
+        "Part 2 Q6": 7.5,
+        "Part 3 Q1": 6.5,
+        "Part 3 Q2": 6.5,
+        "Part 3 Q3": 7.5,
+        "Part 3 Q4": 6.0,
+        "Part 4": 12.0
+      },
+      "part_abs_delta_sum": 33.0,
+      "part_abs_delta_mean": 2.2,
+      "detected_part_labels": [
+        "Part 1 Q1",
+        "Part 1 Q2",
+        "Part 1 Q3",
+        "Part 2 Q1",
+        "Part 2 Q2",
+        "Part 2 Q3",
+        "Part 2 Q4",
+        "Part 2 Q5",
+        "Part 2 Q6",
+        "Part 3 Q1",
+        "Part 3 Q2",
+        "Part 3 Q3",
+        "Part 3 Q4",
+        "Part 4"
+      ],
+      "scoring_word_count": 3786,
+      "structure_word_count": 3174,
+      "preparation_seconds": 0.01,
+      "extraction_seconds": 1.05,
+      "latency_total": 344.99,
+      "latency_wall_total": 346.05,
+      "latency_structure_detect": 0.01,
+      "latency_part_refine": 0.01,
+      "latency_part_analysis": 344.95,
+      "latency_moderation": 0.0,
+      "latency_finalize": 0.0,
+      "validation_notes": [
+        "part_score_spread=9.00",
+        "math_total_used"
+      ],
+      "human_feedback_excerpt": "",
+      "model_feedback_excerpt": "This script is classified from part-level evidence rather than a separate final-language pass. The deterministic overall mark is 79 out of 100, computed as the sum of the part scores. Part 1 Q1 scored 3.5/5 and was place..."
+    }
+  ]
+}

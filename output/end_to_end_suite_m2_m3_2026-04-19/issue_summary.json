@@ -1,0 +1,93 @@
+{
+  "m2_scoring": {
+    "scripts_with_any_part_error": 1,
+    "part_errors_total": 6,
+    "top_error_signatures": [
+      {
+        "error_signature": "Model did not return a numeric provisional score for Part <section>: {'summary': {'title': 'Taxation of Private Schools', 'key_points': ['The introduction of Value Added Tax (VAT) on private school fees can have both efficiency and equity i",
+        "count": 6
+      }
+    ],
+    "worst_total_delta_runs": [
+      {
+        "variant": "cached_map_only",
+        "run_index": 1,
+        "participant_id": "1494054",
+        "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Fahima Ali_1494054_assignsubmission_file\\Final assessment 2026 Economics and Society.pdf",
+        "abs_total_delta": 16.5,
+        "model_total": 50.5,
+        "human_total": 67.0
+      },
+      {
+        "variant": "cached_map_only",
+        "run_index": 1,
+        "participant_id": "1493974",
+        "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Amirah Jeylani_1493974_assignsubmission_file\\ES complete final.pdf",
+        "abs_total_delta": 12.0,
+        "model_total": 79.0,
+        "human_total": 67.0
+      },
+      {
+        "variant": "cached_map_only",
+        "run_index": 1,
+        "participant_id": "1494125",
+        "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Sadik Ulusow_1494125_assignsubmission_file\\Economics and Society Coursework (60^L1) (Final).pdf",
+        "abs_total_delta": 6.5,
+        "model_total": 70.5,
+        "human_total": 64.0
+      },
+      {
+        "variant": "cached_map_only",
+        "run_index": 1,
+        "participant_id": "1494127",
+        "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Federica Alvarez-Ossorio Zaldo_1494127_assignsubmission_file\\Econ and society FINAL.pdf",
+        "abs_total_delta": 4.0,
+        "model_total": 62.0,
+        "human_total": 58.0
+      },
+      {
+        "variant": "cached_map_only",
+        "run_index": 1,
+        "participant_id": "1494007",
+        "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Maria Klenina_1494007_assignsubmission_file\\Economics and society coursework  .pdf",
+        "abs_total_delta": 3.0,
+        "model_total": 59.0,
+        "human_total": 62.0
+      }
+    ]
+  },
+  "m3_latency": {
+    "mean_scoring_total_seconds": 389.32,
+    "mean_moderation_seconds": 6.43,
+    "moderation_groups_total": 10,
+    "moderation_groups_eligible": 1,
+    "moderation_groups_changed": 0,
+    "moderation_groups_zero_delta": 10,
+    "top_moderation_reasons": [
+      {
+        "reason": "wide_score_spread:20.00",
+        "count": 3
+      },
+      {
+        "reason": "wide_score_spread:40.00",
+        "count": 2
+      },
+      {
+        "reason": "wide_score_spread:70.00",
+        "count": 2
+      },
+      {
+        "reason": "eligible",
+        "count": 1
+      },
+      {
+        "reason": "wide_score_spread:33.33",
+        "count": 1
+      },
+      {
+        "reason": "wide_score_spread:66.67",
+        "count": 1
+      }
+    ]
+  }
+}

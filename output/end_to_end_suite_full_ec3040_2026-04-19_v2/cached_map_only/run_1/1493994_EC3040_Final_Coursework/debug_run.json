@@ -1,0 +1,345 @@
+{
+  "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Mir-Nibras Rashed_1493994_assignsubmission_file\\EC3040_Final_Coursework.pdf",
+  "participant_id": "1493994",
+  "full_name": "Participant 1493994 (Mir-Nibras Rashed)",
+  "variant": "cached_map_only",
+  "preparation_seconds": 0.01,
+  "extraction_seconds": 1.93,
+  "structure_detect_seconds": 0.01,
+  "structure_detection_mode": {
+    "mode": "context_fast_path",
+    "expected_part_count": 4,
+    "detected_part_count": 4
+  },
+  "segment_seconds": 0.01,
+  "refine_seconds": 0.01,
+  "apply_artifact_seconds": 0.0,
+  "diagnostics_seconds": 0.0,
+  "moderation_seconds": 0.0,
+  "moderation_error": "",
+  "finalize_seconds": 0.0,
+  "scoring_total_seconds": 350.68,
+  "total_wall_seconds": 352.62,
+  "scoring_word_count": 4867,
+  "structure_word_count": 4867,
+  "detected_part_labels": [
+    "Part 1 Q1",
+    "Part 1 Q2",
+    "Part 1 Q3",
+    "Part 2 Q1",
+    "Part 2 Q2",
+    "Part 2 Q3",
+    "Part 2 Q4",
+    "Part 2 Q5",
+    "Part 2 Q6",
+    "Part 3 Q1",
+    "Part 3 Q2",
+    "Part 3 Q3",
+    "Part 3 Q4",
+    "Part 4"
+  ],
+  "human_total": 0.0,
+  "model_total": 80,
+  "abs_total_delta": 80.0,
+  "part_abs_delta_sum": 80.0,
+  "part_abs_delta_mean": 5.71,
+  "validation_notes": [
+    "part_score_spread=9.00",
+    "math_total_used"
+  ],
+  "overall_feedback_excerpt": "This script is classified from part-level evidence rather than a separate final-language pass. The deterministic overall mark is 80 out of 100, computed as the sum of the part scores. Part 1 Q1 scored 3/5 and was placed ...",
+  "part_debug_rows": [
+    {
+      "index": 1,
+      "label": "Part 1 Q1",
+      "seconds": 20.17,
+      "word_count": 50,
+      "score": 3.0,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 2,
+      "label": "Part 1 Q2",
+      "seconds": 22.43,
+      "word_count": 310,
+      "score": 3.5,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 3,
+      "label": "Part 1 Q3",
+      "seconds": 25.39,
+      "word_count": 1159,
+      "score": 4.0,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 4,
+      "label": "Part 2 Q1",
+      "seconds": 25.95,
+      "word_count": 447,
+      "score": 4.5,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 5,
+      "label": "Part 2 Q2",
+      "seconds": 26.81,
+      "word_count": 385,
+      "score": 5.0,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 6,
+      "label": "Part 2 Q3",
+      "seconds": 32.98,
+      "word_count": 435,
+      "score": 7.5,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 7,
+      "label": "Part 2 Q4",
+      "seconds": 21.4,
+      "word_count": 250,
+      "score": 3.0,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 8,
+      "label": "Part 2 Q5",
+      "seconds": 23.72,
+      "word_count": 250,
+      "score": 3.0,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 9,
+      "label": "Part 2 Q6",
+      "seconds": 22.38,
+      "word_count": 350,
+      "score": 7.5,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 10,
+      "label": "Part 3 Q1",
+      "seconds": 22.13,
+      "word_count": 270,
+      "score": 6.0,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 11,
+      "label": "Part 3 Q2",
+      "seconds": 32.45,
+      "word_count": 443,
+      "score": 7.5,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 12,
+      "label": "Part 3 Q3",
+      "seconds": 28.52,
+      "word_count": 194,
+      "score": 7.5,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 13,
+      "label": "Part 3 Q4",
+      "seconds": 22.25,
+      "word_count": 376,
+      "score": 6.0,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 14,
+      "label": "Part 4",
+      "seconds": 24.06,
+      "word_count": 310,
+      "score": 12.0,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    }
+  ],
+  "moderation_debug_rows": [
+    {
+      "seconds": 0.0,
+      "dependency_group": "part 2",
+      "part_labels": [
+        "Part 2 Q1",
+        "Part 2 Q2",
+        "Part 2 Q3",
+        "Part 2 Q4",
+        "Part 2 Q5",
+        "Part 2 Q6"
+      ],
+      "should_moderate": false,
+      "reason": "wide_score_spread:40.00",
+      "pre_group_score": 30.5,
+      "post_group_score": 30.5,
+      "group_score_delta": 0.0,
+      "changed_label_count": 0,
+      "changed_labels": [],
+      "error": ""
+    },
+    {
+      "seconds": 0.0,
+      "dependency_group": "part 3",
+      "part_labels": [
+        "Part 3 Q1",
+        "Part 3 Q2",
+        "Part 3 Q3",
+        "Part 3 Q4"
+      ],
+      "should_moderate": false,
+      "reason": "wide_score_spread:20.00",
+      "pre_group_score": 27.0,
+      "post_group_score": 27.0,
+      "group_score_delta": 0.0,
+      "changed_label_count": 0,
+      "changed_labels": [],
+      "error": ""
+    }
+  ],
+  "debug_stages": [
+    {
+      "stage": "extract_submission_text",
+      "seconds": 1.93,
+      "detail": "scoring_words=4867, structure_words=4867"
+    },
+    {
+      "stage": "detect_submission_parts",
+      "seconds": 0.01,
+      "detail": "mode=context_fast_path, detected_parts=4"
+    },
+    {
+      "stage": "segment_submission_parts",
+      "seconds": 0.01,
+      "detail": "segmented_parts=4"
+    },
+    {
+      "stage": "refine_submission_granularity",
+      "seconds": 0.01,
+      "detail": "refined_parts=14"
+    },
+    {
+      "stage": "apply_assessment_artifact",
+      "seconds": 0.0,
+      "detail": "variant=cached_map_only"
+    },
+    {
+      "stage": "build_submission_diagnostics",
+      "seconds": 0.0,
+      "detail": "detected_part_count=14"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 20.17,
+      "detail": "1/14 Part 1 Q1"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 22.43,
+      "detail": "2/14 Part 1 Q2"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 25.39,
+      "detail": "3/14 Part 1 Q3"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 25.95,
+      "detail": "4/14 Part 2 Q1"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 26.81,
+      "detail": "5/14 Part 2 Q2"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 32.98,
+      "detail": "6/14 Part 2 Q3"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 21.4,
+      "detail": "7/14 Part 2 Q4"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 23.72,
+      "detail": "8/14 Part 2 Q5"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 22.38,
+      "detail": "9/14 Part 2 Q6"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 22.13,
+      "detail": "10/14 Part 3 Q1"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 32.45,
+      "detail": "11/14 Part 3 Q2"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 28.52,
+      "detail": "12/14 Part 3 Q3"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 22.25,
+      "detail": "13/14 Part 3 Q4"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 24.06,
+      "detail": "14/14 Part 4"
+    },
+    {
+      "stage": "moderate_linked_part_analyses",
+      "seconds": 0.0,
+      "detail": "part 2=wide_score_spread:40.00; part 3=wide_score_spread:20.00"
+    },
+    {
+      "stage": "build_local_final_result",
+      "seconds": 0.0,
+      "detail": ""
+    }
+  ]
+}

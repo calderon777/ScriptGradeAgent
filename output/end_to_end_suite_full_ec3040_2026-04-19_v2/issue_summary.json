@@ -1,0 +1,214 @@
+{
+  "m2_scoring": {
+    "scripts_with_any_part_error": 2,
+    "part_errors_total": 12,
+    "top_error_signatures": [
+      {
+        "error_signature": "Model did not return a numeric provisional score for Part <section>: {'summary': {'title': 'Taxation of Private Schools', 'key_points': ['The introduction of Value Added Tax (VAT) on private school fees can have both efficiency and equity i",
+        "count": 6
+      },
+      {
+        "error_signature": "Model did not return a numeric provisional score for Part <section>: {'scenario_1': {'description': 'In scenario 1, middle-income families choose to send their children to public schools due to budget constraints. The low-income families be",
+        "count": 2
+      },
+      {
+        "error_signature": "Model did not return a numeric provisional score for Part <section>: {'scenario_1': {'description': 'In scenario 1, middle-income families choose public schools due to budget constraints. The low-income family prefers public schools for the",
+        "count": 1
+      },
+      {
+        "error_signature": "Model did not return a numeric provisional score for Part <section>: {'scenario_1': {'description': 'In scenario 1, middle-income families choose to send their children to public schools due to budget constraints. The high-income families c",
+        "count": 1
+      },
+      {
+        "error_signature": "Model did not return a numeric provisional score for Part <section>: {'summary': {'title': 'Impact of VAT on Private Schools', 'key_points': ['The introduction of Value Added Tax (VAT) on private schools aims to reduce inequalities by narro",
+        "count": 1
+      },
+      {
+        "error_signature": "Model did not return a numeric provisional score for Part <section>: {'summary': {'title': 'Impact of VAT on Private Schools', 'key_points': ['The introduction of Value Added Tax (VAT) on private schools can have significant impacts on scho",
+        "count": 1
+      }
+    ],
+    "worst_total_delta_runs": [
+      {
+        "variant": "cached_map_only",
+        "run_index": 1,
+        "participant_id": "1494023",
+        "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Mohammed Elsheikh_1494023_assignsubmission_file\\econ and soc.docx",
+        "abs_total_delta": 82.0,
+        "model_total": 82.0,
+        "human_total": 0.0
+      },
+      {
+        "variant": "cached_map_only",
+        "run_index": 1,
+        "participant_id": "1493994",
+        "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Mir-Nibras Rashed_1493994_assignsubmission_file\\EC3040_Final_Coursework.pdf",
+        "abs_total_delta": 80.0,
+        "model_total": 80.0,
+        "human_total": 0.0
+      },
+      {
+        "variant": "cached_map_only",
+        "run_index": 1,
+        "participant_id": "1493966",
+        "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Alessandro Ungurean_1493966_assignsubmission_file\\EconSociety Final CW.docx",
+        "abs_total_delta": 35.5,
+        "model_total": 25.5,
+        "human_total": 61.0
+      },
+      {
+        "variant": "cached_map_only",
+        "run_index": 1,
+        "participant_id": "1494087",
+        "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Emre Kaya_1494087_assignsubmission_file\\IFS2.docx",
+        "abs_total_delta": 26.6,
+        "model_total": 86.6,
+        "human_total": 60.0
+      },
+      {
+        "variant": "cached_map_only",
+        "run_index": 1,
+        "participant_id": "1494042",
+        "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Jobaer Nurul Alam_1494042_assignsubmission_file\\EC3040 final assignment final copy.docx",
+        "abs_total_delta": 26.3,
+        "model_total": 77.3,
+        "human_total": 51.0
+      },
+      {
+        "variant": "cached_map_only",
+        "run_index": 1,
+        "participant_id": "1494090",
+        "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Rishaye Whabi_1494090_assignsubmission_file\\EC3040 (1).pdf",
+        "abs_total_delta": 25.8,
+        "model_total": 82.8,
+        "human_total": 57.0
+      },
+      {
+        "variant": "cached_map_only",
+        "run_index": 1,
+        "participant_id": "1494018",
+        "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Yasser Hasoon_1494018_assignsubmission_file\\Econ society final assessment.docx",
+        "abs_total_delta": 25.0,
+        "model_total": 71.0,
+        "human_total": 46.0
+      },
+      {
+        "variant": "cached_map_only",
+        "run_index": 1,
+        "participant_id": "1494162",
+        "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Samsoor Nasim_1494162_assignsubmission_file\\Task.docx",
+        "abs_total_delta": 23.5,
+        "model_total": 85.5,
+        "human_total": 62.0
+      },
+      {
+        "variant": "cached_map_only",
+        "run_index": 1,
+        "participant_id": "1494022",
+        "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Ealilan Tharmakulasingam_1494022_assignsubmission_file\\Economics and Society CW.pdf",
+        "abs_total_delta": 23.0,
+        "model_total": 80.0,
+        "human_total": 57.0
+      },
+      {
+        "variant": "cached_map_only",
+        "run_index": 1,
+        "participant_id": "1493972",
+        "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Tony Bui Van_1493972_assignsubmission_file\\Ecnomics and society final asignment.docx",
+        "abs_total_delta": 22.3,
+        "model_total": 79.3,
+        "human_total": 57.0
+      }
+    ]
+  },
+  "m3_latency": {
+    "mean_scoring_total_seconds": 416.44,
+    "mean_moderation_seconds": 7.5,
+    "moderation_groups_total": 99,
+    "moderation_groups_eligible": 13,
+    "moderation_groups_changed": 0,
+    "moderation_groups_zero_delta": 99,
+    "top_moderation_reasons": [
+      {
+        "reason": "wide_score_spread:20.00",
+        "count": 24
+      },
+      {
+        "reason": "eligible",
+        "count": 13
+      },
+      {
+        "reason": "wide_score_spread:33.33",
+        "count": 12
+      },
+      {
+        "reason": "wide_score_spread:40.00",
+        "count": 10
+      },
+      {
+        "reason": "wide_score_spread:75.00",
+        "count": 7
+      },
+      {
+        "reason": "wide_score_spread:29.33",
+        "count": 4
+      },
+      {
+        "reason": "wide_score_spread:100.00",
+        "count": 3
+      },
+      {
+        "reason": "wide_score_spread:30.00",
+        "count": 3
+      },
+      {
+        "reason": "wide_score_spread:30.67",
+        "count": 3
+      },
+      {
+        "reason": "wide_score_spread:66.67",
+        "count": 3
+      },
+      {
+        "reason": "wide_score_spread:70.00",
+        "count": 3
+      },
+      {
+        "reason": "wide_score_spread:26.67",
+        "count": 2
+      },
+      {
+        "reason": "wide_score_spread:33.34",
+        "count": 2
+      },
+      {
+        "reason": "wide_score_spread:80.00",
+        "count": 2
+      },
+      {
+        "reason": "wide_score_spread:21.67",
+        "count": 1
+      },
+      {
+        "reason": "wide_score_spread:35.00",
+        "count": 1
+      },
+      {
+        "reason": "wide_score_spread:46.67",
+        "count": 1
+      },
+      {
+        "reason": "wide_score_spread:50.00",
+        "count": 1
+      },
+      {
+        "reason": "wide_score_spread:55.00",
+        "count": 1
+      },
+      {
+        "reason": "wide_score_spread:56.67",
+        "count": 1
+      }
+    ]
+  }
+}

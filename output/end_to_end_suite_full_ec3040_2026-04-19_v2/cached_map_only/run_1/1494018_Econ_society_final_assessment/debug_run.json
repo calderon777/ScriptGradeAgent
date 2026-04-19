@@ -1,0 +1,345 @@
+{
+  "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Yasser Hasoon_1494018_assignsubmission_file\\Econ society final assessment.docx",
+  "participant_id": "1494018",
+  "full_name": "Participant 1494018 (Yasser Hasoon)",
+  "variant": "cached_map_only",
+  "preparation_seconds": 0.01,
+  "extraction_seconds": 0.07,
+  "structure_detect_seconds": 0.01,
+  "structure_detection_mode": {
+    "mode": "context_fast_path",
+    "expected_part_count": 4,
+    "detected_part_count": 4
+  },
+  "segment_seconds": 0.0,
+  "refine_seconds": 0.01,
+  "apply_artifact_seconds": 0.0,
+  "diagnostics_seconds": 0.0,
+  "moderation_seconds": 0.0,
+  "moderation_error": "",
+  "finalize_seconds": 0.0,
+  "scoring_total_seconds": 401.09,
+  "total_wall_seconds": 401.17,
+  "scoring_word_count": 2322,
+  "structure_word_count": 2312,
+  "detected_part_labels": [
+    "Part 1 Q1",
+    "Part 1 Q2",
+    "Part 1 Q3",
+    "Part 2 Q1",
+    "Part 2 Q2",
+    "Part 2 Q3",
+    "Part 2 Q4",
+    "Part 2 Q5",
+    "Part 2 Q6",
+    "Part 3 Q1",
+    "Part 3 Q2",
+    "Part 3 Q3",
+    "Part 3 Q4",
+    "Part 4"
+  ],
+  "human_total": 46.0,
+  "model_total": 71,
+  "abs_total_delta": 25.0,
+  "part_abs_delta_sum": 48.0,
+  "part_abs_delta_mean": 3.2,
+  "validation_notes": [
+    "part_score_spread=6.50",
+    "math_total_used"
+  ],
+  "overall_feedback_excerpt": "This script is classified from part-level evidence rather than a separate final-language pass. The deterministic overall mark is 71 out of 100, computed as the sum of the part scores. Part 1 Q1 scored 3.5/5 and was place...",
+  "part_debug_rows": [
+    {
+      "index": 1,
+      "label": "Part 1 Q1",
+      "seconds": 25.07,
+      "word_count": 362,
+      "score": 3.5,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 2,
+      "label": "Part 1 Q2",
+      "seconds": 31.22,
+      "word_count": 151,
+      "score": 4.5,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 3,
+      "label": "Part 1 Q3",
+      "seconds": 30.04,
+      "word_count": 709,
+      "score": 4.5,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 4,
+      "label": "Part 2 Q1",
+      "seconds": 27.35,
+      "word_count": 42,
+      "score": 4.5,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 5,
+      "label": "Part 2 Q2",
+      "seconds": 35.06,
+      "word_count": 107,
+      "score": 7.5,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 6,
+      "label": "Part 2 Q3",
+      "seconds": 29.1,
+      "word_count": 103,
+      "score": 6.5,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 7,
+      "label": "Part 2 Q4",
+      "seconds": 24.41,
+      "word_count": 148,
+      "score": 3.0,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 8,
+      "label": "Part 2 Q5",
+      "seconds": 25.87,
+      "word_count": 472,
+      "score": 3.0,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 9,
+      "label": "Part 2 Q6",
+      "seconds": 35.42,
+      "word_count": 874,
+      "score": 7.5,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 10,
+      "label": "Part 3 Q1",
+      "seconds": 27.06,
+      "word_count": 421,
+      "score": 5.0,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 11,
+      "label": "Part 3 Q2",
+      "seconds": 36.39,
+      "word_count": 166,
+      "score": 5.0,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 12,
+      "label": "Part 3 Q3",
+      "seconds": 24.59,
+      "word_count": 103,
+      "score": 2.5,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 13,
+      "label": "Part 3 Q4",
+      "seconds": 23.6,
+      "word_count": 153,
+      "score": 5.0,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 14,
+      "label": "Part 4",
+      "seconds": 25.88,
+      "word_count": 316,
+      "score": 9.0,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    }
+  ],
+  "moderation_debug_rows": [
+    {
+      "seconds": 0.0,
+      "dependency_group": "part 2",
+      "part_labels": [
+        "Part 2 Q1",
+        "Part 2 Q2",
+        "Part 2 Q3",
+        "Part 2 Q4",
+        "Part 2 Q5",
+        "Part 2 Q6"
+      ],
+      "should_moderate": false,
+      "reason": "wide_score_spread:40.00",
+      "pre_group_score": 32.0,
+      "post_group_score": 32.0,
+      "group_score_delta": 0.0,
+      "changed_label_count": 0,
+      "changed_labels": [],
+      "error": ""
+    },
+    {
+      "seconds": 0.0,
+      "dependency_group": "part 3",
+      "part_labels": [
+        "Part 3 Q1",
+        "Part 3 Q2",
+        "Part 3 Q3",
+        "Part 3 Q4"
+      ],
+      "should_moderate": false,
+      "reason": "wide_score_spread:33.34",
+      "pre_group_score": 17.5,
+      "post_group_score": 17.5,
+      "group_score_delta": 0.0,
+      "changed_label_count": 0,
+      "changed_labels": [],
+      "error": ""
+    }
+  ],
+  "debug_stages": [
+    {
+      "stage": "extract_submission_text",
+      "seconds": 0.07,
+      "detail": "scoring_words=2322, structure_words=2312"
+    },
+    {
+      "stage": "detect_submission_parts",
+      "seconds": 0.01,
+      "detail": "mode=context_fast_path, detected_parts=4"
+    },
+    {
+      "stage": "segment_submission_parts",
+      "seconds": 0.0,
+      "detail": "segmented_parts=4"
+    },
+    {
+      "stage": "refine_submission_granularity",
+      "seconds": 0.01,
+      "detail": "refined_parts=14"
+    },
+    {
+      "stage": "apply_assessment_artifact",
+      "seconds": 0.0,
+      "detail": "variant=cached_map_only"
+    },
+    {
+      "stage": "build_submission_diagnostics",
+      "seconds": 0.0,
+      "detail": "detected_part_count=14"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 25.07,
+      "detail": "1/14 Part 1 Q1"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 31.22,
+      "detail": "2/14 Part 1 Q2"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 30.04,
+      "detail": "3/14 Part 1 Q3"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 27.35,
+      "detail": "4/14 Part 2 Q1"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 35.06,
+      "detail": "5/14 Part 2 Q2"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 29.1,
+      "detail": "6/14 Part 2 Q3"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 24.41,
+      "detail": "7/14 Part 2 Q4"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 25.87,
+      "detail": "8/14 Part 2 Q5"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 35.42,
+      "detail": "9/14 Part 2 Q6"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 27.06,
+      "detail": "10/14 Part 3 Q1"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 36.39,
+      "detail": "11/14 Part 3 Q2"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 24.59,
+      "detail": "12/14 Part 3 Q3"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 23.6,
+      "detail": "13/14 Part 3 Q4"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 25.88,
+      "detail": "14/14 Part 4"
+    },
+    {
+      "stage": "moderate_linked_part_analyses",
+      "seconds": 0.0,
+      "detail": "part 2=wide_score_spread:40.00; part 3=wide_score_spread:33.34"
+    },
+    {
+      "stage": "build_local_final_result",
+      "seconds": 0.0,
+      "detail": ""
+    }
+  ]
+}

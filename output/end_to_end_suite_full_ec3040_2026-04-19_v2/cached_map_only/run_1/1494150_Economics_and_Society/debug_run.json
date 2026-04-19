@@ -1,0 +1,346 @@
+{
+  "path": "C:\\Users\\Cam\\OneDrive - City St George's, University of London\\grading test\\test 2\\EC3040\\Faisal Khalid H Alotaibi_1494150_assignsubmission_file\\Economics and Society.pdf",
+  "participant_id": "1494150",
+  "full_name": "Participant 1494150 (Faisal Khalid H Alotaibi)",
+  "variant": "cached_map_only",
+  "preparation_seconds": 0.01,
+  "extraction_seconds": 2.68,
+  "structure_detect_seconds": 0.01,
+  "structure_detection_mode": {
+    "mode": "context_fast_path",
+    "expected_part_count": 4,
+    "detected_part_count": 4
+  },
+  "segment_seconds": 0.01,
+  "refine_seconds": 25.39,
+  "apply_artifact_seconds": 0.0,
+  "diagnostics_seconds": 0.0,
+  "moderation_seconds": 28.92,
+  "moderation_error": "",
+  "finalize_seconds": 0.0,
+  "scoring_total_seconds": 499.54,
+  "total_wall_seconds": 502.23,
+  "scoring_word_count": 5562,
+  "structure_word_count": 5562,
+  "detected_part_labels": [
+    "Part 1 Q1",
+    "Part 1 Q2",
+    "Part 1 Q3",
+    "Part 2 Q1",
+    "Part 2 Q2",
+    "Part 2 Q3",
+    "Part 2 Q4",
+    "Part 2 Q5",
+    "Part 2 Q6",
+    "Part 3 Q1",
+    "Part 3 Q2",
+    "Part 3 Q3",
+    "Part 3 Q4",
+    "Part 4"
+  ],
+  "human_total": 71.0,
+  "model_total": 49.1,
+  "abs_total_delta": 21.9,
+  "part_abs_delta_sum": 58.1,
+  "part_abs_delta_mean": 3.87,
+  "validation_notes": [
+    "part_score_spread=12.00",
+    "part_moderation_max_delta=0.00",
+    "math_total_used"
+  ],
+  "overall_feedback_excerpt": "This script is classified from part-level evidence rather than a separate final-language pass. The deterministic overall mark is 49.1 out of 100, computed as the sum of the part scores. Part 1 Q1 scored 3.8/5 and was pla...",
+  "part_debug_rows": [
+    {
+      "index": 1,
+      "label": "Part 1 Q1",
+      "seconds": 28.74,
+      "word_count": 1525,
+      "score": 3.8,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 2,
+      "label": "Part 1 Q2",
+      "seconds": 40.99,
+      "word_count": 1525,
+      "score": 4.3,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 3,
+      "label": "Part 1 Q3",
+      "seconds": 35.47,
+      "word_count": 1525,
+      "score": 4.0,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 4,
+      "label": "Part 2 Q1",
+      "seconds": 35.2,
+      "word_count": 2598,
+      "score": 0.0,
+      "score_pct": null,
+      "error": "Model did not return a numeric provisional score for Part 2 Q1: {'scenario_1': {'description': 'In scenario 1, middle-income families choose to send their children to public schools due to budget constraints. The low-income families benefit from the VAT raised by private schools, while high-income families prefer private schools for exclusive resources and peer effects.', 'utility_of_private_schools': '-(middle-income family utility) + (high-income family utility)', 'utility_of_public_schools': '(low-income family utility) - (middle-income family utility)', 'social_welfare': '(low-income family utility) + (high-income family utility)'}, 'scenario_2': {'description': 'In scenario 2, middle-income families choose to send their children to public schools due to the increased cost of private schools after VAT implementation. The low-income families benefit from the redistributed funds, while high-income families still prefer private schools.', 'utility_of_private_schools': '-(high-income family utility)', 'utility_of_public_schools': '(low-income family utility) + (middle-income family utility)', 'social_welfare': '(low-income family utility) + (middle-income family utility)'}, 'comparison': {'difference_in_choice': 'The difference between scenario 1 and scenario 2 is the school choice of middle-income families. In scenario 1, they choose public schools due to budget constraints, while in scenario 2, they are forced into public schools because private schools become unaffordable.', 'impact_of_vat_rate_changes': 'Decreasing VAT would make scenario 1 more likely by decreasing the cost of private schools and increasing their utility. Increasing the value of private education could also favor scenario 1.', 'utility_derivative_analysis': 'The derivative analysis shows that an increase in VAT benefits public school families but negatively impacts private school families, affecting social welfare differently depending on which scenario is realized.'}, 'vat_policy_evaluation': {'equity_and_efficiency_tradeoff': 'The introduction of VAT aims to reduce inequalities by narrowing the spending gap between public and private sectors. However, it may create a burden for middle-income families who prefer private schools but are forced into public schools due to cost.', 'impact_on_specific_families': 'Middle-income families lose out on peer effects and competitiveness in the labor market, while low-income families face overcrowded public schools. High-income families might benefit from increased resources per pupil in their exclusive private schools.', 'conclusion': 'The policy may widen the gap between private and state schools due to its impact on middle-income families and potential for increased exclusivity in private schools.'}}",
+      "error_signature": "Model did not return a numeric provisional score for Part <section>: {'scenario_1': {'description': 'In scenario 1, middle-income families choose to send their children to public schools due to budget constraints. The low-income families be"
+    },
+    {
+      "index": 5,
+      "label": "Part 2 Q2",
+      "seconds": 42.22,
+      "word_count": 2598,
+      "score": 0.0,
+      "score_pct": null,
+      "error": "Model did not return a numeric provisional score for Part 2 Q2: {'scenario_1': {'description': 'In scenario 1, middle-income families choose to send their children to public schools due to budget constraints. The low-income families benefit from the VAT raised by private schools, while high-income families continue to prefer private education.', 'utility_of_private_schools': '-(middle income family utility) + (low income family utility) - (high income family utility)', 'utility_of_public_schools': '(middle income family utility) + (low income family utility) - (high income family utility)'}, 'scenario_2': {'description': 'In scenario 2, middle-income families choose to send their children to public schools due to the increased cost of private education caused by VAT. This leads to overcrowding in public schools and a decrease in resources per pupil.', 'utility_of_private_schools': '-(middle income family utility) + (low income family utility) - (high income family utility)', 'utility_of_public_schools': '(middle income family utility) + (low income family utility) - (high income family utility)'}, 'comparison': {'description': \"Scenario 1 is more favorable because it maintains the middle-income families' preference for private schools, while still benefiting low-income families through VAT. Scenario 2 results in overcrowded public schools and reduced resources per pupil.\", 'benefits_of_scenario_1': \"- Maintains middle-income families' choice of private education\", 'disadvantages_of_scenario_1': '- Low-income families may not benefit as much from increased spending on public schools', 'benefits_of_scenario_2': '- Overcrowding and reduced resources per pupil in public schools', 'disadvantages_of_scenario_2': '- Middle-income families are forced into public education due to cost'}, 'vat_impact': {'description': 'Increasing VAT would increase the utility of private school families, making scenario 1 more likely. Decreasing VAT or increasing tuition fees could make scenario 2 more likely.', 'impact_on_private_schools': '- Increase in utility for private school families', 'impact_on_public_schools': '- Decrease in utility for public school families'}, 'social_welfare_analysis': {'description': 'A VAT increase would initially increase social welfare by narrowing the spending gap between public and private schools. However, during the transition from scenario 1 to scenario 2, social welfare may decrease due to overcrowding costs.', 'initial_increase_in_social_welfare': '- Increased spending in state schools benefits low-income families', 'decrease_in_social_welfare_during_transition': '- Overcrowding costs and loss of middle-income family utility'}, 'policy_evaluation': {'description': 'The introduction of VAT on private schools aims to reduce inequalities by narrowing the spending gap. However, it may widen the gap between public and private schools due to potential disadvantages for middle-income families.', 'benefits_of_policy': '- Reduces inequality in education funding', 'disadvantages_of_policy': '- May force middle-income families into public schools with reduced resources per pupil'}}",
+      "error_signature": "Model did not return a numeric provisional score for Part <section>: {'scenario_1': {'description': 'In scenario 1, middle-income families choose to send their children to public schools due to budget constraints. The low-income families be"
+    },
+    {
+      "index": 6,
+      "label": "Part 2 Q3",
+      "seconds": 17.01,
+      "word_count": 2598,
+      "score": 0.0,
+      "score_pct": null,
+      "error": "Model did not return a numeric provisional score for Part 2 Q3: {'summary': {'title': 'Impact of VAT on Private Schools', 'key_points': ['The introduction of Value Added Tax (VAT) on private schools aims to reduce inequalities by narrowing the spending gap between public and private sectors.', 'A VAT increase would initially increase social welfare in Scenario 1, where middle-income families remain in private schools, but decreases during transition to Scenario 2 when the middle-income family moves to public schools due to increased costs.', 'The policy benefits low-income families by increasing teacher recruitments and improving infrastructure for state schools, but may negatively impact middle-income families who are forced into public schools.', 'High-income families might not be significantly affected as VAT represents a smaller fraction of their total budget. However, the policy could potentially increase inequalities by concentrating wealth in private schools.', 'The trade-off between redistributive equity and risk of systematic inefficiency must be evaluated when assessing the introduction of VAT on private schools.']}}",
+      "error_signature": "Model did not return a numeric provisional score for Part <section>: {'summary': {'title': 'Impact of VAT on Private Schools', 'key_points': ['The introduction of Value Added Tax (VAT) on private schools aims to reduce inequalities by narro"
+    },
+    {
+      "index": 7,
+      "label": "Part 2 Q4",
+      "seconds": 19.92,
+      "word_count": 2598,
+      "score": 0.0,
+      "score_pct": null,
+      "error": "Model did not return a numeric provisional score for Part 2 Q4: {'summary': {'title': 'Impact of VAT on Private Schools', 'key_points': ['The introduction of Value Added Tax (VAT) on private schools can have significant impacts on school choice, social welfare, and equity.', 'Scenario 1 favors the status quo with high income families choosing private schools while low income families opt for public schools. Middle income families are indifferent between both options.', 'Scenario 2 shifts middle income families towards public schools due to increased costs of private education under VAT, leading to overcrowding in state schools and reduced benefits for low income families.', 'The policy aims to reduce inequalities by narrowing spending gaps but may increase risk of systematic inefficiency through forced migration of middle income families.', 'Social welfare increases with a VAT increase as long as at least one family remains in private school. However, during transition periods, social welfare decreases due to reduced revenue and overcrowding costs.', 'The trade-off involves redistributive equity versus potential for systematic inefficiency. Middle income families face burden while high income families may benefit from increased exclusivity of private schools.', 'Overall, the policy could widen gaps between public and private school sectors despite benefits in terms of funding redistribution.']}}",
+      "error_signature": "Model did not return a numeric provisional score for Part <section>: {'summary': {'title': 'Impact of VAT on Private Schools', 'key_points': ['The introduction of Value Added Tax (VAT) on private schools can have significant impacts on scho"
+    },
+    {
+      "index": 8,
+      "label": "Part 2 Q5",
+      "seconds": 38.38,
+      "word_count": 2598,
+      "score": 0.0,
+      "score_pct": null,
+      "error": "Model did not return a numeric provisional score for Part 2 Q5: {'scenario_1': {'description': 'In scenario 1, middle-income families choose public schools due to budget constraints. The low-income family prefers public schools for the benefit of VAT redistribution, while the high-income family chooses private schools for exclusive resources.', 'utility_equation': '\\\\(U = \\\\text{Value of Public Education} + 5 \\\\times \\\\sqrt{Tuition Fee - (1+r)\\\\cdot Tuition Fee}\\\\)', 'public_school_payoff': '\\\\(U_{Public} = S + 5 \\\\times \\\\sqrt{t - (1+r)\\\\cdot t}\\\\)', 'private_school_payoff': '\\\\(U_{Private} = V + 5 \\\\times \\\\sqrt{Tuition Fee - (1+r)\\\\cdot Tuition Fee}\\\\)', 'middle_income_family_choice': 'Public school', 'low_income_family_choice': 'Public school', 'high_income_family_choice': 'Private school'}, 'scenario_2': {'description': 'In scenario 2, middle-income families choose private schools due to the benefits outweighing budget constraints. The low-income family prefers public schools for VAT redistribution, while the high-income family chooses private schools.', 'utility_equation': '\\\\(U = \\\\text{Value of Private Education} + 5 \\\\times \\\\sqrt{Tuition Fee - (1+r)\\\\cdot Tuition Fee}\\\\)', 'public_school_payoff': '\\\\(U_{Public} = S + 5 \\\\times \\\\sqrt{t - (1+r)\\\\cdot t}\\\\)', 'private_school_payoff': '\\\\(U_{Private} = V + 5 \\\\times \\\\sqrt{Tuition Fee - (1+r)\\\\cdot Tuition Fee}\\\\)', 'middle_income_family_choice': 'Private school', 'low_income_family_choice': 'Public school', 'high_income_family_choice': 'Private school'}, 'comparison': {'difference_in_middle_income_families_choice': 'Scenario 2 has middle-income families choosing private schools instead of public schools.', 'impact_of_vat_rate_changes': 'Decreasing VAT rate makes scenario 1 more likely, while increasing it favors scenario 2.', 'utility_derivative_analysis': \"The derivative analysis shows that an increase in VAT benefits the low-income family's utility but negatively impacts middle-income families' utility.\", 'social_welfare_impact': 'An increase in VAT initially increases social welfare in scenario 1 due to redistribution benefits, but decreases it during transition to scenario 2 as middle-income families move to public schools.', 'policy_evaluation': 'The policy aims to reduce inequalities by narrowing spending gaps between public and private sectors. However, it may widen the gap for middle-income families and increase exclusivity in private schools.'}}",
+      "error_signature": "Model did not return a numeric provisional score for Part <section>: {'scenario_1': {'description': 'In scenario 1, middle-income families choose public schools due to budget constraints. The low-income family prefers public schools for the"
+    },
+    {
+      "index": 9,
+      "label": "Part 2 Q6",
+      "seconds": 33.23,
+      "word_count": 2598,
+      "score": 0.0,
+      "score_pct": null,
+      "error": "Model did not return a numeric provisional score for Part 2 Q6: {'scenario_1': {'description': 'In scenario 1, middle-income families choose to send their children to public schools due to budget constraints. The high-income families continue to prefer private schools for their children.', 'utility_of_private_schools': 'The utility of private schools is higher than that of public schools for the middle and high-income families.', 'public_school_funding': 'Public schools receive funding from taxes, which helps in improving infrastructure and teacher recruitment.', 'middle_income_migration': 'Middle-income families migrate to public schools due to budget constraints, leading to overcrowding.', 'inequality_reduction': 'The policy aims to reduce inequalities by narrowing the spending gap between private and public sectors.', 'risk_of_inefficiency': 'There is a risk of systematic inefficiency as middle-income families are forced out of their preferred private schools.'}, 'scenario_2': {'description': 'In scenario 2, middle-income families choose to send their children to private schools despite budget constraints. The high-income families continue to prefer private schools for their children.', 'utility_of_private_schools': 'The utility of private schools is higher than that of public schools for all income groups.', 'public_school_funding': 'Public schools receive reduced funding due to the policy, leading to potential overcrowding and decreased resources per pupil.', 'middle_income_migration': 'Middle-income families migrate to private schools despite budget constraints, leading to increased exclusivity in private schools.', 'inequality_reduction': 'The policy aims to reduce inequalities by narrowing the spending gap between private and public sectors.', 'risk_of_inefficiency': 'There is a risk of systematic inefficiency as middle-income families are forced out of their preferred public schools.'}, 'comparison': {'utility_comparison': 'Scenario 1 offers higher utility for middle-income families compared to scenario 2, where they have to migrate to public schools.', 'funding_impact': 'Public school funding is positively impacted in scenario 1 but negatively impacted in scenario 2 due to reduced tax revenue.', 'inequality_impact': 'Both scenarios aim to reduce inequalities, but scenario 1 does so more effectively by keeping middle-income families in private schools.', 'risk_of_inefficiency': 'Scenario 1 has a lower risk of systematic inefficiency as it maintains the choice for middle-income families between public and private schools.'}}",
+      "error_signature": "Model did not return a numeric provisional score for Part <section>: {'scenario_1': {'description': 'In scenario 1, middle-income families choose to send their children to public schools due to budget constraints. The high-income families c"
+    },
+    {
+      "index": 10,
+      "label": "Part 3 Q1",
+      "seconds": 28.8,
+      "word_count": 918,
+      "score": 6.0,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 11,
+      "label": "Part 3 Q2",
+      "seconds": 42.25,
+      "word_count": 918,
+      "score": 6.5,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 12,
+      "label": "Part 3 Q3",
+      "seconds": 33.72,
+      "word_count": 918,
+      "score": 7.5,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 13,
+      "label": "Part 3 Q4",
+      "seconds": 24.61,
+      "word_count": 918,
+      "score": 5.0,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    },
+    {
+      "index": 14,
+      "label": "Part 4",
+      "seconds": 24.67,
+      "word_count": 509,
+      "score": 12.0,
+      "score_pct": null,
+      "error": "",
+      "error_signature": ""
+    }
+  ],
+  "moderation_debug_rows": [
+    {
+      "seconds": 28.92,
+      "dependency_group": "part 2",
+      "part_labels": [
+        "Part 2 Q1",
+        "Part 2 Q2",
+        "Part 2 Q3",
+        "Part 2 Q4",
+        "Part 2 Q5",
+        "Part 2 Q6"
+      ],
+      "should_moderate": true,
+      "reason": "eligible",
+      "pre_group_score": 0.0,
+      "post_group_score": 0.0,
+      "group_score_delta": 0.0,
+      "changed_label_count": 0,
+      "changed_labels": [],
+      "error": ""
+    },
+    {
+      "seconds": 28.92,
+      "dependency_group": "part 3",
+      "part_labels": [
+        "Part 3 Q1",
+        "Part 3 Q2",
+        "Part 3 Q3",
+        "Part 3 Q4"
+      ],
+      "should_moderate": false,
+      "reason": "wide_score_spread:33.33",
+      "pre_group_score": 25.0,
+      "post_group_score": 25.0,
+      "group_score_delta": 0.0,
+      "changed_label_count": 0,
+      "changed_labels": [],
+      "error": ""
+    }
+  ],
+  "debug_stages": [
+    {
+      "stage": "extract_submission_text",
+      "seconds": 2.68,
+      "detail": "scoring_words=5562, structure_words=5562"
+    },
+    {
+      "stage": "detect_submission_parts",
+      "seconds": 0.01,
+      "detail": "mode=context_fast_path, detected_parts=4"
+    },
+    {
+      "stage": "segment_submission_parts",
+      "seconds": 0.01,
+      "detail": "segmented_parts=4"
+    },
+    {
+      "stage": "refine_submission_granularity",
+      "seconds": 25.39,
+      "detail": "refined_parts=14"
+    },
+    {
+      "stage": "apply_assessment_artifact",
+      "seconds": 0.0,
+      "detail": "variant=cached_map_only"
+    },
+    {
+      "stage": "build_submission_diagnostics",
+      "seconds": 0.0,
+      "detail": "detected_part_count=14"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 28.74,
+      "detail": "1/14 Part 1 Q1"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 40.99,
+      "detail": "2/14 Part 1 Q2"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 35.47,
+      "detail": "3/14 Part 1 Q3"
+    },
+    {
+      "stage": "part_analysis_error",
+      "seconds": 35.2,
+      "detail": "4/14 Part 2 Q1: ValueError"
+    },
+    {
+      "stage": "part_analysis_error",
+      "seconds": 42.22,
+      "detail": "5/14 Part 2 Q2: ValueError"
+    },
+    {
+      "stage": "part_analysis_error",
+      "seconds": 17.01,
+      "detail": "6/14 Part 2 Q3: ValueError"
+    },
+    {
+      "stage": "part_analysis_error",
+      "seconds": 19.92,
+      "detail": "7/14 Part 2 Q4: ValueError"
+    },
+    {
+      "stage": "part_analysis_error",
+      "seconds": 38.38,
+      "detail": "8/14 Part 2 Q5: ValueError"
+    },
+    {
+      "stage": "part_analysis_error",
+      "seconds": 33.23,
+      "detail": "9/14 Part 2 Q6: ValueError"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 28.8,
+      "detail": "10/14 Part 3 Q1"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 42.25,
+      "detail": "11/14 Part 3 Q2"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 33.72,
+      "detail": "12/14 Part 3 Q3"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 24.61,
+      "detail": "13/14 Part 3 Q4"
+    },
+    {
+      "stage": "part_analysis_model",
+      "seconds": 24.67,
+      "detail": "14/14 Part 4"
+    },
+    {
+      "stage": "moderate_linked_part_analyses",
+      "seconds": 28.92,
+      "detail": "part 2=eligible; part 3=wide_score_spread:33.33"
+    },
+    {
+      "stage": "build_local_final_result",
+      "seconds": 0.0,
+      "detail": ""
+    }
+  ]
+}

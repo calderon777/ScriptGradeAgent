@@ -1,0 +1,19 @@
+stage,seconds,detail
+extract_submission_text,0.06,"scoring_words=3173, structure_words=3177"
+detect_submission_parts,0.01,"mode=context_fast_path, detected_parts=4"
+segment_submission_parts,0.01,segmented_parts=3
+refine_submission_granularity,12.71,refined_parts=10
+apply_assessment_artifact,0.0,variant=cached_map_only
+build_submission_diagnostics,0.0,detected_part_count=10
+part_analysis_model,29.85,1/10 Part 1 Q1
+part_analysis_model,30.55,2/10 Part 1 Q2
+part_analysis_model,31.42,3/10 Part 1 Q3
+part_analysis_model,24.15,4/10 Part 2 Q1
+part_analysis_model,28.21,5/10 Part 2 Q2
+part_analysis_model,27.12,6/10 Part 2 Q3
+part_analysis_model,26.46,7/10 Part 2 Q4
+part_analysis_model,34.02,8/10 Part 2 Q5
+part_analysis_model,25.28,9/10 Part 2 Q6
+part_analysis_model,23.73,10/10 Part 4
+moderate_linked_part_analyses,0.0,part 2=wide_score_spread:29.33
+build_local_final_result,0.0,
