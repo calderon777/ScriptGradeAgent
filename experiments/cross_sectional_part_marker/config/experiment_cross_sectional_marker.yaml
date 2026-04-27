@@ -1,0 +1,36 @@
+assessment_name: "EC3040 Economics and Society"
+submissions_folder: "C:/Users/Cam/OneDrive - City St George's, University of London/grading test/test 2/EC3040"
+output_folder: "experiments/cross_sectional_part_marker/outputs"
+marking_scheme_path: "data/marking_scheme_text.txt"
+rubric_path: null
+instructions_path: null
+sample_answers_path: null
+
+question_splitting:
+  method: "hybrid"  # heuristic | llm | hybrid
+  patterns:
+    - "(?i)^part\\s+\\d+[:\\s]?"
+    - "(?i)^question\\s+\\d+[a-z]?"
+    - "(?i)^Q\\d+[a-zA-Z]?[.:\\s]"
+  llm_fallback_threshold: 0.6
+
+models:
+  analysis_model: "qwen2:7b"
+  scoring_model: "qwen2:7b"
+  feedback_model: "gemma3:4b"
+  embedding_model: "nomic-embed-text"
+  reranker_model: "dengcao/Qwen3-Reranker-0.6B:Q8_0"
+
+ollama:
+  base_url: "http://localhost:11434"
+  timeout: 120
+
+temperature: 0.1
+batch_size: 10
+confidence_threshold: 0.65
+
+run_clustering: true
+run_umap: true
+run_pairwise_boundary: true
+
+export_format: "xlsx"

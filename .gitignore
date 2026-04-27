@@ -3,7 +3,21 @@ venv/
 __pycache__/
 *.pyc
 .pytest_cache/
+.pytest_tmp/
 .DS_Store
+
+# Local assessment data and app permissions should not enter git history.
+data/
+.claude/
+
+# Ignore experiment output subdirectories (raw JSON, debug files, corpus packs, etc.).
+output/*/
 
 output/*.xlsx
 output/*.csv
+output/*.html
+
+# Cross-sectional marker runtime artifacts. Keep source, prompts, tests, config,
+# and the placeholder output directory trackable.
+experiments/cross_sectional_part_marker/outputs/*
+!experiments/cross_sectional_part_marker/outputs/.gitkeep

@@ -1,0 +1,453 @@
+{
+  "assessment_name": "Introduction to Economics — Semester 1 Exam",
+  "needs_human_confirmation": false,
+  "question_parts": [
+    {
+      "question_id": "Q1",
+      "part_id": "a",
+      "max_marks": 5,
+      "task_instruction": "Explain how an increase in consumer income affects the demand for a normal good, using a supply-and-demand diagram where appropriate.",
+      "criteria": [
+        {
+          "criterion_id": "q1a_c1",
+          "name": "Demand shift identification",
+          "description": "Student correctly identifies that an increase in income shifts the demand curve to the right for a normal good.",
+          "max_marks": 2,
+          "required_evidence": [
+            "demand curve shifts right",
+            "identifies good as normal good"
+          ],
+          "partial_credit_rules": [
+            "1 mark for identifying shift without explaining direction",
+            "1 mark for identifying normal good without linking to shift"
+          ],
+          "common_misconceptions": [
+            "confusing normal and inferior goods",
+            "stating price changes rather than demand shifts"
+          ],
+          "no_credit_conditions": [
+            "states demand curve shifts left",
+            "discusses supply rather than demand"
+          ],
+          "provenance": "Marking scheme Q1a, criterion 1"
+        },
+        {
+          "criterion_id": "q1a_c2",
+          "name": "Price and quantity outcome",
+          "description": "Student correctly explains that equilibrium price and quantity both rise as a result of the demand shift.",
+          "max_marks": 2,
+          "required_evidence": [
+            "equilibrium price rises",
+            "equilibrium quantity rises"
+          ],
+          "partial_credit_rules": [
+            "1 mark for correctly identifying price or quantity change alone"
+          ],
+          "common_misconceptions": [
+            "stating only price rises without quantity",
+            "confusing movement along a curve with a shift"
+          ],
+          "no_credit_conditions": [
+            "both price and quantity stated as falling"
+          ],
+          "provenance": "Marking scheme Q1a, criterion 2"
+        },
+        {
+          "criterion_id": "q1a_c3",
+          "name": "Diagram quality",
+          "description": "Student describes or draws a correctly labelled supply-and-demand diagram showing the rightward shift of demand and new equilibrium.",
+          "max_marks": 1,
+          "required_evidence": [
+            "reference to diagram with labelled axes or curves",
+            "new equilibrium point identified"
+          ],
+          "partial_credit_rules": [],
+          "common_misconceptions": [
+            "shifting supply instead of demand",
+            "unlabelled axes"
+          ],
+          "no_credit_conditions": [
+            "no diagram or description of diagram"
+          ],
+          "provenance": "Marking scheme Q1a, criterion 3"
+        }
+      ],
+      "bucket_definitions": [
+        {
+          "bucket": "A",
+          "label": "Excellent",
+          "mark_range": [5, 5],
+          "description": "All three criteria fully met with clear explanation and correct diagram."
+        },
+        {
+          "bucket": "B",
+          "label": "Good",
+          "mark_range": [4, 4],
+          "description": "Two criteria fully met; one minor gap."
+        },
+        {
+          "bucket": "C",
+          "label": "Adequate",
+          "mark_range": [3, 3],
+          "description": "Core demand shift identified with partial evidence for outcomes."
+        },
+        {
+          "bucket": "D",
+          "label": "Poor",
+          "mark_range": [2, 2],
+          "description": "Some relevant content but significant gaps or one misconception."
+        },
+        {
+          "bucket": "E",
+          "label": "Very Poor",
+          "mark_range": [1, 1],
+          "description": "Minimal relevant content; shows awareness of topic only."
+        },
+        {
+          "bucket": "F",
+          "label": "Fail",
+          "mark_range": [0, 0],
+          "description": "No relevant content or completely incorrect."
+        }
+      ]
+    },
+    {
+      "question_id": "Q1",
+      "part_id": "b",
+      "max_marks": 5,
+      "task_instruction": "Using the concept of price elasticity of demand, explain why a 10% rise in price may lead to a larger or smaller percentage fall in quantity demanded depending on the good.",
+      "criteria": [
+        {
+          "criterion_id": "q1b_c1",
+          "name": "PED definition",
+          "description": "Student correctly defines price elasticity of demand as the percentage change in quantity demanded divided by the percentage change in price.",
+          "max_marks": 2,
+          "required_evidence": [
+            "percentage change in quantity demanded",
+            "percentage change in price",
+            "ratio or formula"
+          ],
+          "partial_credit_rules": [
+            "1 mark for stating PED measures responsiveness of demand to price without formula"
+          ],
+          "common_misconceptions": [
+            "using absolute changes rather than percentage changes",
+            "inverting numerator and denominator"
+          ],
+          "no_credit_conditions": [
+            "no reference to percentage or proportional changes"
+          ],
+          "provenance": "Marking scheme Q1b, criterion 1"
+        },
+        {
+          "criterion_id": "q1b_c2",
+          "name": "Elastic vs inelastic distinction",
+          "description": "Student correctly distinguishes elastic demand (PED > 1, larger % fall in QD) from inelastic demand (PED < 1, smaller % fall in QD) with appropriate examples.",
+          "max_marks": 3,
+          "required_evidence": [
+            "PED > 1 leads to larger fall in QD",
+            "PED < 1 leads to smaller fall in QD",
+            "at least one appropriate example (luxury vs necessity, or substitute availability)"
+          ],
+          "partial_credit_rules": [
+            "1 mark for correct statement about elastic or inelastic alone",
+            "2 marks for both elastic and inelastic without examples"
+          ],
+          "common_misconceptions": [
+            "stating elastic means price-sensitive without quantifying",
+            "confusing PED with PES"
+          ],
+          "no_credit_conditions": [
+            "elastic and inelastic definitions reversed"
+          ],
+          "provenance": "Marking scheme Q1b, criterion 2"
+        }
+      ],
+      "bucket_definitions": [
+        {
+          "bucket": "A",
+          "label": "Excellent",
+          "mark_range": [5, 5],
+          "description": "Full PED definition, correct elastic/inelastic distinction, appropriate examples."
+        },
+        {
+          "bucket": "B",
+          "label": "Good",
+          "mark_range": [4, 4],
+          "description": "Mostly correct with one minor omission."
+        },
+        {
+          "bucket": "C",
+          "label": "Adequate",
+          "mark_range": [3, 3],
+          "description": "PED concept understood; elastic/inelastic partially addressed."
+        },
+        {
+          "bucket": "D",
+          "label": "Poor",
+          "mark_range": [2, 2],
+          "description": "Partial definition; elastic/inelastic confused or missing."
+        },
+        {
+          "bucket": "E",
+          "label": "Very Poor",
+          "mark_range": [1, 1],
+          "description": "Minimal relevant content about price and demand."
+        },
+        {
+          "bucket": "F",
+          "label": "Fail",
+          "mark_range": [0, 0],
+          "description": "No relevant content."
+        }
+      ]
+    },
+    {
+      "question_id": "Q2",
+      "part_id": "a",
+      "max_marks": 10,
+      "task_instruction": "Explain the concept of market failure due to negative externalities. Illustrate with an example and discuss one government policy to address it.",
+      "criteria": [
+        {
+          "criterion_id": "q2a_c1",
+          "name": "Market failure definition",
+          "description": "Student correctly defines market failure as a situation where the free market does not allocate resources efficiently.",
+          "max_marks": 2,
+          "required_evidence": [
+            "inefficient resource allocation",
+            "free market or price mechanism failure"
+          ],
+          "partial_credit_rules": [
+            "1 mark for identifying market failure without defining inefficiency"
+          ],
+          "common_misconceptions": [
+            "equating market failure with market collapse",
+            "defining as government failure"
+          ],
+          "no_credit_conditions": [],
+          "provenance": "Marking scheme Q2a, criterion 1"
+        },
+        {
+          "criterion_id": "q2a_c2",
+          "name": "Negative externality explanation",
+          "description": "Student correctly explains negative externalities as third-party costs not reflected in the market price, leading to overproduction.",
+          "max_marks": 3,
+          "required_evidence": [
+            "third-party costs",
+            "social cost exceeds private cost",
+            "overproduction or overallocation"
+          ],
+          "partial_credit_rules": [
+            "1 mark for third-party cost alone",
+            "2 marks for third-party cost plus overproduction without MSC/MPC language"
+          ],
+          "common_misconceptions": [
+            "stating externality only affects the producer",
+            "confusing negative externality with negative income effect"
+          ],
+          "no_credit_conditions": [
+            "describes positive externality instead"
+          ],
+          "provenance": "Marking scheme Q2a, criterion 2"
+        },
+        {
+          "criterion_id": "q2a_c3",
+          "name": "Example",
+          "description": "Student provides a relevant, correctly applied example of a negative externality (e.g. pollution, smoking, congestion).",
+          "max_marks": 2,
+          "required_evidence": [
+            "named example",
+            "link between example and third-party cost"
+          ],
+          "partial_credit_rules": [
+            "1 mark for named example without explanation"
+          ],
+          "common_misconceptions": [
+            "using a positive externality example"
+          ],
+          "no_credit_conditions": [],
+          "provenance": "Marking scheme Q2a, criterion 3"
+        },
+        {
+          "criterion_id": "q2a_c4",
+          "name": "Government policy",
+          "description": "Student correctly explains one government policy (e.g. Pigouvian tax, regulation, cap-and-trade) and how it addresses the externality.",
+          "max_marks": 3,
+          "required_evidence": [
+            "named policy",
+            "mechanism by which policy internalises the externality",
+            "link to reducing overproduction"
+          ],
+          "partial_credit_rules": [
+            "1 mark for naming a policy without explanation",
+            "2 marks for mechanism without explicit link to externality correction"
+          ],
+          "common_misconceptions": [
+            "describing subsidies as a policy for negative externalities",
+            "stating ban is the only option"
+          ],
+          "no_credit_conditions": [],
+          "provenance": "Marking scheme Q2a, criterion 4"
+        }
+      ],
+      "bucket_definitions": [
+        {
+          "bucket": "A",
+          "label": "Excellent",
+          "mark_range": [9, 10],
+          "description": "All four criteria fully met; clear, accurate, and well-illustrated."
+        },
+        {
+          "bucket": "B",
+          "label": "Good",
+          "mark_range": [7, 8],
+          "description": "Three criteria fully met; one minor gap in evidence or policy explanation."
+        },
+        {
+          "bucket": "C",
+          "label": "Adequate",
+          "mark_range": [5, 6],
+          "description": "Core externality concept present; policy or example partially addressed."
+        },
+        {
+          "bucket": "D",
+          "label": "Poor",
+          "mark_range": [3, 4],
+          "description": "Partial understanding; one or two criteria barely met."
+        },
+        {
+          "bucket": "E",
+          "label": "Very Poor",
+          "mark_range": [1, 2],
+          "description": "Minimal relevant content; some awareness of externalities but largely incorrect."
+        },
+        {
+          "bucket": "F",
+          "label": "Fail",
+          "mark_range": [0, 0],
+          "description": "No relevant content or completely incorrect."
+        }
+      ]
+    },
+    {
+      "question_id": "Q2",
+      "part_id": "b",
+      "max_marks": 10,
+      "task_instruction": "Compare and contrast monopoly and perfect competition in terms of price, output, and efficiency. Include a discussion of deadweight loss.",
+      "criteria": [
+        {
+          "criterion_id": "q2b_c1",
+          "name": "Perfect competition characteristics",
+          "description": "Student correctly identifies key characteristics of perfect competition: many firms, price-taking, P = MC, allocative efficiency.",
+          "max_marks": 2,
+          "required_evidence": [
+            "price-taking behaviour or P = MC",
+            "allocative or productive efficiency"
+          ],
+          "partial_credit_rules": [
+            "1 mark for listing features without efficiency implications"
+          ],
+          "common_misconceptions": [],
+          "no_credit_conditions": [],
+          "provenance": "Marking scheme Q2b, criterion 1"
+        },
+        {
+          "criterion_id": "q2b_c2",
+          "name": "Monopoly characteristics",
+          "description": "Student correctly identifies monopoly as a single seller with market power that charges P > MC and produces below the competitive output.",
+          "max_marks": 3,
+          "required_evidence": [
+            "single seller or price-maker",
+            "P > MC",
+            "lower output than competitive equilibrium"
+          ],
+          "partial_credit_rules": [
+            "1 mark for identifying single seller alone",
+            "2 marks for P > MC without output comparison"
+          ],
+          "common_misconceptions": [
+            "stating monopolist always earns profit in short run",
+            "confusing monopsony with monopoly"
+          ],
+          "no_credit_conditions": [],
+          "provenance": "Marking scheme Q2b, criterion 2"
+        },
+        {
+          "criterion_id": "q2b_c3",
+          "name": "Deadweight loss",
+          "description": "Student correctly explains deadweight loss as the welfare loss arising from monopoly underproduction relative to the competitive equilibrium.",
+          "max_marks": 3,
+          "required_evidence": [
+            "welfare loss",
+            "underproduction relative to competitive output",
+            "triangle in diagram or equivalent description"
+          ],
+          "partial_credit_rules": [
+            "1 mark for naming deadweight loss without explanation",
+            "2 marks for correct concept without diagram or triangle description"
+          ],
+          "common_misconceptions": [
+            "stating deadweight loss is producer profit",
+            "ignoring consumer surplus reduction"
+          ],
+          "no_credit_conditions": [],
+          "provenance": "Marking scheme Q2b, criterion 3"
+        },
+        {
+          "criterion_id": "q2b_c4",
+          "name": "Comparison and synthesis",
+          "description": "Student explicitly compares the two structures in terms of at least two dimensions (price, output, efficiency, consumer welfare) and draws a clear conclusion.",
+          "max_marks": 2,
+          "required_evidence": [
+            "explicit comparison on at least two dimensions",
+            "conclusion about relative efficiency or consumer welfare"
+          ],
+          "partial_credit_rules": [
+            "1 mark for comparison on one dimension only"
+          ],
+          "common_misconceptions": [],
+          "no_credit_conditions": [],
+          "provenance": "Marking scheme Q2b, criterion 4"
+        }
+      ],
+      "bucket_definitions": [
+        {
+          "bucket": "A",
+          "label": "Excellent",
+          "mark_range": [9, 10],
+          "description": "Comprehensive comparison; deadweight loss correctly explained; clear synthesis."
+        },
+        {
+          "bucket": "B",
+          "label": "Good",
+          "mark_range": [7, 8],
+          "description": "Good comparison; one minor gap in deadweight loss or efficiency discussion."
+        },
+        {
+          "bucket": "C",
+          "label": "Adequate",
+          "mark_range": [5, 6],
+          "description": "Both structures described; comparison partial; deadweight loss mentioned."
+        },
+        {
+          "bucket": "D",
+          "label": "Poor",
+          "mark_range": [3, 4],
+          "description": "One structure well described; comparison weak; deadweight loss vague."
+        },
+        {
+          "bucket": "E",
+          "label": "Very Poor",
+          "mark_range": [1, 2],
+          "description": "Minimal relevant content; one structure barely described."
+        },
+        {
+          "bucket": "F",
+          "label": "Fail",
+          "mark_range": [0, 0],
+          "description": "No relevant content."
+        }
+      ]
+    }
+  ]
+}
